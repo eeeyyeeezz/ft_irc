@@ -78,7 +78,7 @@ int		main(int argc, char **argv){
 		for (size_t i = 0; i < countconnects; i++){
 			if (fds[i].fd > 0 && (fds[i].revents & POLLIN) == POLLIN){
 				++flag;
-				if (!i){ // new_conenct
+				if (i == 0){ // new_conenct
 					flag = 0;
 					fds[countconnects].fd = accept(fds[i].fd, NULL, NULL);
 					std::cout << "NEW CONNNECT\n";
@@ -94,13 +94,15 @@ int		main(int argc, char **argv){
 					readed = read(fds[i].fd, buff, BUFFER_SIZE);
 					fds[i].revents = 0;
 					if (!readed){
-						std::cout << fds[i].fd << "  end\n";
+						std::cout << fds[i].fd << "  disconnected\n";
 						fds[i].fd = -1;
 						--countconnects;
 						continue ;
 					}
 					buff[readed] = 0;
 					std::cout << "Message: " << buff;
+					for (size_t userToWrite = 0; userToWrite < i; userToWrite++)
+						send(fds[userToWrite].fd, buff, readed + 1, 0);
 					fds[i].revents = 0;
 				}
 			}
