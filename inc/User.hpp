@@ -15,12 +15,15 @@ class User {
 	string	_realname;
 	string	_password;
 	int		_passwordPassed;
+	int		_nickNamePassed;
+	int		_userPassed;
 	string	_nickname;
 	int		_sockfd;
 	int		_port;
 
-	User (User const & );
-	User & operator = (User const & );
+	User(User const & );
+	User &operator = (User const & );
+	void checkUserPassword();
 
 	public:
 	User();
@@ -32,7 +35,7 @@ class User {
 	
 	void	setFd(int fd);
 	int		getFd();
-	void	parsCommand(string message);
+	int		parsCommand(string message); // return 1 - user passed command ; return 0 - simple message
 
 };
 
