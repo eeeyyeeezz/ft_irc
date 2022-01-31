@@ -12,6 +12,7 @@ class Server{
 	private:
 	int				_port;
 	int				_listening;
+	int				_countConnects;
 	struct pollfd	_fds[50];
 
 	public:
@@ -23,6 +24,9 @@ class Server{
 	void	listenSocket(Server &server, struct pollfd fds[]);
 	int		getPort();
 	int		getListening();
+	int		getCountConnects();
+	void	mainLoop(Server &server, struct pollfd fds[]);
+	void	setCountConnects(int i);
 	void	setListening(int socket);
 };
 

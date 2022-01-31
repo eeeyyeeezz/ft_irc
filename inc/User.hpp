@@ -7,24 +7,25 @@ using std::string;
 class User {
 
 	private:
-		string username;
-		string hostname;		// не проверяется 
-		string servername;		// не проверяется 
-		string realname;
-		string password;
-		string nickname;
-		int	sockfd;
-		int	port;
+		string _username;
+		string _hostname;		// не проверяется 
+		string _servername;		// не проверяется 
+		string _realname;
+		string _password;
+		string _nickname;
+		int	_sockfd;
+		int	_port;
 
 		User();
 		User (User const & );
 		User & operator = (User const & );
 
 	public:
+		User(string message);
 		User(string username, string hostname, string servername, string realname);
 		~User();
 	
-	
+	void	parsCommand();
 
 };
 

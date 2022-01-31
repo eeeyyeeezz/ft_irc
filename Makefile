@@ -1,7 +1,8 @@
 NAME = server
 
-SRCS = server.cpp \
-		src/error.cpp src/Server.cpp
+SRCS = main_server.cpp \
+		src/error.cpp src/Server.cpp \
+		src/User.cpp
 
 CLANG = clang++
 
