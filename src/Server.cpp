@@ -48,6 +48,7 @@ void	Server::mainLoop(Server &server, struct pollfd fds[]){
 	int flag = 0;
 	while (true){
 		int COUNTFD;
+		User user;
 		
 		if (flag > 0) { std::cout << "Exit\n" ; exit(EXIT_SUCCESS); } // exit_success
 		if ((COUNTFD = poll(fds, server.getCountConnects(), -1)) < 0) { error("Poll crash"); } // do_error poll crash
@@ -58,6 +59,8 @@ void	Server::mainLoop(Server &server, struct pollfd fds[]){
 				if (i == 0){ // new_conenct
 					flag = 0;
 					fds[server.getCountConnects()].fd = accept(fds[i].fd, NULL, NULL);
+					// setFD to User
+					user.setFd(fds[server.getCountConnects()].fd);
 					std::cout << "NEW CONNNECT\n";
 					fds[server.getCountConnects()].events = POLLIN;
 					fds[server.getCountConnects()].revents = 0;
@@ -77,8 +80,10 @@ void	Server::mainLoop(Server &server, struct pollfd fds[]){
 						continue ;
 					}
 					buff[readed] = 0;
+					// user(std::string(buff));
+					// User user(std::string(buff));
+
 					std::cout << "Message: " << buff;
-					User(std::string(buff));
 					for (size_t userToWrite = 0; userToWrite < server.getCountConnects(); userToWrite++){
 						if (fds[i].fd != fds[userToWrite].fd)
 							send(fds[userToWrite].fd, buff, readed + 1, 0);

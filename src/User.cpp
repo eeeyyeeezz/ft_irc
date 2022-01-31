@@ -2,6 +2,8 @@
 
 User::User() { };
 
+User::User(int fd) : _sockfd(fd) { }
+
 User::User(string message){
 	string commands[2] = {"ADD", "KILL"};
 
@@ -21,5 +23,7 @@ void		User::parsCommand(){
 
 
 }
+
+void			User::setFd(int fd) { _sockfd = fd; }
 
 User::~User() { };
