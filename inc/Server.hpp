@@ -1,10 +1,6 @@
 #pragma once
-#include <netdb.h>
-#include <arpa/inet.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <iostream>
-#include <poll.h>
+#include "User.hpp"
+#include "GlobalLibraries.hpp"
 
 using std::string;
 
@@ -13,10 +9,11 @@ class Server{
 	int				_port;
 	int				_listening;
 	int				_countConnects;
+	string			_password;
 	struct pollfd	_fds[50];
 
 	public:
-	Server(int port);
+	Server(int port, string password);
 	~Server();
 
 	void	createSocket(Server &server);
@@ -25,7 +22,8 @@ class Server{
 	int		getPort();
 	int		getListening();
 	int		getCountConnects();
-	void	mainLoop(Server &server, struct pollfd fds[]);
+	string	getPassword();
+	void	mainLoop(Server &server, User &user, struct pollfd fds[]);
 	void	setCountConnects(int i);
 	void	setListening(int socket);
 };

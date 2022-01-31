@@ -11,7 +11,7 @@ FLAGS = -Wall -Wextra -Werror
 RM = rm -rf
 
 all: 
-	${CLANG} ${SRCS} -o ${NAME} && ./${NAME} 6667
+	${CLANG} ${SRCS} -o ${NAME} && ./${NAME} 6667 12345
 
 clean:
 	rm -rf server

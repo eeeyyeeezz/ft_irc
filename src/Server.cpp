@@ -5,7 +5,7 @@
 
 #define BUFFER_SIZE 4096
 
-Server::Server(int port) : _port(port), _countConnects(0) {
+Server::Server(int port, string password) : _port(port), _password(password), _countConnects(0) {
 	struct pollfd fds[50];
 	// _fds = struct pollfd[50];
 }
@@ -17,6 +17,8 @@ void	Server::setListening(int socket) { _listening = socket; }
 int		Server::getListening() { return(_listening); }
 
 int		Server::getCountConnects() { return(_countConnects); }
+
+string	Server::getPassword() { return(this->_password); }
 
 void	Server::setCountConnects(int i) { _countConnects += i; }
 
@@ -44,11 +46,10 @@ void	Server::listenSocket(Server &server, struct pollfd fds[]){
 	fcntl(fds[0].fd, F_SETFL, O_NONBLOCK);
 }
 
-void	Server::mainLoop(Server &server, struct pollfd fds[]){
+void	Server::mainLoop(Server &server, User &user, struct pollfd fds[]){
 	int flag = 0;
 	while (true){
 		int COUNTFD;
-		User user;
 		
 		if (flag > 0) { std::cout << "Exit\n" ; exit(EXIT_SUCCESS); } // exit_success
 		if ((COUNTFD = poll(fds, server.getCountConnects(), -1)) < 0) { error("Poll crash"); } // do_error poll crash
@@ -62,6 +63,7 @@ void	Server::mainLoop(Server &server, struct pollfd fds[]){
 					// setFD to User
 					user.setFd(fds[server.getCountConnects()].fd);
 					std::cout << "NEW CONNNECT\n";
+					send(user.getFd(), "With first log in type PASS and password\n", 41 + 1, 0);
 					fds[server.getCountConnects()].events = POLLIN;
 					fds[server.getCountConnects()].revents = 0;
 					server.setCountConnects(1);
@@ -70,8 +72,7 @@ void	Server::mainLoop(Server &server, struct pollfd fds[]){
 					char buff[BUFFER_SIZE];
 					flag = 0;
 					
-					int readed;
-					readed = read(fds[i].fd, buff, BUFFER_SIZE);
+					int readed = read(fds[i].fd, buff, BUFFER_SIZE);
 					fds[i].revents = 0;
 					if (!readed){
 						std::cout << fds[i].fd << "  disconnected\n";
@@ -80,9 +81,7 @@ void	Server::mainLoop(Server &server, struct pollfd fds[]){
 						continue ;
 					}
 					buff[readed] = 0;
-					// user(std::string(buff));
-					// User user(std::string(buff));
-
+					user.parsCommand(std::string(buff));
 					std::cout << "Message: " << buff;
 					for (size_t userToWrite = 0; userToWrite < server.getCountConnects(); userToWrite++){
 						if (fds[i].fd != fds[userToWrite].fd)
