@@ -23,7 +23,7 @@ class User {
 
 	User(User const & );
 	User &operator = (User const & );
-	void checkUserPassword();
+	void checkUserPassword(string message);
 
 	public:
 	User();

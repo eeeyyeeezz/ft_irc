@@ -12,12 +12,13 @@ User::User(string username, string hostname, string servername, string realname)
 }
 
 int			User::parsCommand(string message){
-	string firstCommands[3] = {"PASS", "NICK", "USER"};
+	string firstWord = message.substr(0, message.find(" "));
 
-	if (!this->_passwordPassed && message == "PASS\n"){
-		this->checkUserPassword();
+	if (this->_passwordPassed == 0 && firstWord == "PASS"){
+		this->checkUserPassword(message);
 		return (1);
-	} else if (!this->_passwordPassed && message != "PASS") {
+	} else if (this->_passwordPassed == 0 && firstWord != "PASS") {
+		std::cout << this->_passwordPassed << std::endl;
 		send(this->getFd(), "You need to write PASS command and password\n", 45, 0);
 		return (1);	
 	}
@@ -30,10 +31,27 @@ int			User::parsCommand(string message){
 	return (0);
 }
 
-void			User::checkUserPassword(){
+void			User::checkUserPassword(string message){
+	size_t i = message.find(" ");
+	while (message[i] && message[i] == ' ')
+		i++;
+	if (!message[i]){
+		send(this->getFd(), "No arguments at PASS\n", 22, 0);
+		close(this->getFd());
+	}
+	
+	string parametr = message.substr(i, message.length());
+	send(this->getFd(), "Params is ", 11, 0);
+	send(this->getFd(), parametr.c_str(), parametr.length(), 0);
+	parametr.erase(std::remove(parametr.begin(), parametr.end(), '\n'), parametr.end());
 
-
-	send(this->getFd(), "Passed password is ", 20 + 1, 0);
+	if (parametr == this->_password){
+		send(this->getFd(), "Password correct!\n", 19, 0);
+		this->_passwordPassed = 1;
+	} else {
+		send(this->getFd(), "Password wrong!\n", 17, 0);
+		close(this->getFd());
+	}
 }
 
 void			User::setFd(int fd) { _sockfd = fd; }
