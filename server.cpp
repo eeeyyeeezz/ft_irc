@@ -1,12 +1,8 @@
 #include <iostream>
 #include <unistd.h>
-#include <netdb.h>
 #include <string>
 #include <string.h>
-#include <arpa/inet.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <poll.h>
+#include "inc/Server.hpp"
 
 #define BUFFER_SIZE 4096
 
@@ -16,11 +12,34 @@ void	InitialSetup(struct pollfd fds[], int count)
 		fds[i].fd = -1;
 }
 
+void	newConnect(int &listening){
+	sockaddr_in client;
+	socklen_t clientSize = sizeof(client);
+	char host[NI_MAXHOST];
+	char svc[NI_MAXSERV];
+	
+	int clientSocket = accept(listening, (sockaddr *)&client, &clientSize);
+	if (clientSocket == -1) { error("Client connecting error"); }
+	
+	close(listening);
+	
+	memset(host, 0, NI_MAXHOST); 
+	memset(svc, 0, NI_MAXSERV);
+	
+	int result = getnameinfo((sockaddr * )&client, sizeof(client), host, NI_MAXHOST, svc, NI_MAXSERV, 0);
+	if (result){
+		std::cout << host << " connected on " << svc << std::endl;
+ 	} else { 
+		inet_ntop(AF_INET, &client.sin_addr, host, NI_MAXHOST); 
+		std::cout << host << " connected on " << htons(client.sin_port) << std::endl;
+	}
+}
+
 int		main(int argc, char **argv){
-	if (argc != 2) { std::cout << "Args Error\n"; exit(EXIT_FAILURE); } // do_error argc error
+	if (argc != 2) { error("Args Error. Pls type: <port> <password>"); } 
 	
 	// Первичная настройка
-	int port = atoi(argv[1]);
+	Server	server(atoi(argv[1]));
 	struct pollfd fds[10]; // количество FD'шников
 	InitialSetup(fds, 10);
 	fds[0].events = POLLIN;
@@ -28,44 +47,11 @@ int		main(int argc, char **argv){
 	int countconnects = 0;
 	countconnects++;
 
-	// Создать сокет
-	int listening = socket(AF_INET, SOCK_STREAM, 0);
-	if (listening == -1) { std::cout << "Error establishing connectionr\n"; exit(EXIT_FAILURE); } // do_error error establishing connection
+	server.createSocket(server);
 	
-	// Связать сокет с айпи / портом
-	sockaddr_in hint;
-	hint.sin_family = AF_INET;
-	hint.sin_port = htons(port); // 6667 ??
-	hint.sin_addr.s_addr = htonl(INADDR_ANY);
-	inet_pton(AF_INET, "0.0.0.0", &hint.sin_addr);
+	server.bindSocket(server);
 	
-	if (bind(listening, (sockaddr *)&hint, sizeof(hint)) == -1) { std::cout << "Can't bind\n"; exit(EXIT_FAILURE); } // do_error can't bind
-	
-	// Обозначить какой сокет слушать
-	if (listen(listening, SOMAXCONN) == -1) { } // do_error can't listen
-	fds[0].fd = listening;
-
-	// Принять звонок
-	// sockaddr_in client;
-	// socklen_t clientSize = sizeof(client);
-	// char host[NI_MAXHOST];
-	// char svc[NI_MAXSERV];
-	
-	// int clientSocket = accept(listening, (sockaddr *)&client, &clientSize);
-	// if (clientSocket == -1) { std::cout << "Client connecting error\n"; exit(EXIT_FAILURE); } // do_error problem with client connecting
-	
-	// close(listening);
-	
-	// memset(host, 0, NI_MAXHOST); 
-	// memset(svc, 0, NI_MAXSERV);
-	
-	// int result = getnameinfo((sockaddr * )&client, sizeof(client), host, NI_MAXHOST, svc, NI_MAXSERV, 0);
-	// if (result){
-	// 	std::cout << host << " connected on " << svc << std::endl;
- 	// } else { 
-	// 	inet_ntop(AF_INET, &client.sin_addr, host, NI_MAXHOST); 
-	// 	std::cout << host << " connected on " << htons(client.sin_port) << std::endl;
-	// }
+	server.listenSocket(server, fds);
 	
 	// Принятие и вывод сообщений
 	int flag = 0;
@@ -73,7 +59,7 @@ int		main(int argc, char **argv){
 		int COUNTFD;
 		
 		if (flag > 0) { std::cout << "Exit\n" ; exit(EXIT_SUCCESS); } // exit_success
-		if ((COUNTFD = poll(fds, countconnects, -1)) < 0) { exit(EXIT_FAILURE); } // do_error poll crash
+		if ((COUNTFD = poll(fds, countconnects, -1)) < 0) { error("Poll crash"); } // do_error poll crash
 
 		for (size_t i = 0; i < countconnects; i++){
 			if (fds[i].fd > 0 && (fds[i].revents & POLLIN) == POLLIN){
@@ -82,6 +68,7 @@ int		main(int argc, char **argv){
 					flag = 0;
 					fds[countconnects].fd = accept(fds[i].fd, NULL, NULL);
 					std::cout << "NEW CONNNECT\n";
+					// newConnect(listening);					
 					fds[countconnects].events = POLLIN;
 					fds[countconnects].revents = 0;
 					++countconnects;
@@ -101,7 +88,7 @@ int		main(int argc, char **argv){
 					}
 					buff[readed] = 0;
 					std::cout << "Message: " << buff;
-					for (size_t userToWrite = 0; userToWrite < i; userToWrite++)
+					for (size_t userToWrite = 0; userToWrite < countconnects; userToWrite++)
 						send(fds[userToWrite].fd, buff, readed + 1, 0);
 					fds[i].revents = 0;
 				}
