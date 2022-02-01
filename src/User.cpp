@@ -23,11 +23,11 @@ int			User::parsCommand(string message){
 		return (1);	
 	}
 
-	// if (!this->_passwordPassed && message != "PASS"){
-	// 	send(this->getFd(), "You need to pass PASS command and password\n", 44, 0);
-	// } else if (!this->_passwordPassed && message == "PASS"){
-	// 	send(this->getFd(), "Type pass: ", 12 + 1, 0);
-	// }
+	// all prep is done
+	std::vector<string> commands = {"QUIT", "privatemsg"};
+
+
+
 	return (0);
 }
 
