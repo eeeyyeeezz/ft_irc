@@ -2,7 +2,7 @@
 
 User::User() { };
 
-User::User(int fd) : _sockfd(fd), _passwordPassed(0), _nickNamePassed(0), _userPassed(0) { }
+User::User(int fd) : _sockfd(fd), _passwordPassed(0), _nickNamePassed(0), _userPassed(0) {  }
 
 User::User(string password) : _password(password), _passwordPassed(0), _nickNamePassed(0), _userPassed(0) { }
 
@@ -11,22 +11,38 @@ User::User(string username, string hostname, string servername, string realname)
 
 }
 
-int			User::parsCommand(Server &server, string message, int fd, int i){
-	// bool allPrepIsDone = 
-	string firstWord = message.substr(0, message.find(" "));
+// SETTERS
+void		User::setFd(int fd) { _sockfd = fd; }
+void		User::setPasswordPassed() { _passwordPassed = 1; }
 
-	if (server._users[i]._passwordPassed == 0 && firstWord == "PASS"){
-		server._users[i].checkUserPassword(server, message, fd, i);
-		return (1);
-	} else if (server._users[i]._passwordPassed == 0 && firstWord != "PASS") {
-		send(fd, "You need to write PASS command and password\n", 45, 0);
-		return (1);
-	}
+// GETTERS
+int			User::getFd() { return(_sockfd); }
+bool		User::getAllPrepArguments() { return _passwordPassed && _nickNamePassed && _userPassed ? true : false;  }
 
+// PARSING
 
+int			User::parsCommand(Server &server, string message, int i){
+	bool allPrepIsDone = server.getUser(i).getAllPrepArguments();
+
+	if (!allPrepIsDone)
+		return server.getUser(i).preparationCommands(server, message, i);
+	
 
 	return (0);
 }
+
+int			User::preparationCommands(Server &server, string message, int i){
+	string firstWord = message.substr(0, message.find(" "));
+	if (server.getUser(i)._passwordPassed == 0 && firstWord == "PASS"){
+		server.getUser(i).checkUserPassword(server, message, server.getUser(i).getFd(), i);
+		return (1);
+	} else if (server.getUser(i)._passwordPassed == 0 && firstWord != "PASS") {
+		send(server.getUser(i).getFd(), "You need to write PASS command and password\n", 45, 0);
+		return (1);
+	}
+	return (0);
+}
+
 
 void			User::checkUserPassword(Server &server, string message, int fd, int i){
 	size_t findI = message.find(" ");
@@ -43,15 +59,11 @@ void			User::checkUserPassword(Server &server, string message, int fd, int i){
 	if (parametr == server.getPassword()){
 		send(fd, "Password correct!\n", 19, 0);
 		server.acceptedUsersPushBack(fd);
-		server._users[i]._passwordPassed = 1;
+		server.setPasswordPassedByUser(i);
 	} else {
 		send(fd, "Password wrong!\n", 17, 0);
 		close(fd);
 	}
 }
-
-void			User::setFd(int fd) { _sockfd = fd; }
-
-int				User::getFd() { return(this->_sockfd); }
 
 User::~User() { };
