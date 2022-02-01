@@ -8,20 +8,22 @@ Server::Server(int port, string password) : _port(port), _password(password), _c
 	// _fds = struct pollfd[50];
 }
 
+// GETTERS
 int		Server::getPort() { return(_port); }
-
 void	Server::setListening(int socket) { _listening = socket; }
-
 int		Server::getListening() { return(_listening); }
-
 int		Server::getCountConnects() { return(_countConnects); }
-
+User	Server::getUser(int i) { return(_users[i]); }
 string	Server::getPassword() { return(this->_password); }
 
-void	Server::setCountConnects(int i) { _countConnects += i; }
 
+// SETTERS
+void	Server::setPasswordPassedByUser(int i) { _users[i].setPasswordPassed(); }
+void	Server::setCountConnects(int i) { _countConnects += i; }
 void	Server::acceptedUsersPushBack(int value) { _acceptedUsers.push_back(value); }
 
+
+// SERVER
 void	Server::createSocket(Server &server){
 	server.setListening(socket(AF_INET, SOCK_STREAM, 0));
 	if (server.getListening() == -1) { error("Error establishing connection"); } 
@@ -84,14 +86,14 @@ void	Server::setNewConnection(int &flag, struct pollfd fds[], size_t &i){
 	std::cout << "CHECK " << this->_users[i].getFd() << std::endl;
 
 	flag = 0;
-	fds[this->getCountConnects()].fd = accept(fds[i].fd, NULL, NULL);
+	fds[getCountConnects()].fd = accept(fds[i].fd, NULL, NULL);
 	// setFD to User
-	this->_users[i].setFd(fds[this->getCountConnects()].fd);
+	// _users[i].setFd(fds[getCountConnects()].fd);
 	std::cout << "NEW CONNNECT\n";
-	send(this->_users[i].getFd(), "With first log in type PASS and password\n", 41 + 1, 0);
-	fds[this->getCountConnects()].events = POLLIN;
-	fds[this->getCountConnects()].revents = 0;
-	this->setCountConnects(1);
+	send(_users[i].getFd(), "With first log in type PASS and password\n", 41 + 1, 0);
+	fds[getCountConnects()].events = POLLIN;
+	fds[getCountConnects()].revents = 0;
+	setCountConnects(1);
 }
 
 void	Server::continueConnection(int &flag, struct pollfd fds[], size_t &i){
@@ -106,7 +108,8 @@ void	Server::continueConnection(int &flag, struct pollfd fds[], size_t &i){
 		this->setCountConnects(-1);
 	}
 	buff[readed] = 0;
-	if (!this->_users[i].parsCommand(*this, std::string(buff), fds[i].fd, i))
+	_users[i].setFd(fds[i].fd);
+	if (!_users[i].parsCommand(*this, std::string(buff), i))
 		this->writeToServerAndAllUsers(std::string(buff), readed, fds, i);
 	fds[i].revents = 0;
 }

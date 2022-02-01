@@ -27,14 +27,21 @@ class User {
 	User();
 	User(int fd);
 	User(string password);
-	// User(string message);
 	User(string username, string hostname, string servername, string realname);
 	~User();
 	
+	// SETTERS
 	void	setFd(int fd);
+	void	setPasswordPassed();
+	void	setNickName(string nickName);
+	
+	// GETTERS
 	int		getFd();
-	int		parsCommand(Server &server, string message, int fd, int i); // return 1 - user passed command ; return 0 - simple message
+	bool	getAllPrepArguments();
 
+	// PARSING
+	int		preparationCommands(Server &server, string message, int i);
+	int		parsCommand(Server &server, string message, int i); // return 1 - user passed command ; return 0 - simple message
 };
 
 #endif

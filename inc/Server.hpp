@@ -11,26 +11,35 @@ class Server{
 	int				_countConnects;
 	vector<int>		_acceptedUsers;
 	string			_password;
+	vector<User>	_users;
 	struct pollfd	_fds[50];
 
 	public:
-	vector<User>	_users;
 	Server(int port, string password);
 	~Server();
 
-	void	createSocket(Server &server);
-	void	bindSocket(Server &server);
-	void	listenSocket(Server &server, struct pollfd fds[]);
+	// GETTERS
 	int		getPort();
 	int		getListening();
 	int		getCountConnects();
+	User	getUser(int i);
 	string	getPassword();
-	void	mainLoop(Server &server, struct pollfd fds[]);
+	
+	// SETTERS
+	void	setListening(int socket);
 	void	setCountConnects(int i);
-	void	writeToServerAndAllUsers(string buff, int readed, struct pollfd fds[], int i);
+	void	setPasswordPassedByUser(int i);
+	
+	// SERVER
+	void	createSocket(Server &server);
+	void	bindSocket(Server &server);
+	void	listenSocket(Server &server, struct pollfd fds[]);
+	void	mainLoop(Server &server, struct pollfd fds[]);
 	void	setNewConnection(int &flag, struct pollfd fds[], size_t &i);
 	void	continueConnection(int &flag, struct pollfd fds[], size_t &i);
-	void	setListening(int socket);
+	
+	// OTHER
+	void	writeToServerAndAllUsers(string buff, int readed, struct pollfd fds[], int i);
 	void	acceptedUsersPushBack(int value);
 };
 
