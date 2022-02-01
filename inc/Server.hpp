@@ -27,9 +27,14 @@ class Server{
 	
 	// SETTERS
 	void	setUsernameByUser(string username, int i);
+	void	setNicknameByUser(string username, int i);
+
+	void	setPasswordPassedByUser(int i);
+	void	setNicknamePassedByUser(int i);
+	void	setUserPassedByUser(int i);
+	
 	void	setListening(int socket);
 	void	setCountConnects(int i);
-	void	setPasswordPassedByUser(int i);
 	
 	// SERVER
 	void	createSocket(Server &server);

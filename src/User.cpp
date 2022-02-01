@@ -4,26 +4,26 @@ User::User() { };
 
 User::User(int fd) : _sockfd(fd), _passwordPassed(0), _nickNamePassed(0), _userPassed(0) {  }
 
-User::User(string username, string hostname, string servername, string realname) 
-: _username(username), _hostname(hostname), _servername(servername), _realname(realname) {
-
-}
 
 // SETTERS
 void		User::setFd(int fd) { _sockfd = fd; }
+void		User::setUsername(string username) { _username = username; }
 void		User::setNickname(string nickname) { _nickname = nickname; }
 void		User::setPasswordPassed() { _passwordPassed = 1; }
+void		User::setNicknamePassed() { _nickNamePassed = 1; }
+void		User::setUserPassed() { _userPassed = 1; }
+
 
 // GETTERS
 int			User::getFd() { return(_sockfd); }
 int			User::getPasswordPassed() { return(this->_passwordPassed); }
 int			User::getUserPassed() { return(this->_userPassed); }
 int			User::getNickNamePassed() { return(this->_nickNamePassed); }
-bool		User::getAllPrepArguments() { return _passwordPassed && _nickNamePassed && _userPassed ? true : false;  }
+bool		User::getAllPrepArguments() { return _passwordPassed && _nickNamePassed && _userPassed ? true : false; }
+string		User::getUsername() { return(_username); }
 string		User::getNickname() { return(_nickname); }
 
 // PARSING
-
 int			User::parsCommand(Server &server, string message, int i){
 	bool allPrepIsDone = server.getUser(i).getAllPrepArguments();
 
@@ -42,14 +42,15 @@ int			User::preparationCommands(Server &server, string message, int i){
 		firstWord = message.substr(0, message.find(" "));
 	else
 		firstWord = message.substr(0, message.length() - 1);
+
 	// PASS 
-	// if (server.getUser(i).getPasswordPassed() == 0 && firstWord == "PASS"){
-	// 	server.getUser(i).checkUserPassword(server, message, i);
-	// 	return (1);
-	// } else if (server.getUser(i).getPasswordPassed() == 0 && firstWord != "PASS") {
-	// 	send(server.getUser(i).getFd(), "You need to write PASS command and password\n", 45, 0);
-	// 	return (1);
-	// }
+	if (server.getUser(i).getPasswordPassed() == 0 && firstWord == "PASS"){
+		server.getUser(i).checkUserPassword(server, message, i);
+		return (1);
+	} else if (server.getUser(i).getPasswordPassed() == 0 && firstWord != "PASS") {
+		send(server.getUser(i).getFd(), "You need to write PASS command and password\n", 45, 0);
+		return (1);
+	}
 
 	// NICK / USER
 	bool NickUserPassed = server.getUser(i).getUserPassed() && server.getUser(i).getNickNamePassed() ? true : false;
@@ -64,7 +65,7 @@ int			User::preparationCommands(Server &server, string message, int i){
 		}
 	} 
 
-
+	SEND_ABOUT_NEW_USER;
 	return (0);
 }
 
@@ -86,28 +87,50 @@ int				User::parsNickCommand(Server &server, string message, int i){
 		send(server.getUser(i).getFd(), "No arguments at NICK [2]\n", 26, 0);
 		return (1);
 	}
-	server.setUsernameByUser(parametr, i);
-
-	std::cout << WHITE << server.getUser(i).getFd() << " NICK IS " << BLUE << "[" << server.getUser(i).getNickname() << "]" << NORMAL << std::endl;
-
-
+	send(server.getUser(i).getFd(), "Nickname set!\n", 15, 0);
+	server.setNicknameByUser(parametr, i);
+	server.setNicknamePassedByUser(i);
+	if (GET_USER_PASSED)
+		SEND_ABOUT_NEW_USER;
 	return (1);
 }
 
 int				User::parsUserCommand(Server &server, string message, int i){
+	size_t findI;
+	if (message.find(" ") != message.npos)
+		findI = message.find(" ");
+	else{
+		send(server.getUser(i).getFd(), "No arguments at USER [1]\n", 26, 0);
+		return (1);
+	} 
+
+	while (message[findI] && message[findI] == ' ')
+		findI++;
 	
-	
+	string parametr = message.substr(findI, message.length());
+	parametr.erase(std::remove(parametr.begin(), parametr.end(), '\n'), parametr.end());
+	if (parametr == ""){
+		send(server.getUser(i).getFd(), "No arguments at USER [2]\n", 26, 0);
+		return (1);
+	}
+	send(server.getUser(i).getFd(), "Username set!\n", 15, 0);
+	server.setUsernameByUser(parametr, i);
+	server.setUserPassedByUser(i);
+	if (GET_NICK_PASSED)
+		SEND_ABOUT_NEW_USER;
 	return (1);
 }
 
 void			User::checkUserPassword(Server &server, string message, int i){
-	size_t findI = message.find(" ");
+	size_t findI;
+	if (message.find(" ") != message.npos)
+		findI = message.find(" ");
+	else{
+		send(server.getUser(i).getFd(), "No arguments at PASS\n", 22, 0);
+		return ;
+	} 
 	while (message[findI] && message[findI] == ' ')
 		findI++;
-	if (!message[findI]){
-		send(server.getUser(i).getFd(), "No arguments at PASS\n", 22, 0);
-		close(server.getUser(i).getFd());
-	}
 	
 	string parametr = message.substr(findI, message.length());
 	parametr.erase(std::remove(parametr.begin(), parametr.end(), '\n'), parametr.end());
@@ -116,7 +139,6 @@ void			User::checkUserPassword(Server &server, string message, int i){
 		send(server.getUser(i).getFd(), "Password correct!\n", 19, 0);
 		// server.acceptedUsersPushBack(fd);
 		server.setPasswordPassedByUser(i);
-		std::cout << server.getUser(i).getPasswordPassed() << std::endl;
 	} else {
 		send(server.getUser(i).getFd(), "Password wrong!\n", 17, 0);
 		close(server.getUser(i).getFd());
