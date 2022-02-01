@@ -5,8 +5,9 @@
 #include "inc/Server.hpp"
 #include "inc/User.hpp"
 
-void	InitialSetup(struct pollfd fds[], int count)
+void	InitialSetup(Server &server, struct pollfd fds[], int count)
 {
+	server.setCountConnects(1);
 	for (size_t i = 0; i < count; i++)
 		fds[i].fd = -1;
 	fds[0].events = POLLIN;
@@ -19,9 +20,7 @@ int		main(int argc, char **argv){
 	// Первичная настройка
 	Server	server(atoi(argv[1]), std::string(argv[2]));
 	struct pollfd fds[10]; // количество FD'шников
-	InitialSetup(fds, 10);
-	
-	server.setCountConnects(1);
+	InitialSetup(server, fds, 10);
 
 	server.createSocket(server);
 	
