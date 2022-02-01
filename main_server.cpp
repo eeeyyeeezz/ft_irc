@@ -15,10 +15,9 @@ void	InitialSetup(struct pollfd fds[], int count)
 
 int		main(int argc, char **argv){
 	if (argc != 3) { error("Args Error. Please type: <port> <password>"); } 
-	
+		
 	// Первичная настройка
 	Server	server(atoi(argv[1]), std::string(argv[2]));
-	User	user((std::string(argv[2])));
 	struct pollfd fds[10]; // количество FD'шников
 	InitialSetup(fds, 10);
 	
@@ -30,7 +29,7 @@ int		main(int argc, char **argv){
 	
 	server.listenSocket(server, fds);
 
-	server.mainLoop(server, user, fds);
+	server.mainLoop(server, fds);
 
 	// close(clientSocket);
 }
