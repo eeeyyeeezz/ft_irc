@@ -20,6 +20,8 @@ string	Server::getPassword() { return(this->_password); }
 
 void	Server::setCountConnects(int i) { _countConnects += i; }
 
+void	Server::acceptedUsersPushBack(int value) { _acceptedUsers.push_back(value); }
+
 void	Server::createSocket(Server &server){
 	server.setListening(socket(AF_INET, SOCK_STREAM, 0));
 	if (server.getListening() == -1) { error("Error establishing connection"); } 
@@ -46,42 +48,17 @@ void	Server::listenSocket(Server &server, struct pollfd fds[]){
 
 void	Server::writeToServerAndAllUsers(string buff, int readed, struct pollfd fds[], int i){
 	std::cout << "Message: " << buff;
+
+	// std::find(v.begin(), v.end(), x) != v.end()
+	// std::find(_acceptedUsers.begin(), _acceptedUsers.end(), fds[0].fd) != _acceptedUsers.end();
+
 	for (size_t userToWrite = 0; userToWrite < this->getCountConnects(); userToWrite++){
-		if (fds[i].fd != fds[userToWrite].fd)
+		if (fds[i].fd != fds[userToWrite].fd && std::find(_acceptedUsers.begin(), _acceptedUsers.end(), fds[i].fd) != _acceptedUsers.end()) 
 			send(fds[userToWrite].fd, buff.c_str(), readed + 1, 0);
 	}
 }
 
-void	Server::setNewConnection(User &user, int &flag, struct pollfd fds[], size_t &i){
-	flag = 0;
-	fds[this->getCountConnects()].fd = accept(fds[i].fd, NULL, NULL);
-	// setFD to User
-	user.setFd(fds[this->getCountConnects()].fd);
-	std::cout << "NEW CONNNECT\n";
-	send(user.getFd(), "With first log in type PASS and password\n", 41 + 1, 0);
-	fds[this->getCountConnects()].events = POLLIN;
-	fds[this->getCountConnects()].revents = 0;
-	this->setCountConnects(1);
-}
-
-void	Server::continueConnection(User &user, int &flag, struct pollfd fds[], size_t &i){
-	char buff[BUFFER_SIZE];
-	flag = 0;
-	
-	int readed = read(fds[i].fd, buff, BUFFER_SIZE);
-	fds[i].revents = 0;
-	if (!readed){
-		std::cout << fds[i].fd << "  disconnected\n";
-		fds[i].fd = -1;
-		this->setCountConnects(-1);
-	}
-	buff[readed] = 0;
-	if (!user.parsCommand(std::string(buff)))
-		this->writeToServerAndAllUsers(std::string(buff), readed, fds, i);
-	fds[i].revents = 0;
-}
-
-void	Server::mainLoop(Server &server, User &user, struct pollfd fds[]){
+void	Server::mainLoop(Server &server, struct pollfd fds[]){
 	int flag = 0;
 	while (true){
 		int COUNTFD;
@@ -93,12 +70,45 @@ void	Server::mainLoop(Server &server, User &user, struct pollfd fds[]){
 			if (fds[i].fd > 0 && (fds[i].revents & POLLIN) == POLLIN){
 				++flag;
 				if (i == 0) 
-					server.setNewConnection(user, flag, fds, i);
+					server.setNewConnection(flag, fds, i);
 				else
-					server.continueConnection(user, flag, fds, i);
+					server.continueConnection(flag, fds, i);
 			}
 		}
 	}
+}
+
+void	Server::setNewConnection(int &flag, struct pollfd fds[], size_t &i){
+	User *user = new User(this->_fds[i].fd);
+	this->_users.push_back(*user);
+	std::cout << "CHECK " << this->_users[i].getFd() << std::endl;
+
+	flag = 0;
+	fds[this->getCountConnects()].fd = accept(fds[i].fd, NULL, NULL);
+	// setFD to User
+	this->_users[i].setFd(fds[this->getCountConnects()].fd);
+	std::cout << "NEW CONNNECT\n";
+	send(this->_users[i].getFd(), "With first log in type PASS and password\n", 41 + 1, 0);
+	fds[this->getCountConnects()].events = POLLIN;
+	fds[this->getCountConnects()].revents = 0;
+	this->setCountConnects(1);
+}
+
+void	Server::continueConnection(int &flag, struct pollfd fds[], size_t &i){
+	char buff[BUFFER_SIZE];
+	flag = 0;
+	
+	int readed = read(fds[i].fd, buff, BUFFER_SIZE);
+	fds[i].revents = 0;
+	if (!readed){
+		std::cout << fds[i].fd << "  disconnected\n";
+		fds[i].fd = -1;
+		this->setCountConnects(-1);
+	}
+	buff[readed] = 0;
+	if (!this->_users[i].parsCommand(*this, std::string(buff), fds[i].fd, i))
+		this->writeToServerAndAllUsers(std::string(buff), readed, fds, i);
+	fds[i].revents = 0;
 }
 
 Server::~Server(){ }

@@ -1,10 +1,9 @@
 #ifndef USER_HPP
 # define USER_HPP
-
 #include "GlobalLibraries.hpp"
-using std::string;
+#include "Server.hpp"
 
-#define BUFFER_SIZE 4096
+class Server;
 
 class User {
 
@@ -21,9 +20,8 @@ class User {
 	int		_sockfd;
 	int		_port;
 
-	User(User const & );
 	User &operator = (User const & );
-	void checkUserPassword(string message);
+	void checkUserPassword(Server &server, string message, int fd, int i);
 
 	public:
 	User();
@@ -35,7 +33,7 @@ class User {
 	
 	void	setFd(int fd);
 	int		getFd();
-	int		parsCommand(string message); // return 1 - user passed command ; return 0 - simple message
+	int		parsCommand(Server &server, string message, int fd, int i); // return 1 - user passed command ; return 0 - simple message
 
 };
 

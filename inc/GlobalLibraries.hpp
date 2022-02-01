@@ -14,3 +14,7 @@
 #include <signal.h>
 #include <vector>
 #include <algorithm>
+
+using std::string;
+using std::vector;
+#define BUFFER_SIZE 4096
