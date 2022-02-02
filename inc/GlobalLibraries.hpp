@@ -23,11 +23,6 @@ using std::vector;
 
 #define BUFFER_SIZE 4096
 
-#define NEW_USER_CREATED send(server.getUser(i).getFd(), "New user created!\n", 19, 0)
-#define GET_USER_PASSED server.getUser(i).getUserPassed()
-#define GET_NICK_PASSED server.getUser(i).getNickNamePassed()
-#define SEND_ABOUT_NEW_USER std::cout << WHITE << "NEW USER! NICKNAME: " << BLUE << "[" << server.getUser(i).getNickname() << "]" << WHITE << " USERNAME: "<< BLUE << "[" << server.getUser(i).getUsername() << "]" << NORMAL << std::endl;
-
 // COLORS
 #define RED "\033[1;31m"
 #define BLUE "\033[1;34m"
@@ -39,3 +34,15 @@ using std::vector;
 #define NORMAL "\033[0m"
 
 // ERRORS
+#define NICK_NAME_IN_USE send(server.getUser(i).getFd(), "433 ERR_NICKNAMEINUSE\n", 23, 0)
+#define NEED_MORE_PARAMS send(server.getUser(i).getFd(), "461 ERR_NEEDMOREPARAMS\n", 24, 0)
+#define PASSWORD_WRONG send(server.getUser(i).getFd(), "464 ERR_PASSWDMISMATCH\n", 24, 0)
+
+// GET_PASSED
+#define GET_USER_PASSED server.getUser(i).getUserPassed()
+#define GET_NICK_PASSED server.getUser(i).getNickNamePassed()
+
+#define NEED_NICK_OR_USER send(server.getUser(i).getFd(), "You need to write NICK or USER command with argument before you can chat\n", 74, 0)
+#define NEW_USER_CREATED send(server.getUser(i).getFd(), "New user created!\n", 19, 0)
+#define SEND_ABOUT_NEW_USER std::cout << WHITE << "NEW USER! NICKNAME: " << BLUE << "[" << server.getUser(i).getNickname() << "]" << WHITE << " USERNAME: "<< BLUE << "[" << server.getUser(i).getUsername() << "]" << NORMAL << std::endl;
+
