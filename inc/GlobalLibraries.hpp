@@ -14,6 +14,7 @@
 #include <signal.h>
 #include <vector>
 #include <algorithm>
+#include "Colors.hpp"
 
 using std::string;
 using std::vector;

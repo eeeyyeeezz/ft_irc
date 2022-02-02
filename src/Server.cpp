@@ -14,14 +14,14 @@ void	Server::setListening(int socket) { _listening = socket; }
 int		Server::getListening() { return(_listening); }
 int		Server::getCountConnects() { return(_countConnects); }
 User	Server::getUser(int i) { return(_users[i]); }
-string	Server::getPassword() { return(this->_password); }
+string	Server::getPassword() { return(_password); }
 
 
 // SETTERS
 void	Server::setPasswordPassedByUser(int i) { _users[i].setPasswordPassed(); }
 void	Server::setCountConnects(int i) { _countConnects += i; }
 void	Server::acceptedUsersPushBack(int value) { _acceptedUsers.push_back(value); }
-
+void	Server::setUsernameByUser(string username, int i) { _users[i].setNickname(username); }
 
 // SERVER
 void	Server::createSocket(Server &server){
@@ -83,13 +83,10 @@ void	Server::mainLoop(Server &server, struct pollfd fds[]){
 void	Server::setNewConnection(int &flag, struct pollfd fds[], size_t &i){
 	User *user = new User(this->_fds[i].fd);
 	this->_users.push_back(*user);
-	std::cout << "CHECK " << this->_users[i].getFd() << std::endl;
 
 	flag = 0;
 	fds[getCountConnects()].fd = accept(fds[i].fd, NULL, NULL);
-	// setFD to User
-	// _users[i].setFd(fds[getCountConnects()].fd);
-	std::cout << "NEW CONNNECT\n";
+	std::cout << YELLOW << "NEW CONNNECT" << NORMAL << std::endl;
 	send(_users[i].getFd(), "With first log in type PASS and password\n", 41 + 1, 0);
 	fds[getCountConnects()].events = POLLIN;
 	fds[getCountConnects()].revents = 0;
@@ -103,7 +100,7 @@ void	Server::continueConnection(int &flag, struct pollfd fds[], size_t &i){
 	int readed = read(fds[i].fd, buff, BUFFER_SIZE);
 	fds[i].revents = 0;
 	if (!readed){
-		std::cout << fds[i].fd << "  disconnected\n";
+		std::cout << RED << fds[i].fd << BLUE << "  disconnected" << NORMAL << std::endl;;
 		fds[i].fd = -1;
 		this->setCountConnects(-1);
 	}

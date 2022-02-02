@@ -9,8 +9,8 @@ class Server{
 	int				_port;
 	int				_listening;
 	int				_countConnects;
-	vector<int>		_acceptedUsers;
 	string			_password;
+	vector<int>		_acceptedUsers;
 	vector<User>	_users;
 	struct pollfd	_fds[50];
 
@@ -26,6 +26,7 @@ class Server{
 	string	getPassword();
 	
 	// SETTERS
+	void	setUsernameByUser(string username, int i);
 	void	setListening(int socket);
 	void	setCountConnects(int i);
 	void	setPasswordPassedByUser(int i);
