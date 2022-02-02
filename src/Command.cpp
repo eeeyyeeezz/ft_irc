@@ -63,10 +63,28 @@ void	Command::doNickCommand(){
 }
 
 void	Command::doPrivmsgCommand(){
-	// if exist
-
-	// do send
+	if (_arguments.size() < 2){
+		 NO_USER_TO_PRIVATEMSG;
+		 return ;
+	}
 	
+	// if exist
+	bool userExist = false;
+	for(vector<User>::iterator it = _users.begin(); it != _users.end(); it++){
+		if ((*it).getNickname() == _arguments[0]){
+			userExist = true;
+			break;
+		}
+	}
+	
+	if (userExist){
+		std::cout << "USER EXIST AT PRIVMSG!\n";
+	}
+	else {
+		NO_SUCH_NICK;
+		return ;
+	}
+
 }
 
 
