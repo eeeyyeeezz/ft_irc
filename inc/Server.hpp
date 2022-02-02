@@ -11,9 +11,8 @@ class Server{
 	int				_listening;
 	int				_countConnects;
 	string			_password;
-	vector<int>		_acceptedUsers;
 	vector<User>	_users;
-	struct pollfd	_fds[50];
+	vector<int>		_acceptedUsers;
 
 	public:
 	Server(int port, string password);

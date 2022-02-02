@@ -3,17 +3,14 @@
 
 #define BUFFER_SIZE 4096
 
-Server::Server(int port, string password) : _port(port), _password(password), _countConnects(0) {
-	struct pollfd fds[50];
-	// _fds = struct pollfd[50];
-}
+Server::Server(int port, string password) : _port(port), _password(password), _countConnects(0) { }
 
 // GETTERS
 int				Server::getPort() { return(_port); }
 void			Server::setListening(int socket) { _listening = socket; }
 int				Server::getListening() { return(_listening); }
 int				Server::getCountConnects() { return(_countConnects); }
-vector<User>	Server:: getVectorOfUsers() { return(_users); }
+vector<User>	Server::getVectorOfUsers() { return(_users); }
 User			Server::getUser(int i) { return(_users[i]); }
 string			Server::getPassword() { return(_password); }
 
@@ -85,8 +82,8 @@ void	Server::mainLoop(Server &server, struct pollfd fds[]){
 }
 
 void	Server::setNewConnection(int &flag, struct pollfd fds[], size_t &i){
-	User *user = new User(this->_fds[i].fd);
-	this->_users.push_back(*user);
+	User *user = new User(fds[i].fd);
+	_users.push_back(*user);
 
 	flag = 0;
 	fds[getCountConnects()].fd = accept(fds[i].fd, NULL, NULL);
@@ -109,9 +106,9 @@ void	Server::continueConnection(int &flag, struct pollfd fds[], size_t &i){
 		this->setCountConnects(-1);
 	}
 	buff[readed] = 0;
-	_users[i].setFd(fds[i].fd);
-	if (!_users[i].parsCommand(*this, std::string(buff), i))
-		this->writeToServerAndAllUsers(std::string(buff), readed, fds, i);
+	_users[i - 1].setFd(fds[i].fd);
+	if (!_users[i].parsCommand(*this, std::string(buff), i - 1))
+		this->writeToServerAndAllUsers(std::string(buff), readed, fds, i - 1);
 	fds[i].revents = 0;
 }
 

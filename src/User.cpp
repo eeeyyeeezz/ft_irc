@@ -27,12 +27,27 @@ string		User::getNickname() { return(_nickname); }
 int			User::parsCommand(Server &server, string message, int i){
 	bool allPrepIsDone = server.getUser(i).getAllPrepArguments();
 
-	// if (!allPrepIsDone)
-		// return server.getUser(i).preparationCommands(server, message, i);
-	
+	if (!allPrepIsDone)
+		return server.getUser(i).preparationCommands(server, message, i);
+
 	// all prep is done
-	Command command(message, server.getUser(i).getFd(), server.getUser(i).getNickname(), server.getVectorOfUsers());
+	
+	vector<User> newVector = server.getVectorOfUsers();
+	Command command(message, server.getUser(i).getFd(), server.getUser(i).getNickname(), newVector);
 	return command.commandStart();
+}
+	
+int			setFindI(Server &server, string message, int i){
+	size_t findI;
+	if (message.find(" ") != message.npos)
+		findI = message.find(" ");
+	else{
+		NEED_MORE_PARAMS; 
+		return -1;
+	}
+	while (message[findI] && message[findI] == ' ')
+		findI++;
+	return findI;
 }
 
 int			User::preparationCommands(Server &server, string message, int i){
@@ -70,15 +85,8 @@ int			User::preparationCommands(Server &server, string message, int i){
 
 int				User::parsNickCommand(Server &server, string message, int i){
 	size_t findI;
-	if (message.find(" ") != message.npos)
-		findI = message.find(" ");
-	else{
-		NEED_MORE_PARAMS;
+	if ((findI = setFindI(server, message, i)) == -1)
 		return (1);
-	} 
-
-	while (message[findI] && message[findI] == ' ')
-		findI++;
 	
 	string parametr = message.substr(findI, message.length());
 	parametr.erase(std::remove(parametr.begin(), parametr.end(), '\n'), parametr.end());
@@ -98,16 +106,9 @@ int				User::parsNickCommand(Server &server, string message, int i){
 }
 
 int				User::parsUserCommand(Server &server, string message, int i){
-	size_t findI;
-	if (message.find(" ") != message.npos)
-		findI = message.find(" ");
-	else{
-		NEED_MORE_PARAMS;
+	size_t	findI;
+	if ((findI = setFindI(server, message, i)) == -1)
 		return (1);
-	} 
-
-	while (message[findI] && message[findI] == ' ')
-		findI++;
 	
 	string parametr = message.substr(findI, message.length());
 	parametr.erase(std::remove(parametr.begin(), parametr.end(), '\n'), parametr.end());
@@ -128,15 +129,9 @@ int				User::parsUserCommand(Server &server, string message, int i){
 
 void			User::checkUserPassword(Server &server, string message, int i){
 	size_t findI;
-	if (message.find(" ") != message.npos)
-		findI = message.find(" ");
-	else{
-		NEED_MORE_PARAMS; 
+	if ((findI = setFindI(server, message, i)) == -1)
 		return ;
-	}
-	while (message[findI] && message[findI] == ' ')
-		findI++;
-	
+		
 	string parametr = message.substr(findI, message.length());
 	parametr.erase(std::remove(parametr.begin(), parametr.end(), '\n'), parametr.end());
 
