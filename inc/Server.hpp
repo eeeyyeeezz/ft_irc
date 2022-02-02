@@ -1,6 +1,7 @@
 #pragma once
 #include "User.hpp"
 #include "GlobalLibraries.hpp"
+#include "Command.hpp"
 
 class User;
 

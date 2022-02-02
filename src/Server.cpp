@@ -58,7 +58,7 @@ void	Server::writeToServerAndAllUsers(string buff, int readed, struct pollfd fds
 	// std::find(_acceptedUsers.begin(), _acceptedUsers.end(), fds[0].fd) != _acceptedUsers.end();
 
 	for (size_t userToWrite = 0; userToWrite < this->getCountConnects(); userToWrite++){
-		if (fds[i].fd != fds[userToWrite].fd && std::find(_acceptedUsers.begin(), _acceptedUsers.end(), fds[i].fd) != _acceptedUsers.end()) 
+		if (fds[i].fd != fds[userToWrite].fd && std::find(_acceptedUsers.begin(), _acceptedUsers.end(), fds[userToWrite].fd) != _acceptedUsers.end()) 
 			send(fds[userToWrite].fd, buff.c_str(), readed + 1, 0);
 	}
 }

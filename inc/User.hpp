@@ -2,6 +2,7 @@
 # define USER_HPP
 #include "GlobalLibraries.hpp"
 #include "Server.hpp"
+#include "Command.hpp"
 
 class Server;
 

@@ -27,13 +27,12 @@ string		User::getNickname() { return(_nickname); }
 int			User::parsCommand(Server &server, string message, int i){
 	bool allPrepIsDone = server.getUser(i).getAllPrepArguments();
 
-	if (!allPrepIsDone)
-		return server.getUser(i).preparationCommands(server, message, i);
+	// if (!allPrepIsDone)
+	// 	return server.getUser(i).preparationCommands(server, message, i);
 	
 	// all prep is done
-
-
-	return (0);
+	Command command(message);
+	return command.commandStart();
 }
 
 int			User::preparationCommands(Server &server, string message, int i){
@@ -90,8 +89,11 @@ int				User::parsNickCommand(Server &server, string message, int i){
 	send(server.getUser(i).getFd(), "Nickname set!\n", 15, 0);
 	server.setNicknameByUser(parametr, i);
 	server.setNicknamePassedByUser(i);
-	if (GET_USER_PASSED)
+	if (GET_USER_PASSED){
+		NEW_USER_CREATED;
+		server.acceptedUsersPushBack(server.getUser(i).getFd());
 		SEND_ABOUT_NEW_USER;
+	}
 	return (1);
 }
 
@@ -116,8 +118,11 @@ int				User::parsUserCommand(Server &server, string message, int i){
 	send(server.getUser(i).getFd(), "Username set!\n", 15, 0);
 	server.setUsernameByUser(parametr, i);
 	server.setUserPassedByUser(i);
-	if (GET_NICK_PASSED)
+	if (GET_NICK_PASSED){
+		NEW_USER_CREATED;
+		server.acceptedUsersPushBack(server.getUser(i).getFd());
 		SEND_ABOUT_NEW_USER;
+	}
 	return (1);
 }
 
@@ -137,7 +142,6 @@ void			User::checkUserPassword(Server &server, string message, int i){
 
 	if (parametr == server.getPassword()){
 		send(server.getUser(i).getFd(), "Password correct!\n", 19, 0);
-		// server.acceptedUsersPushBack(fd);
 		server.setPasswordPassedByUser(i);
 	} else {
 		send(server.getUser(i).getFd(), "Password wrong!\n", 17, 0);
