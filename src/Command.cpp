@@ -3,8 +3,8 @@
 Command::Command() { }
 
 Command::Command(string message, int fd, string nickname, vector<User> &users) : _fd(fd), _nickname(nickname), _users(users) {
-	std::cout << "0 " << _users[0].getUsername() << " " << _users[0].getNickname() << std::endl;
-	std::cout << "1 " << _users[1].getUsername() << " " << _users[1].getNickname() << std::endl;
+	// std::cout << "0 " << _users[0].getUsername() << " " << _users[0].getNickname() << std::endl;
+	// std::cout << "1 " << _users[1].getUsername() << " " << _users[1].getNickname() << std::endl;
 
 	// for (vector<User>::iterator it = _users.begin(); it != _users.end(); it++)
 	// 	std::cout << (*it).getUsername() << std::endl;

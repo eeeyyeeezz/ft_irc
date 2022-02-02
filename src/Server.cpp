@@ -50,7 +50,7 @@ void	Server::listenSocket(Server &server, struct pollfd fds[]){
 }
 
 void	Server::writeToServerAndAllUsers(string buff, int readed, struct pollfd fds[], int i){
-	std::cout << "Message: " << buff;
+	std::cout << getUser(i - 1).getNickname() << ": " << buff;
 
 	// std::find(v.begin(), v.end(), x) != v.end()
 	// std::find(_acceptedUsers.begin(), _acceptedUsers.end(), fds[0].fd) != _acceptedUsers.end();
@@ -103,12 +103,14 @@ void	Server::continueConnection(int &flag, struct pollfd fds[], size_t &i){
 	if (!readed){
 		std::cout << RED << fds[i].fd << BLUE << "  disconnected" << NORMAL << std::endl;
 		fds[i].fd = -1;
-		this->setCountConnects(-1);
+		_users.erase(_users.begin() + i - 1);
+		setCountConnects(-1);
 	}
 	buff[readed] = 0;
+	std::cout << "THIS IS I " << i << std::endl;
 	_users[i - 1].setFd(fds[i].fd);
 	if (!_users[i].parsCommand(*this, std::string(buff), i - 1))
-		this->writeToServerAndAllUsers(std::string(buff), readed, fds, i - 1);
+		this->writeToServerAndAllUsers(std::string(buff), readed, fds, i);
 	fds[i].revents = 0;
 }
 
