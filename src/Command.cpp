@@ -37,7 +37,7 @@ int		Command::commandStart(){
 void	Command::checkCommand(){
 	if (_command == "QUIT") doQuitCommand();
 	else if (_command == "NICK") doNickCommand();
-	
+	else if (_command == "PRIVMSG") doPrivmsgCommand();
 	
 }
 
@@ -58,8 +58,16 @@ void	Command::doNickCommand(){
 			return ;
 		}
 	}
-	_nickname = _arguments[0];
+	_nickname = _arguments[0];		// Ne tak nado u usera menyat'
 	NEW_NICK_NAME_SET;
 }
+
+void	Command::doPrivmsgCommand(){
+	// if exist
+
+	// do send
+	
+}
+
 
 Command::~Command() { }

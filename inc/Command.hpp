@@ -25,9 +25,11 @@ class Command{
 
 	int		commandStart();
 	void	checkCommand();
+
+	// COMMANDS
 	void	doQuitCommand();
 	void	doNickCommand();
-
+	void	doPrivmsgCommand();
 };
 
 
