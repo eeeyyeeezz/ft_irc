@@ -70,15 +70,25 @@ void	Command::doPrivmsgCommand(){
 	
 	// if exist
 	bool userExist = false;
+	int fdToPm;
+	// string userFromPm;
 	for(vector<User>::iterator it = _users.begin(); it != _users.end(); it++){
 		if ((*it).getNickname() == _arguments[0]){
 			userExist = true;
+			fdToPm = (*it).getFd();
 			break;
 		}
 	}
 	
+	// arguments to count and ++ to write
+	string privateMessage;
+
 	if (userExist){
-		std::cout << "USER EXIST AT PRIVMSG!\n";
+		send(fdToPm, "PM from ", 9, 0);
+		send(fdToPm, _nickname.c_str(), _nickname.length(), 0);
+		send(fdToPm, ": ", 2, 0);
+		send(fdToPm, _arguments[1].c_str(), _arguments[1].length(), 0);
+		// std::cout << "USER EXIST AT PRIVMSG!\n";
 	}
 	else {
 		NO_SUCH_NICK;
