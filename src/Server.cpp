@@ -16,12 +16,15 @@ int		Server::getCountConnects() { return(_countConnects); }
 User	Server::getUser(int i) { return(_users[i]); }
 string	Server::getPassword() { return(_password); }
 
-
 // SETTERS
 void	Server::setPasswordPassedByUser(int i) { _users[i].setPasswordPassed(); }
+void	Server::setNicknamePassedByUser(int i) { _users[i].setNicknamePassed(); }
+void	Server::setUserPassedByUser(int i) { _users[i].setUserPassed(); }
+
 void	Server::setCountConnects(int i) { _countConnects += i; }
 void	Server::acceptedUsersPushBack(int value) { _acceptedUsers.push_back(value); }
-void	Server::setUsernameByUser(string username, int i) { _users[i].setNickname(username); }
+void	Server::setUsernameByUser(string username, int i) {  _users[i].setUsername(username); }
+void	Server::setNicknameByUser(string nickname, int i) { _users[i].setNickname(nickname); }
 
 // SERVER
 void	Server::createSocket(Server &server){

@@ -8,16 +8,15 @@ class Server;
 class User {
 
 	private:
+	string	_nickname;
 	string	_username;
-	string	_hostname;		// не проверяется 
-	string	_servername;		// не проверяется 
-	string	_realname;
+	// string	_hostname;		// не проверяется 
+	// string	_servername;		// не проверяется 
+	// string	_realname;
 	int		_passwordPassed;
 	int		_nickNamePassed;
 	int		_userPassed;
-	string	_nickname;
 	int		_sockfd;
-	int		_port;
 
 	User &operator = (User const & );
 	void checkUserPassword(Server &server, string message, int i);
@@ -25,20 +24,24 @@ class User {
 	public:
 	User();
 	User(int fd);
-	User(string username, string hostname, string servername, string realname);
 	~User();
 	
 	// SETTERS
+	void	setUsername(string username);
 	void	setNickname(string nickname);
+
 	void	setFd(int fd);
 	void	setPasswordPassed();
-	void	setNickName(string nickName);
+	void	setNicknamePassed();
+	void	setUserPassed();
 	
 	// GETTERS
 	int		getFd();
 	int		getPasswordPassed();
 	int		getNickNamePassed();
 	int		getUserPassed();
+
+	string	getUsername();
 	string	getNickname();
 	bool	getAllPrepArguments();
 
