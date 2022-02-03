@@ -12,10 +12,11 @@ class Command{
 	int				_i;
 	string			_nickname;
 	string			_command;
+
+	vector<User>	_users;
 	vector<string>	_arguments;
 
 	public:
-	vector<User>	_users;
 	Command();
 	Command(string message, int fd, string nickname, vector<User> &users);
 	~Command();
@@ -30,7 +31,12 @@ class Command{
 	void	doQuitCommand();
 	void	doNickCommand(Server &server);
 	void	doPrivmsgCommand();
-	void	doHelpCommand();
+	void	doHelpCommand();	
+	
+	// CHANNEL COMMANDS
+	void	doJoinCommand(Server &server);
+	void	doPartCommand();
+	
 };
 
 

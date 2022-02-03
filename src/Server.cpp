@@ -11,6 +11,7 @@ int				Server::getPort() { return(_port); }
 void			Server::setListening(int socket) { _listening = socket; }
 int				Server::getListening() { return(_listening); }
 int				Server::getCountConnects() { return(_countConnects); }
+vector<Channel>	Server::getVectorOfChannels() { return(_channels); }
 vector<User>	Server::getVectorOfUsers() { return(_users); }
 User			Server::getUser(int i) { return(_users[i]); }
 string			Server::getPassword() { return(_password); }
@@ -25,6 +26,7 @@ void			Server::setCountConnects(int i) { _countConnects += i; }
 void			Server::acceptedUsersPushBack(int value) { _acceptedUsers.push_back(value); }
 void			Server::setUsernameByUser(string username, int i) {  _users[i].setUsername(username); }
 void			Server::setNicknameByUser(string nickname, int i) { _users[i].setNickname(nickname); }
+void			Server::channelsPushBack(Channel *channel) { _channels.push_back(*channel); }
 void			Server::userPushBack(User *user) { _users.push_back(*user); }
 
 // SERVER
@@ -54,9 +56,6 @@ void	Server::listenSocket(Server &server, struct pollfd fds[]){
 
 void	Server::writeToServerAndAllUsers(string buff, int readed, struct pollfd fds[], int i){
 	std::cout << getUser(i - 1).getNickname() << ": " << buff;
-
-	// std::find(v.begin(), v.end(), x) != v.end()
-	// std::find(_acceptedUsers.begin(), _acceptedUsers.end(), fds[0].fd) != _acceptedUsers.end();
 
 	for (size_t userToWrite = 0; userToWrite < this->getCountConnects(); userToWrite++){
 		if (fds[i].fd != fds[userToWrite].fd && std::find(_acceptedUsers.begin(), _acceptedUsers.end(), fds[userToWrite].fd) != _acceptedUsers.end()) 

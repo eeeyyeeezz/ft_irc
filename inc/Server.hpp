@@ -2,6 +2,7 @@
 #include "User.hpp"
 #include "GlobalLibraries.hpp"
 #include "Command.hpp"
+#include "Channel.hpp"
 
 class User;
 
@@ -12,8 +13,10 @@ class Server{
 	int				_listening;
 	int				_countConnects;
 	string			_password;
-	vector<User>	_users;
+
 	vector<int>		_acceptedUsers;
+	vector<User>	_users;
+	vector<Channel>	_channels;
 
 	public:
 	Server(int port, string password);
@@ -24,6 +27,7 @@ class Server{
 	int				getPort();
 	int				getListening();
 	int				getCountConnects();
+	vector<Channel>	getVectorOfChannels();	
 	vector<User>	getVectorOfUsers();
 	User			getUser(int i);
 	string			getPassword();
@@ -36,6 +40,7 @@ class Server{
 	void			setNicknamePassedByUser(int i);
 	void			setUserPassedByUser(int i);
 
+	void			channelsPushBack(Channel *channel);
 	void			userPushBack(User *user);
 	void			setId(int id);
 	void			setListening(int socket);

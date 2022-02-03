@@ -10,7 +10,13 @@ Command::Command(string message, int fd, string nickname, vector<User> &users) :
 		while (getline(stringToSplit, stringSplitted, ' ' ) && stringSplitted != " ")
 			_arguments.push_back(stringSplitted);
 		_command = _arguments[0];
+		_command.erase(std::remove(_command.begin(), _command.end(), '\n'), _command.end());
+		
+		// _command delete
 		_arguments.erase(_arguments.begin());
+
+		for (vector<string>::iterator it = _arguments.begin(); it != _arguments.end(); it++)
+			(*it).erase(std::remove((*it).begin(), (*it).end(), '\n'), (*it).end());
 	}
 }
 
@@ -19,8 +25,8 @@ vector<User>		Command::getVectorOfUsers() { return (_users); }
 
 
 int		Command::commandStart(Server &server){
-	string	commands[] = {"PASS", "USER", "NICK", "QUIT", "JOIN", "PRIVMSG", "NOTICE", "PART", "KICK", "HELP", "BOT"};
-	if (contains(commands, _command)){
+	string	commands[] = {"NICK", "QUIT", "JOIN", "PRIVMSG", "NOTICE", "PART", "KICK", "HELP", "BOT"};
+	if (std::find(std::begin(commands), std::end(commands), _command) != std::end(commands)){
 		checkCommand(server);
 		return (1);
 	}
@@ -29,17 +35,57 @@ int		Command::commandStart(Server &server){
 }
 
 void	Command::checkCommand(Server &server){
-	if (_command == "HELP\n") doHelpCommand();
-	
 	
 	if (_command == "QUIT") doQuitCommand();
 	else if (_command == "NICK") doNickCommand(server);
 	else if (_command == "PRIVMSG") doPrivmsgCommand();
+	else if (_command == "JOIN") doJoinCommand(server);
+
+	// BOT COMMANDS
+	if (_command == "BOT" && _arguments[0] == "HELP") doHelpCommand();
+
+}
+
+void	Command::doJoinCommand(Server &server){
+	Channel *channel = new Channel();
 	
+	server.channelsPushBack(channel);
 }
 
 void	Command::doHelpCommand(){
-	std::cout << "HELP.WORKS.\n";
+	send(_fd, "COMMANDS:\n", 10, 0);
+	send(_fd, "NICK\n", 5, 0);
+	send(_fd, "   Syntax:\n", 11, 0);
+	send(_fd, "   NICK <nickname>\n", 19, 0);
+	send(_fd, "   Allows a client to change their IRC nickname.\n", 49, 0);
+	send(_fd, "QUIT\n", 5, 0);
+	send(_fd, "   Syntax:\n", 11, 0);
+	send(_fd, "   QUIT [<message>]\n", 20, 0);
+	send(_fd, "   Disconnects the user from the server.\n", 41, 0);
+	send(_fd, "JOIN\n", 5, 0);
+	send(_fd, "   Syntax:\n", 11, 0);
+	send(_fd, "   JOIN <channels> [<keys>]\n", 28, 0);
+	send(_fd, "   Makes the client join the channels in the comma-separated list <channels>, specifying the passwords, if needed, in the comma-separated list <keys>. If the channel(s) do not exist then they will be created.\n", 209, 0);
+	send(_fd, "PRIVMSG\n", 8, 0);
+	send(_fd, "   Syntax:\n", 11,	0);	
+	send(_fd, "   PRIVMSG <msgtarget> :<message>\n", 34, 0);
+	send(_fd, "   Sends <message> to <msgtarget>, which is usually a user or channel.\n", 71, 0);
+	send(_fd, "NOTICE\n", 7, 0);
+	send(_fd, "   Syntax:\n", 11, 0);
+	send(_fd, "   NOTICE <msgtarget> <message>\n", 32, 0);
+	send(_fd, "   This command works similarly to PRIVMSG, except automatic replies must never be sent in reply to NOTICE messages.\n", 117, 0);
+	send(_fd, "PART\n", 5, 0);
+	send(_fd, "   Syntax:\n", 11, 0);
+	send(_fd, "   PART <channels> [<message>]\n", 31, 0);
+	send(_fd, "   Sets a connection password. This command must be sent before the NICK/USER registration combination.\n", 104, 0);
+	send(_fd, "KICK\n", 5, 0);
+	send(_fd, "   Syntax:\n", 11, 0);
+	send(_fd, "   KICK <channel> <client> :[<message>]\n", 40, 0);
+	send(_fd, "   Forcibly removes <client> from <channel>. This command may only be issued by channel operators.\n", 99, 0);
+	send(_fd, "BOT\n", 4, 0);
+	send(_fd, "   Syntax:\n", 11, 0);
+	send(_fd, "   BOT HELP\n", 12, 0);
+	send(_fd, "   Рelps clients navigate in commands\n", 38, 0);
 }
 
 void	Command::doQuitCommand(){
@@ -61,7 +107,6 @@ void	Command::doNickCommand(Server &server){
 		}
 	}
 	server.setNicknameByUser(newNick, server.getId());
-
 	// _nickname = _arguments[0];		// Ne tak nado u usera menyat'
 	NEW_NICK_NAME_SET;
 }
