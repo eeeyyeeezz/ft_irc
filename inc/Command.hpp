@@ -23,12 +23,12 @@ class Command{
 	// GETTERS
 	vector<User>	getVectorOfUsers();
 
-	int		commandStart();
-	void	checkCommand();
+	int		commandStart(Server &server);
+	void	checkCommand(Server &server);
 
 	// COMMANDS
 	void	doQuitCommand();
-	void	doNickCommand();
+	void	doNickCommand(Server &server);
 	void	doPrivmsgCommand();
 };
 

@@ -1,6 +1,6 @@
 #include "../inc/User.hpp"
 
-User::User() { };
+User::User() :  _passwordPassed(0), _nickNamePassed(0), _userPassed(0) { };
 
 User::User(int fd) : _sockfd(fd), _passwordPassed(0), _nickNamePassed(0), _userPassed(0) {  }
 
@@ -24,17 +24,47 @@ string		User::getUsername() { return(_username); }
 string		User::getNickname() { return(_nickname); }
 
 // PARSING
+void		startDebug(Server &server){
+	{
+	server.setNicknameByUser("gmorra", 0);
+	server.setUsernameByUser("0", 0);
+	server.setPasswordPassedByUser(0);
+	server.setUserPassedByUser(0);
+	server.setNicknamePassedByUser(0);
+	std::cout << WHITE << "NEW USER! NICKNAME: " << BLUE << "[" << server.getUser(0).getNickname() << "]" << WHITE << " USERNAME: "<< BLUE << "[" << server.getUser(0).getUsername() << "]" << NORMAL << std::endl;
+	}
+
+	{
+	// User *user = new User();
+	// server.userPushBack(user);
+	// server.getUser(1).setFd(5);	// ?
+	server.setNicknameByUser("mhogg", 1);
+	server.setUsernameByUser("1", 1);
+	server.setPasswordPassedByUser(1);
+	server.setUserPassedByUser(1);
+	server.setNicknamePassedByUser(1);
+	std::cout << WHITE << "NEW USER! NICKNAME: " << BLUE << "[" << server.getUser(1).getNickname() << "]" << WHITE << " USERNAME: "<< BLUE << "[" << server.getUser(1).getUsername() << "]" << NORMAL << std::endl;;
+	}
+
+
+}
+
+
 int			User::parsCommand(Server &server, string message, int i){
+	static int onlyOnce = 0;
 	bool allPrepIsDone = server.getUser(i).getAllPrepArguments();
 
-	if (!allPrepIsDone)
-		return server.getUser(i).preparationCommands(server, message, i);
-
+	// if (!allPrepIsDone)
+	// 	return server.getUser(i).preparationCommands(server, message, i);
+	if (!onlyOnce){
+		startDebug(server);
+		++onlyOnce;
+	}
 	// all prep is done
 	
 	vector<User> newVector = server.getVectorOfUsers();
 	Command command(message, server.getUser(i).getFd(), server.getUser(i).getNickname(), newVector);
-	return command.commandStart();
+	return command.commandStart(server);
 }
 	
 int			setFindI(Server &server, string message, int i){

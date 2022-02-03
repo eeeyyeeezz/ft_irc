@@ -8,6 +8,7 @@ class User;
 class Server{
 	private:
 	int				_port;
+	int				_id;
 	int				_listening;
 	int				_countConnects;
 	string			_password;
@@ -19,6 +20,7 @@ class Server{
 	~Server();
 
 	// GETTERS
+	int				getId();
 	int				getPort();
 	int				getListening();
 	int				getCountConnects();
@@ -34,6 +36,8 @@ class Server{
 	void			setNicknamePassedByUser(int i);
 	void			setUserPassedByUser(int i);
 
+	void			userPushBack(User *user);
+	void			setId(int id);
 	void			setListening(int socket);
 	void			setCountConnects(int i);
 	

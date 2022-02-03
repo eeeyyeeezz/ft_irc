@@ -6,6 +6,7 @@
 Server::Server(int port, string password) : _port(port), _password(password), _countConnects(0) { }
 
 // GETTERS
+int				Server::getId() { return (_id); }
 int				Server::getPort() { return(_port); }
 void			Server::setListening(int socket) { _listening = socket; }
 int				Server::getListening() { return(_listening); }
@@ -18,11 +19,13 @@ string			Server::getPassword() { return(_password); }
 void			Server::setPasswordPassedByUser(int i) { _users[i].setPasswordPassed(); }
 void			Server::setNicknamePassedByUser(int i) { _users[i].setNicknamePassed(); }
 void			Server::setUserPassedByUser(int i) { _users[i].setUserPassed(); }
+void			Server::setId(int id) { _id = id;  }
 
 void			Server::setCountConnects(int i) { _countConnects += i; }
 void			Server::acceptedUsersPushBack(int value) { _acceptedUsers.push_back(value); }
 void			Server::setUsernameByUser(string username, int i) {  _users[i].setUsername(username); }
 void			Server::setNicknameByUser(string nickname, int i) { _users[i].setNickname(nickname); }
+void			Server::userPushBack(User *user) { _users.push_back(*user); }
 
 // SERVER
 void	Server::createSocket(Server &server){
@@ -107,8 +110,8 @@ void	Server::continueConnection(int &flag, struct pollfd fds[], size_t &i){
 		setCountConnects(-1);
 	}
 	buff[readed] = 0;
-	std::cout << "THIS IS I " << i << std::endl;
 	_users[i - 1].setFd(fds[i].fd);
+	setId(i - 1);
 	if (!_users[i].parsCommand(*this, std::string(buff), i - 1))
 		this->writeToServerAndAllUsers(std::string(buff), readed, fds, i);
 	fds[i].revents = 0;
