@@ -19,7 +19,6 @@ class User {
 	int		_userPassed;
 	int		_sockfd;
 
-	User &operator = (User const & );
 	void checkUserPassword(Server &server, string message, int i);
 
 	public:
