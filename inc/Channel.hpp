@@ -10,8 +10,20 @@ class Channel{
 
 	public:
 	Channel();
-	Channel(string channelName);
+	Channel(string channelName, int fd);
 	~Channel();
+
+	// GETTERS
+	string				getChannelName();
+	vector<int>			getFdVector();
+	int					getFdAdmin();
+
+	// SETTERS
+	void				fdsPushBack(int fd);
+	void				setChannelName(string channelName);
+	void				setFdVector(vector<int> fds);
+	void				setFdAdmin(int fd);
+
 
 };
 

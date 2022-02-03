@@ -27,9 +27,11 @@ class Server{
 	int				getPort();
 	int				getListening();
 	int				getCountConnects();
-	vector<Channel>	getVectorOfChannels();	
+	vector<Channel>	getVectorOfChannels();
 	vector<User>	getVectorOfUsers();
+
 	User			getUser(int i);
+	Channel			getChannel(int i);
 	string			getPassword();
 	
 	// SETTERS

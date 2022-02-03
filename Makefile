@@ -2,7 +2,7 @@ NAME = server
 
 SRCS = main_server.cpp \
 		src/Utils.cpp src/Server.cpp \
-		src/User.cpp src/Command.cpp
+		src/User.cpp src/Command.cpp src/Channel.cpp
 
 CLANG = clang++
 

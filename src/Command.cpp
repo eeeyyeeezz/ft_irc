@@ -47,9 +47,24 @@ void	Command::checkCommand(Server &server){
 }
 
 void	Command::doJoinCommand(Server &server){
-	Channel *channel = new Channel();
-	
-	server.channelsPushBack(channel);
+	bool channelNameExist = false;
+	for (vector<Channel>::iterator it = server.getVectorOfChannels().begin(); it != server.getVectorOfChannels().end(); it++){
+		if ((*it).getChannelName() == _arguments[0]){
+			channelNameExist = true;
+			break ;
+		}
+	}
+	if (!channelNameExist){
+		Channel *channel = new Channel(_arguments[0], _fd);
+		server.channelsPushBack(channel);
+		std::cout << "NEW CHANNEL! " << _arguments[0] << std::endl;
+	} else { 
+		// if not admin and not already in channel
+		server.getChannel(server.getId()).fdsPushBack(_fd);
+		std::cout << "NEW MEMBER AT " << server.getChannel(server.getId()).getChannelName() << " BY FD " << _fd << std::endl;
+
+	}
+
 }
 
 void	Command::doHelpCommand(){
