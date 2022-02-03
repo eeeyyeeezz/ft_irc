@@ -3,12 +3,6 @@
 Command::Command() { }
 
 Command::Command(string message, int fd, string nickname, vector<User> &users) : _fd(fd), _nickname(nickname), _users(users) {
-	// std::cout << "0 " << _users[0].getUsername() << " " << _users[0].getNickname() << std::endl;
-	// std::cout << "1 " << _users[1].getUsername() << " " << _users[1].getNickname() << std::endl;
-
-	// for (vector<User>::iterator it = _users.begin(); it != _users.end(); it++)
-	// 	std::cout << (*it).getUsername() << std::endl;
-
 	if (!message.empty()){	
 		std::istringstream stringToSplit(message.c_str());
 		string stringSplitted;
@@ -25,7 +19,7 @@ vector<User>		Command::getVectorOfUsers() { return (_users); }
 
 
 int		Command::commandStart(Server &server){
-	string	commands[] = {"NICK", "QUIT", "JOIN", "PRIVMSG", "NOTICE", "PART", "KICK", "HELP", "BOT"};
+	string	commands[] = {"PASS", "USER", "NICK", "QUIT", "JOIN", "PRIVMSG", "NOTICE", "PART", "KICK", "HELP", "BOT"};
 	if (contains(commands, _command)){
 		checkCommand(server);
 		return (1);
@@ -35,10 +29,17 @@ int		Command::commandStart(Server &server){
 }
 
 void	Command::checkCommand(Server &server){
+	if (_command == "HELP\n") doHelpCommand();
+	
+	
 	if (_command == "QUIT") doQuitCommand();
 	else if (_command == "NICK") doNickCommand(server);
 	else if (_command == "PRIVMSG") doPrivmsgCommand();
 	
+}
+
+void	Command::doHelpCommand(){
+	std::cout << "HELP.WORKS.\n";
 }
 
 void	Command::doQuitCommand(){
@@ -51,14 +52,14 @@ void	Command::doQuitCommand(){
 }
 
 void	Command::doNickCommand(Server &server){
+	string newNick = _arguments[0];
+	newNick.erase(std::remove(newNick.begin(), newNick.end(), '\n'), newNick.end());
 	for (vector<User>::iterator it = server.getVectorOfUsers().begin(); it != server.getVectorOfUsers().end(); it++){
-		if ((*it).getNickname() == _arguments[0]){
+		if ((*it).getNickname() == newNick){
 			NICK_NAME_IN_USE;
 			return ;
 		}
 	}
-	string newNick = _arguments[0];
-	newNick.erase(std::remove(newNick.begin(), newNick.end(), '\n'), newNick.end());
 	server.setNicknameByUser(newNick, server.getId());
 
 	// _nickname = _arguments[0];		// Ne tak nado u usera menyat'
@@ -87,6 +88,7 @@ void	Command::doPrivmsgCommand(){
 	string privateMessage;
 	for (int i = 1; i < _arguments.size(); i++)
 		privateMessage += _arguments[i] + " ";
+	// privateMessage.erase(std::remove(privateMessage.end(), privateMessage.end(), ' '), privateMessage.end());
 	// privateMessage.erase(std::remove(privateMessage.begin(), privateMessage.end(), '\n'), privateMessage.end());
 	
 	if (userExist){

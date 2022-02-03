@@ -35,9 +35,6 @@ void		startDebug(Server &server){
 	}
 
 	{
-	// User *user = new User();
-	// server.userPushBack(user);
-	// server.getUser(1).setFd(5);	// ?
 	server.setNicknameByUser("mhogg", 1);
 	server.setUsernameByUser("1", 1);
 	server.setPasswordPassedByUser(1);
@@ -46,7 +43,6 @@ void		startDebug(Server &server){
 	std::cout << WHITE << "NEW USER! NICKNAME: " << BLUE << "[" << server.getUser(1).getNickname() << "]" << WHITE << " USERNAME: "<< BLUE << "[" << server.getUser(1).getUsername() << "]" << NORMAL << std::endl;;
 	}
 
-
 }
 
 
@@ -54,12 +50,12 @@ int			User::parsCommand(Server &server, string message, int i){
 	static int onlyOnce = 0;
 	bool allPrepIsDone = server.getUser(i).getAllPrepArguments();
 
-	// if (!allPrepIsDone)
-	// 	return server.getUser(i).preparationCommands(server, message, i);
-	if (!onlyOnce){
-		startDebug(server);
-		++onlyOnce;
-	}
+	if (!allPrepIsDone)
+		return server.getUser(i).preparationCommands(server, message, i);
+	// if (!onlyOnce){
+	// 	startDebug(server);
+	// 	++onlyOnce;
+	// }
 	// all prep is done
 	
 	vector<User> newVector = server.getVectorOfUsers();

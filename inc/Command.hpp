@@ -30,6 +30,7 @@ class Command{
 	void	doQuitCommand();
 	void	doNickCommand(Server &server);
 	void	doPrivmsgCommand();
+	void	doHelpCommand();
 };
 
 
