@@ -29,13 +29,14 @@ class Command{
 	// COMMANDS
 	void	doQuitCommand();
 	void	doNickCommand(Server &server);
-	void	doPrivmsgCommand();
+	void	doPrivmsgCommand(int flag);
+	void	doNoticeCommand();
 	void	doHelpCommand();	
 	
 	// CHANNEL COMMANDS
 	void	doJoinCommand();
 	void	doPartCommand();
-	
+
 };
 
 

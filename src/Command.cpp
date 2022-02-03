@@ -22,7 +22,7 @@ vector<User>		Command::getVectorOfUsers() { return (_users); }
 
 
 int		Command::commandStart(Server &server){
-	string	commands[] = {"NICK", "QUIT", "JOIN", "PRIVMSG", "NOTICE", "PART", "KICK", "HELP", "BOT"};
+	string	commands[] = {"NICK", "QUIT", "PRIVMSG", "NOTICE", "HELP", "JOIN", "PART", "KICK", "BOT"};
 	if (std::find(std::begin(commands), std::end(commands), _command) != std::end(commands)){
 		checkCommand(server);
 		return (1);
@@ -34,8 +34,9 @@ int		Command::commandStart(Server &server){
 void	Command::checkCommand(Server &server){
 	if (_command == "QUIT") doQuitCommand();
 	else if (_command == "NICK") doNickCommand(server);
-	else if (_command == "PRIVMSG") doPrivmsgCommand();
+	else if (_command == "PRIVMSG") doPrivmsgCommand(1);
 	else if (_command == "HELP") doHelpCommand();
+	else if (_command == "NOTICE") doNoticeCommand();
 }
 
 void	Command::doHelpCommand(){
@@ -73,7 +74,7 @@ void	Command::doHelpCommand(){
 	send(_fd, "   BOT HELP\n", 12, 0);
 	send(_fd, "   Рelps clients navigate in commands\n", 38, 0);
 }
-
+void	Command::doNoticeCommand() { doPrivmsgCommand(0); }
 void	Command::doQuitCommand(){
 	string goodbyeMessage;
 	for (vector<string>::iterator it = _arguments.begin(); it != _arguments.end(); it++)
@@ -98,7 +99,7 @@ void	Command::doNickCommand(Server &server){
 	NEW_NICK_NAME_SET;
 }
 
-void	Command::doPrivmsgCommand(){
+void	Command::doPrivmsgCommand(int flag){
 	if (_arguments.size() < 2){
 		 NO_USER_TO_PRIVATEMSG;
 		 return ;
@@ -121,9 +122,12 @@ void	Command::doPrivmsgCommand(){
 	for (int i = 1; i < _arguments.size(); i++)
 		privateMessage += _arguments[i] + " ";
 	// privateMessage.erase(std::remove(privateMessage.begin(), privateMessage.end(), '\n'), privateMessage.end());
-	
+
 	if (userExist){
-		send(fdToPm, "PM from ", 9, 0);
+		if (flag)
+			send(fdToPm, "PM from ", 9, 0);
+		else
+			send(fdToPm, "NOTICE ", 8, 0);
 		send(fdToPm, _nickname.c_str(), _nickname.length(), 0);
 		send(fdToPm, ": ", 2, 0);
 		send(fdToPm, privateMessage.c_str(), privateMessage.length(), 0);
@@ -133,6 +137,8 @@ void	Command::doPrivmsgCommand(){
 		NO_SUCH_NICK;
 		return ;
 	}
+	if (flag)
+		send(_fd, "Message send!\n", 15, 0);
 
 }
 
