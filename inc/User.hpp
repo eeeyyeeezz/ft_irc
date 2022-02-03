@@ -11,13 +11,12 @@ class User {
 	private:
 	string	_nickname;
 	string	_username;
-	// string	_hostname;		// не проверяется 
-	// string	_servername;		// не проверяется 
-	// string	_realname;
+	int		_sockfd;
+	
+	// VALIDATION FLAGS
 	int		_passwordPassed;
 	int		_nickNamePassed;
 	int		_userPassed;
-	int		_sockfd;
 
 	void checkUserPassword(Server &server, string message, int i);
 

@@ -2,8 +2,10 @@
 
 bool	contains(string array[], string message){
 	for (int i = 0; i < array->length(); i++){
-		if (array[i] == message)
+		if (array[i] == message) {
+			std::cout << message << std::endl;
 			return (true);
+		}
 	}
 	return (false);
 }
