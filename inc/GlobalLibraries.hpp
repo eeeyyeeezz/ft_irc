@@ -35,7 +35,6 @@ using std::vector;
 
 // ERRORS
 #define NO_USER_TO_PRIVATEMSG send(_fd, "411 ERR_NORECIPIENT\n", 21, 0)
-#define NO_USER_TO_NOTICEMSG send(_fd, "411 ERR_NORECIPIENT\n", 21, 0);
 #define NO_SUCH_NICK send(_fd, "401 ERR_NOSUCHNICK\n", 20, 0)
 #define NICK_NAME_IN_USE send(_fd, "433 ERR_NICKNAMEINUSE\n", 23, 0)
 #define NEED_MORE_PARAMS send(server.getUser(i).getFd(), "461 ERR_NEEDMOREPARAMS\n", 24, 0)
