@@ -9,9 +9,9 @@ class Channel{
 	int					_fdAmin;
 
 	public:
-	Channel();
+	// Channel();
 	Channel(string channelName);
-	~Channel();
+	// ~Channel();
 
 };
 

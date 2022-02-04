@@ -47,9 +47,9 @@ void	Command::checkCommand(Server &server){
 }
 
 void	Command::doJoinCommand(Server &server){
-	Channel *channel = new Channel();
+	// Channel *channel = new Channel();
 	
-	server.channelsPushBack(channel);
+	// server.channelsPushBack(channel);
 }
 
 void	Command::doHelpCommand(){
