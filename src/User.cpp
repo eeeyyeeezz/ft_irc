@@ -51,38 +51,52 @@ int			User::parsCommand(Server &server, string message, int i){
 	bool allPrepIsDone = server.getUser(i).getAllPrepArguments();
 
 	// if (!allPrepIsDone)
-		// return server.getUser(i).preparationCommands(server, message, i);
-	if (!onlyOnce){
-		startDebug(server);
-		++onlyOnce;
-	}
+	// 	return server.getUser(i).preparationCommands(server, message, i);
+	// if (!onlyOnce){
+	// 	startDebug(server);
+	// 	++onlyOnce;
+	// }
 	// all prep is done
 	
 	vector<User> newVector = server.getVectorOfUsers();
 	Command command(message, server.getUser(i).getFd(), server.getUser(i).getNickname(), newVector);
 	return command.commandStart(server);
 }
+
+string		getFirstWord(string message){
+	string firstWord;
+	if (!message.empty()){	
+		std::istringstream stringToSplit(message.c_str());
+		string stringSplitted;
 	
-int			setFindI(Server &server, string message, int i){
-	size_t findI;
-	if (message.find(" ") != message.npos)
-		findI = message.find(" ");
-	else{
-		NEED_MORE_PARAMS; 
-		return -1;
+		while (getline(stringToSplit, stringSplitted, ' ' ) && stringSplitted != " "){
+			firstWord = stringSplitted;
+			break ;
+		}
+		firstWord.erase(std::remove(firstWord.begin(), firstWord.end(), '\n'), firstWord.end());
 	}
-	while (message[findI] && message[findI] == ' ')
-		findI++;
-	return findI;
+	return firstWord;
+}
+
+vector<string>		getParametrs(string message){
+	vector<string> parametrs;
+	if (!message.empty()){	
+		std::istringstream stringToSplit(message.c_str());
+		string stringSplitted;
+	
+		while (getline(stringToSplit, stringSplitted, ' ' ) && stringSplitted != " ")
+			parametrs.push_back(stringSplitted);
+		parametrs.erase(parametrs.begin());
+
+		for (vector<string>::iterator it = parametrs.begin(); it != parametrs.end(); it++)
+			(*it).erase(std::remove((*it).begin(), (*it).end(), '\n'), (*it).end());
+	}
+	return parametrs;
 }
 
 int			User::preparationCommands(Server &server, string message, int i){
-	string firstWord;
-	if (message.find(" ") != message.npos)
-		firstWord = message.substr(0, message.find(" "));
-	else
-		firstWord = message.substr(0, message.length() - 1);
-
+	string firstWord = getFirstWord(message);
+	
 	// PASS 
 	if (server.getUser(i).getPasswordPassed() == 0 && firstWord == "PASS"){
 		server.getUser(i).checkUserPassword(server, message, i);
@@ -110,18 +124,14 @@ int			User::preparationCommands(Server &server, string message, int i){
 }
 
 int				User::parsNickCommand(Server &server, string message, int i){
-	size_t findI;
-	if ((findI = setFindI(server, message, i)) == -1)
-		return (1);
-	
-	string parametr = message.substr(findI, message.length());
-	parametr.erase(std::remove(parametr.begin(), parametr.end(), '\n'), parametr.end());
-	if (parametr == ""){
+	vector<string>	parametrs = getParametrs(message);
+
+	if (parametrs.size() == 0){
 		NEED_MORE_PARAMS;
 		return (1);
 	}
 	send(server.getUser(i).getFd(), "Nickname set!\n", 15, 0);
-	server.setNicknameByUser(parametr, i);
+	server.setNicknameByUser(parametrs[0], i);
 	server.setNicknamePassedByUser(i);
 	if (GET_USER_PASSED){
 		NEW_USER_CREATED;
@@ -132,18 +142,14 @@ int				User::parsNickCommand(Server &server, string message, int i){
 }
 
 int				User::parsUserCommand(Server &server, string message, int i){
-	size_t	findI;
-	if ((findI = setFindI(server, message, i)) == -1)
-		return (1);
+	vector<string>	parametrs = getParametrs(message);
 	
-	string parametr = message.substr(findI, message.length());
-	parametr.erase(std::remove(parametr.begin(), parametr.end(), '\n'), parametr.end());
-	if (parametr == ""){
+	if (parametrs.size() == 0){
 		NEED_MORE_PARAMS;
 		return (1);
 	}
 	send(server.getUser(i).getFd(), "Username set!\n", 15, 0);
-	server.setUsernameByUser(parametr, i);
+	server.setUsernameByUser(parametrs[0], i);
 	server.setUserPassedByUser(i);
 	if (GET_NICK_PASSED){
 		NEW_USER_CREATED;
@@ -154,14 +160,9 @@ int				User::parsUserCommand(Server &server, string message, int i){
 }
 
 void			User::checkUserPassword(Server &server, string message, int i){
-	size_t findI;
-	if ((findI = setFindI(server, message, i)) == -1)
-		return ;
-		
-	string parametr = message.substr(findI, message.length());
-	parametr.erase(std::remove(parametr.begin(), parametr.end(), '\n'), parametr.end());
+	vector<string>	parametrs = getParametrs(message);
 
-	if (parametr == server.getPassword()){
+	if (parametrs[0] == server.getPassword()){
 		send(server.getUser(i).getFd(), "Password correct!\n", 19, 0);
 		server.setPasswordPassedByUser(i);
 	} else{
