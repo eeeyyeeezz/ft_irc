@@ -47,37 +47,39 @@ void	Command::checkCommand(Server &server){
 }
 
 void	Command::doJoinCommand(Server &server){
-	// bool channelNameExist = true;
-	// for (vector<Channel>::iterator it = server.getVectorOfChannels().begin(); it != server.getVectorOfChannels().end(); it++){
-	// 	if ((*it).getChannelName() == _arguments[0]){
-	// 		channelNameExist = true;
-	// 		break ;
-	// 	}
-	// }
+	bool channelNameExist = true;
+	vector<Channel> tmpVector = server.getVectorOfChannels();
+	for (vector<Channel>::iterator it = tmpVector.begin(); it != tmpVector.end(); it++){
+		if ((*it).getChannelName() == _arguments[0]){
+			channelNameExist = true;
+			break ;
+		}
+	}
 	
-	// if (!channelNameExist){
-	// 	Channel *channel = new Channel(_arguments[0], _fd);
-	// 	server.channelsPushBack(channel);
-	// 	std::cout << "NEW CHANNEL! " << _arguments[0] << std::endl;
-	// } else {
-	// 	// if not admin and not already in channel
-	// 	for(vector<Channel>::iterator it = server.getVectorOfChannels().begin(); it != server.getVectorOfChannels().end(); it++) {
-	// 		if ((*it).getChannelName() == _arguments[0]) {
-	// 			if((*it).getFdAdmin() != _fd) {
-	// 				vector<int>::iterator it2;
-	// 				for(it2= (*it).getFdVector().begin(); it2 != (*it).getFdVector().end(); it2++) {
-	// 					if((*it2) == _fd) {
-	// 						break;
-	// 					}
-	// 				}
-	// 				if(it2 == (*it).getFdVector().end()) {
-	// 					server.getChannel(server.getId()).fdsPushBack(_fd);
-	// 					std::cout << "NEW MEMBER AT " << server.getChannel(server.getId()).getChannelName() << " BY FD " << _fd << std::endl;
-	// 				}
-	// 			}
-	// 		}
-	// 	}	
-	// }
+	if (!channelNameExist){
+		Channel *channel = new Channel(_arguments[0], _fd);
+		server.channelsPushBack(channel);
+		std::cout << "NEW CHANNEL! " << _arguments[0] << std::endl;
+		return ;
+	} else {
+		// if not admin and not already in channel
+		for(vector<Channel>::iterator it = tmpVector.begin(); it != tmpVector.end(); it++) {
+			if ((*it).getChannelName() == _arguments[0]) {
+				if((*it).getFdAdmin() != _fd) {
+					vector<int>::iterator it2;
+					for(it2= (*it).getFdVector().begin(); it2 != (*it).getFdVector().end(); it2++) {
+						if((*it2) == _fd) {
+							break;
+						}
+					}
+					if(it2 == (*it).getFdVector().end()) {
+						server.getChannel(server.getId()).fdsPushBack(_fd);
+						std::cout << "NEW MEMBER AT " << server.getChannel(server.getId()).getChannelName() << " BY FD " << _fd << std::endl;
+					}
+				}
+			}
+		}	
+	}
 }
 
 void	Command::doNoticeCommand() { doPrivmsgCommand(0); }
@@ -92,20 +94,19 @@ void	Command::doQuitCommand(){
 }
 
 void	Command::doNickCommand(Server &server){
-	// string newNick = _arguments[0];
-	// newNick.erase(std::remove(newNick.begin(), newNick.end(), '\n'), newNick.end());
-	// vector<User>::iterator it_begin = server.getVectorOfUsers().begin();
-	// vector<User>::iterator it_end = server.getVectorOfUsers().end();
+	string newNick = _arguments[0];
+	newNick.erase(std::remove(newNick.begin(), newNick.end(), '\n'), newNick.end());
+	vector<User> tmpVector = server.getVectorOfUsers();
 	
-	// for (vector<User>::iterator it = it_begin; it != it_end; it++){
-	// 	if ((*it).getNickname() == newNick){
-	// 		NICK_NAME_IN_USE;
-	// 		return ;
-	// 	}
-	// }
-	// server.setNicknameByUser(newNick, server.getId());
-	// // _nickname = _arguments[0];		// Ne tak nado u usera menyat'
-	// NEW_NICK_NAME_SET;
+	for (vector<User>::iterator it = tmpVector.begin(); it != tmpVector.end(); it++){
+		if ((*it).getNickname() == newNick){
+			NICK_NAME_IN_USE;
+			return ;
+		}
+	}
+	server.setNicknameByUser(newNick, server.getId());
+	// _nickname = _arguments[0];		// Ne tak nado u usera menyat'
+	NEW_NICK_NAME_SET;
 }
 
 void	Command::doPrivmsgCommand(int flag){

@@ -50,8 +50,8 @@ int			User::parsCommand(Server &server, string message, int i){
 	static int onlyOnce = 0;
 	bool allPrepIsDone = server.getUser(i).getAllPrepArguments();
 
-	// if (!allPrepIsDone)
-	// 	return server.getUser(i).preparationCommands(server, message, i);
+	if (!allPrepIsDone)
+		return server.getUser(i).preparationCommands(server, message, i);
 	// if (!onlyOnce){
 	// 	startDebug(server);
 	// 	++onlyOnce;
@@ -87,9 +87,10 @@ vector<string>		getParametrs(string message){
 		while (getline(stringToSplit, stringSplitted, ' ' ) && stringSplitted != " ")
 			parametrs.push_back(stringSplitted);
 		parametrs.erase(parametrs.begin());
-
+		
 		for (vector<string>::iterator it = parametrs.begin(); it != parametrs.end(); it++)
 			(*it).erase(std::remove((*it).begin(), (*it).end(), '\n'), (*it).end());
+		parametrs.push_back(" ");
 	}
 	return parametrs;
 }
@@ -162,12 +163,14 @@ int				User::parsUserCommand(Server &server, string message, int i){
 void			User::checkUserPassword(Server &server, string message, int i){
 	vector<string>	parametrs = getParametrs(message);
 
-	if (parametrs[0] == server.getPassword()){
+	std::cout << "PASS [" << parametrs[0] << "] " << parametrs.size() << " TO GET [" << server.getPassword() << "]" << std::endl;
+	if (parametrs[0] == std::string(server.getPassword())){
 		send(server.getUser(i).getFd(), "Password correct!\n", 19, 0);
 		server.setPasswordPassedByUser(i);
 	} else{
 		PASSWORD_WRONG;
-		close(server.getUser(i).getFd());
+		// "461 * PASS :Not enough parameters\n"
+		// close(server.getUser(i).getFd());
 	}
 }
 
