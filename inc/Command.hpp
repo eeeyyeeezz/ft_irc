@@ -11,6 +11,7 @@ class Command{
 	int				_fd;
 	int				_i;
 	string			_message;
+	string			_username;
 	string			_nickname;
 	string			_command;
 
@@ -19,7 +20,7 @@ class Command{
 
 	public:
 	Command();
-	Command(string message, int fd, string nickname, vector<User> &users);
+	Command(string message, int fd, string nickname, string username, vector<User> &users);
 	~Command();
 
 	// GETTERS

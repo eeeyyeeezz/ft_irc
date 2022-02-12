@@ -52,6 +52,8 @@ class Server{
 	void			setUsersAtChannelFd(int fd);
 	void			userPushBack(User *user);
 	
+	void			channelPushBackFd(int id, int fd);
+	
 	// SERVER
 	void			createSocket(Server &server);
 	void			bindSocket(Server &server);

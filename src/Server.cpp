@@ -34,6 +34,8 @@ void			Server::channelsPushBack(Channel *channel) { _channels.push_back(*channel
 void			Server::setUsersAtChannelFd(int fd) { _users[_id].setAtChannelFd(fd); }
 void			Server::userPushBack(User *user) { _users.push_back(*user); }
 
+void			Server::channelPushBackFd(int id, int fd) { _channels[id].fdsPushBack(fd); }
+
 // SERVER
 void	Server::createSocket(Server &server){
 	server.setListening(socket(AF_INET, SOCK_STREAM, 0));

@@ -2,7 +2,7 @@
 
 Command::Command() { }
 
-Command::Command(string message, int fd, string nickname, vector<User> &users) : _message(message), _fd(fd), _nickname(nickname), _users(users) {
+Command::Command(string message, int fd, string nickname, string username, vector<User> &users) : _message(message), _fd(fd), _nickname(nickname), _username(username), _users(users) {
 	if (!message.empty()){	
 		std::istringstream stringToSplit(message.c_str());
 		string stringSplitted;

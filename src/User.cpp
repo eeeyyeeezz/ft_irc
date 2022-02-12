@@ -60,7 +60,7 @@ int			User::parsCommand(Server &server, string message, int i){
 	// all prep is done
 	
 	vector<User> newVector = server.getVectorOfUsers();
-	Command command(message, server.getUser(i).getFd(), server.getUser(i).getNickname(), newVector);
+	Command command(message, server.getUser(i).getFd(), server.getUser(i).getNickname(), server.getUser(i).getUsername(), newVector);
 	return command.commandStart(server);
 }
 
