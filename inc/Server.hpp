@@ -29,8 +29,10 @@ class Server{
 	int				getCountConnects();
 	vector<Channel>	getVectorOfChannels();
 	vector<User>	getVectorOfUsers();
-
+	
 	User			getUser(int i);
+	int				getUserAtChannelFd();
+	
 	Channel			getChannel(int i);
 	string			getPassword();
 	
@@ -43,10 +45,12 @@ class Server{
 	void			setUserPassedByUser(int i);
 
 	void			channelsPushBack(Channel *channel);
-	void			userPushBack(User *user);
 	void			setId(int id);
 	void			setListening(int socket);
 	void			setCountConnects(int i);
+	
+	void			setUsersAtChannelFd(int fd);
+	void			userPushBack(User *user);
 	
 	// SERVER
 	void			createSocket(Server &server);

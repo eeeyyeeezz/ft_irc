@@ -29,12 +29,12 @@ class User {
 	// SETTERS
 	void	setUsername(string username);
 	void	setNickname(string nickname);
-
+	void	setAtChannelFd(int fd);
 	void	setFd(int fd);
+
 	void	setPasswordPassed();
 	void	setNicknamePassed();
 	void	setUserPassed();
-	void	setAtChannelFd();
 	
 	// GETTERS
 	int		getFd();

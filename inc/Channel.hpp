@@ -6,6 +6,7 @@ class Channel{
 	private:
 	string				_channelName;
 	vector<int>			_fds;
+	int					_channelID;
 	int					_fdAmin;
 
 	public:

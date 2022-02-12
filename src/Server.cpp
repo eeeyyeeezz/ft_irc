@@ -14,8 +14,10 @@ int				Server::getCountConnects() { return(_countConnects); }
 vector<Channel>	Server::getVectorOfChannels() { return(_channels); }
 vector<User>	Server::getVectorOfUsers() { return(_users); }
 Channel			Server::getChannel(int i) { return(_channels[i]); }
-User			Server::getUser(int i) { return(_users[i]); }
 string			Server::getPassword() { return(_password); }
+
+int				Server::getUserAtChannelFd() { return(_users[_id].getAtChannelFd()); }
+User			Server::getUser(int i) { return(_users[i]); }
 
 // SETTERS
 void			Server::setPasswordPassedByUser(int i) { _users[i].setPasswordPassed(); }
@@ -28,6 +30,8 @@ void			Server::acceptedUsersPushBack(int value) { _acceptedUsers.push_back(value
 void			Server::setUsernameByUser(string username, int i) {  _users[i].setUsername(username); }
 void			Server::setNicknameByUser(string nickname, int i) { _users[i].setNickname(nickname); }
 void			Server::channelsPushBack(Channel *channel) { _channels.push_back(*channel); }
+
+void			Server::setUsersAtChannelFd(int fd) { _users[_id].setAtChannelFd(fd); }
 void			Server::userPushBack(User *user) { _users.push_back(*user); }
 
 // SERVER

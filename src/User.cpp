@@ -1,8 +1,8 @@
 #include "../inc/User.hpp"
 
-User::User() :  _passwordPassed(0), _nickNamePassed(0), _userPassed(0) { };
+User::User() :  _passwordPassed(0), _nickNamePassed(0), _userPassed(0), _atChannelFd(-1) { };
 
-User::User(int fd) : _sockfd(fd), _passwordPassed(0), _nickNamePassed(0), _userPassed(0) {  }
+User::User(int fd) : _sockfd(fd), _passwordPassed(0), _nickNamePassed(0), _userPassed(0), _atChannelFd(-1) {  }
 
 
 // SETTERS
@@ -12,10 +12,12 @@ void		User::setNickname(string nickname) { _nickname = nickname; }
 void		User::setPasswordPassed() { _passwordPassed = 1; }
 void		User::setNicknamePassed() { _nickNamePassed = 1; }
 void		User::setUserPassed() { _userPassed = 1; }
+void		User::setAtChannelFd(int fd) { _atChannelFd = fd; }
 
 
 // GETTERS
 int			User::getFd() { return(_sockfd); }
+int			User::getAtChannelFd() { return(_atChannelFd); }
 int			User::getPasswordPassed() { return(this->_passwordPassed); }
 int			User::getUserPassed() { return(this->_userPassed); }
 int			User::getNickNamePassed() { return(this->_nickNamePassed); }
@@ -27,7 +29,7 @@ string		User::getNickname() { return(_nickname); }
 void		startDebug(Server &server){
 	{
 	server.setNicknameByUser("gmorra", 0);
-	server.setUsernameByUser("0", 0);
+	server.setUsernameByUser("Danya", 0);
 	server.setPasswordPassedByUser(0);
 	server.setUserPassedByUser(0);
 	server.setNicknamePassedByUser(0);
@@ -36,13 +38,12 @@ void		startDebug(Server &server){
 
 	{
 	server.setNicknameByUser("mhogg", 1);
-	server.setUsernameByUser("1", 1);
+	server.setUsernameByUser("Irina", 1);
 	server.setPasswordPassedByUser(1);
 	server.setUserPassedByUser(1);
 	server.setNicknamePassedByUser(1);
 	std::cout << WHITE << "NEW USER! NICKNAME: " << BLUE << "[" << server.getUser(1).getNickname() << "]" << WHITE << " USERNAME: "<< BLUE << "[" << server.getUser(1).getUsername() << "]" << NORMAL << std::endl;;
 	}
-
 }
 
 
@@ -50,12 +51,12 @@ int			User::parsCommand(Server &server, string message, int i){
 	static int onlyOnce = 0;
 	bool allPrepIsDone = server.getUser(i).getAllPrepArguments();
 
-	if (!allPrepIsDone)
-		return server.getUser(i).preparationCommands(server, message, i);
-	// if (!onlyOnce){
-	// 	startDebug(server);
-	// 	++onlyOnce;
-	// }
+	// if (!allPrepIsDone)
+		// return server.getUser(i).preparationCommands(server, message, i);
+	if (!onlyOnce){
+		startDebug(server);
+		++onlyOnce;
+	}
 	// all prep is done
 	
 	vector<User> newVector = server.getVectorOfUsers();
@@ -165,7 +166,6 @@ int				User::parsUserCommand(Server &server, string message, int i){
 void			User::checkUserPassword(Server &server, string message, int i){
 	vector<string>	parametrs = getParametrs(message);
 
-	std::cout << "PASS [" << parametrs[0] << "] " << parametrs.size() << " TO GET [" << server.getPassword() << "]" << std::endl;
 	if (parametrs[0] == std::string(server.getPassword())){
 		send(server.getUser(i).getFd(), "Password correct!\n", 19, 0);
 		server.setPasswordPassedByUser(i);

@@ -2,7 +2,7 @@
 
 Command::Command() { }
 
-Command::Command(string message, int fd, string nickname, vector<User> &users) : _fd(fd), _nickname(nickname), _users(users) {
+Command::Command(string message, int fd, string nickname, vector<User> &users) : _message(message), _fd(fd), _nickname(nickname), _users(users) {
 	if (!message.empty()){	
 		std::istringstream stringToSplit(message.c_str());
 		string stringSplitted;
@@ -38,7 +38,7 @@ void	Command::checkCommand(Server &server){
 	
 	if (_command == "QUIT") doQuitCommand();
 	else if (_command == "NICK") doNickCommand(server);
-	else if (_command == "PRIVMSG") doPrivmsgCommand(1);
+	else if (_command == "PRIVMSG") doPrivmsgCommand();
 	else if (_command == "NOTICE") doNoticeCommand();
 	else if (_command == "JOIN") doJoinCommand(server);
 
@@ -46,7 +46,7 @@ void	Command::checkCommand(Server &server){
 	if (_command == "BOT" && _arguments[0] == "HELP") doHelpCommand();
 }
 
-void	Command::doNoticeCommand() { doPrivmsgCommand(0); }
+void	Command::doNoticeCommand() { doPrivmsgCommand(); }
 
 void	Command::doQuitCommand(){
 	string goodbyeMessage;
@@ -73,7 +73,8 @@ void	Command::doNickCommand(Server &server){
 	NEW_NICK_NAME_SET;
 }
 
-void	Command::doPrivmsgCommand(int flag){
+
+void	Command::doPrivmsgCommand(){
 	if (_arguments.size() < 2){
 		 NO_USER_TO_PRIVATEMSG;
 		 return ;
@@ -82,7 +83,6 @@ void	Command::doPrivmsgCommand(int flag){
 	// if exist
 	bool userExist = false;
 	int fdToPm;
-	// string userFromPm;
 	for(vector<User>::iterator it = _users.begin(); it != _users.end(); it++){
 		if ((*it).getNickname() == _arguments[0]){
 			userExist = true;
@@ -90,30 +90,20 @@ void	Command::doPrivmsgCommand(int flag){
 			break;
 		}
 	}
-	
-	// arguments to count and ++ to write
-	string privateMessage;
-	for (int i = 1; i < _arguments.size(); i++)
-		privateMessage += _arguments[i] + " ";
-	// privateMessage.erase(std::remove(privateMessage.end(), privateMessage.end(), ' '), privateMessage.end());
-	// privateMessage.erase(std::remove(privateMessage.begin(), privateMessage.end(), '\n'), privateMessage.end());
+
+	// Выводим у тех, кто получил сообщение: ”:Nick!<username>@host Command <args>”
+	// например “:user1!John@127.0.0.1 PRIVMSG user2 :Hello”
 
 	if (userExist){
-		if (flag)
-			send(fdToPm, "PM from ", 9, 0);
-		else
-			send(fdToPm, "NOTICE ", 8, 0);
+		send(fdToPm, ":!", 2, 0);
 		send(fdToPm, _nickname.c_str(), _nickname.length(), 0);
-		send(fdToPm, ": ", 2, 0);
-		send(fdToPm, privateMessage.c_str(), privateMessage.length(), 0);
-		// std::cout << "USER EXIST AT PRIVMSG!\n";
+		send(fdToPm, "@127.0.0.1 ", 12, 0);
+		send(fdToPm, _message.c_str(), _message.length(), 0);
 	}
 	else {
 		NO_SUCH_NICK;
 		return ;
 	}
-	if (flag)
-		send(_fd, "Message send!\n", 15, 0);
 
 }
 

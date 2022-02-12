@@ -29,6 +29,4 @@ int		main(int argc, char **argv){
 	server.listenSocket(server, fds);
 
 	server.mainLoop(server, fds);
-
-	// close(clientSocket);
 }

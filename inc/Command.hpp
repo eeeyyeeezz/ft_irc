@@ -10,6 +10,7 @@ class Command{
 	private:
 	int				_fd;
 	int				_i;
+	string			_message;
 	string			_nickname;
 	string			_command;
 
@@ -30,7 +31,7 @@ class Command{
 	// COMMANDS
 	void	doQuitCommand();
 	void	doNickCommand(Server &server);
-	void	doPrivmsgCommand(int flag);
+	void	doPrivmsgCommand();
 	void	doNoticeCommand();
 	
 	// CHANNEL COMMANDS
