@@ -34,14 +34,14 @@ void		startDebug(Server &server){
 	std::cout << WHITE << "NEW USER! NICKNAME: " << BLUE << "[" << server.getUser(0).getNickname() << "]" << WHITE << " USERNAME: "<< BLUE << "[" << server.getUser(0).getUsername() << "]" << NORMAL << std::endl;
 	}
 
-	// {
-	// server.setNicknameByUser("mhogg", 1);
-	// server.setUsernameByUser("1", 1);
-	// server.setPasswordPassedByUser(1);
-	// server.setUserPassedByUser(1);
-	// server.setNicknamePassedByUser(1);
-	// std::cout << WHITE << "NEW USER! NICKNAME: " << BLUE << "[" << server.getUser(1).getNickname() << "]" << WHITE << " USERNAME: "<< BLUE << "[" << server.getUser(1).getUsername() << "]" << NORMAL << std::endl;;
-	// }
+	{
+	server.setNicknameByUser("mhogg", 1);
+	server.setUsernameByUser("1", 1);
+	server.setPasswordPassedByUser(1);
+	server.setUserPassedByUser(1);
+	server.setNicknamePassedByUser(1);
+	std::cout << WHITE << "NEW USER! NICKNAME: " << BLUE << "[" << server.getUser(1).getNickname() << "]" << WHITE << " USERNAME: "<< BLUE << "[" << server.getUser(1).getUsername() << "]" << NORMAL << std::endl;;
+	}
 
 }
 
@@ -89,8 +89,10 @@ vector<string>		getParametrs(string message){
 		parametrs.erase(parametrs.begin());
 		
 		for (vector<string>::iterator it = parametrs.begin(); it != parametrs.end(); it++)
+			(*it).erase(std::remove((*it).begin(), (*it).end(), '\r'), (*it).end());
+		
+		for (vector<string>::iterator it = parametrs.begin(); it != parametrs.end(); it++)
 			(*it).erase(std::remove((*it).begin(), (*it).end(), '\n'), (*it).end());
-		parametrs.push_back(" ");
 	}
 	return parametrs;
 }

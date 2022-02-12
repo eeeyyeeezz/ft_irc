@@ -11,6 +11,7 @@ class User {
 	private:
 	string	_nickname;
 	string	_username;
+	int		_atChannelFd;
 	int		_sockfd;
 	
 	// VALIDATION FLAGS
@@ -33,12 +34,14 @@ class User {
 	void	setPasswordPassed();
 	void	setNicknamePassed();
 	void	setUserPassed();
+	void	setAtChannelFd();
 	
 	// GETTERS
 	int		getFd();
 	int		getPasswordPassed();
 	int		getNickNamePassed();
 	int		getUserPassed();
+	int		getAtChannelFd();
 
 	string	getUsername();
 	string	getNickname();

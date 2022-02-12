@@ -2,10 +2,16 @@
 
 
 
+void	Command::doShowtimeCommand(){
+	
+}
 
+void	Command::doRandnumberCommand(){
+	
+}
 
 void	Command::doHelpCommand(){
-	if (_arguments.size() == 2){
+	if (_arguments.size() == 2 + 1){
 		if (_arguments[1] == "NICK"){
 		send(_fd, "NICK\n", 6, 0);
 		send(_fd, "   Syntax:\n", 12, 0);
@@ -42,10 +48,10 @@ void	Command::doHelpCommand(){
 		send(_fd, "   KICK <channel> <client> :[<message>]\n", 40, 0);
 		send(_fd, "   Forcibly removes <client> from <channel>. This command may only be issued by channel operators.\n", 99, 0);
 		}
-	} else if (_arguments.size() == 1){
+	} else if (_arguments.size() == 1 + 1){
 		send(_fd, "   BOT HELP <command>\n", 23, 0);
 		send(_fd, "   Рelps clients navigate in commands\n", 40, 0);
-		send(_fd, "BOT commands: HELP, SHOWTIME, \n", 32, 0);
+		send(_fd, "BOT commands: HELP, SHOWTIME, RANDNUMBER, \n", 32, 0);
 	} else 
 		send(_fd, "Wrong BOT arguments\n", 21, 0);
 		// send(_fd, "Syntax: BOT <command>\n", 23, 0);

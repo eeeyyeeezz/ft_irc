@@ -58,10 +58,10 @@ void	Server::listenSocket(Server &server, struct pollfd fds[]){
 void	Server::writeToServerAndAllUsers(string buff, int readed, struct pollfd fds[], int i){
 	std::cout << getUser(i - 1).getNickname() << ": " << buff;
 
-	for (size_t userToWrite = 0; userToWrite < this->getCountConnects(); userToWrite++){
-		if (fds[i].fd != fds[userToWrite].fd && std::find(_acceptedUsers.begin(), _acceptedUsers.end(), fds[userToWrite].fd) != _acceptedUsers.end()) 
-			send(fds[userToWrite].fd, buff.c_str(), readed + 1, 0);
-	}
+	// for (size_t userToWrite = 0; userToWrite < this->getCountConnects(); userToWrite++){
+	// 	if (fds[i].fd != fds[userToWrite].fd && std::find(_acceptedUsers.begin(), _acceptedUsers.end(), fds[userToWrite].fd) != _acceptedUsers.end()) 
+	// 		send(fds[userToWrite].fd, buff.c_str(), readed + 1, 0);
+	// }
 }
 
 void	Server::mainLoop(Server &server, struct pollfd fds[]){
@@ -101,6 +101,7 @@ void	Server::continueConnection(int &flag, struct pollfd fds[], size_t &i){
 	char buff[BUFFER_SIZE];
 	flag = 0;
 	
+	memset(buff, 0, BUFFER_SIZE);
 	int readed = read(fds[i].fd, buff, BUFFER_SIZE);
 	fds[i].revents = 0;
 	if (!readed){

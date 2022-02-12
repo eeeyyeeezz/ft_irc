@@ -32,12 +32,15 @@ class Command{
 	void	doNickCommand(Server &server);
 	void	doPrivmsgCommand(int flag);
 	void	doNoticeCommand();
-	void	doHelpCommand();	
 	
 	// CHANNEL COMMANDS
 	void	doJoinCommand(Server &server);
 	void	doPartCommand();
 
+	// BOT
+	void	doHelpCommand();	
+	void	doShowtimeCommand();
+	void	doRandnumberCommand();
 };
 
 
