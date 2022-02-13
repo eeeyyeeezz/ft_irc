@@ -2,9 +2,11 @@
 #include "GlobalLibraries.hpp"
 #include "User.hpp"
 #include "Server.hpp"
+#include "Channel.hpp"
 
 class User;
 class Server;
+class Channel;
 
 class Command{
 	private:
@@ -32,8 +34,8 @@ class Command{
 	// COMMANDS
 	void	doQuitCommand();
 	void	doNickCommand(Server &server);
-	void	doPrivmsgCommand();
-	void	doNoticeCommand();
+	void	doPrivmsgCommand(Server &server);
+	void	doNoticeCommand(Server &server);
 	
 	// CHANNEL COMMANDS
 	void	doJoinCommand(Server &server);
@@ -43,6 +45,7 @@ class Command{
 	void	doHelpCommand();	
 	void	doShowtimeCommand();
 	void	doRandnumberCommand();
+    bool    checkUserInChannel(Channel &channel);
 };
 
 

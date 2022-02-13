@@ -62,7 +62,7 @@ void	Server::listenSocket(Server &server, struct pollfd fds[]){
 }
 
 void	Server::writeToServerAndAllUsers(string buff, int readed, struct pollfd fds[], int i){
-  std::cout << getUser(i - 1).getNickname() << ": " << buff;
+  //std::cout << getUser(i - 1).getNickname() << ": " << buff;
 
   // user in which channel
   //int channelID = this->getUser(getId()).getAtChannelFd();
