@@ -5,7 +5,7 @@ SRCS = main_server.cpp \
 		src/User.cpp src/Command.cpp src/Channel.cpp \
 		src/Bot.cpp
 
-CLANG = clang++
+CLANG = c++
 
 FLAGS = -Wall -Wextra -Werror
 

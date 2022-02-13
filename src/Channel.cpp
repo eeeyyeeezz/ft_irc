@@ -58,16 +58,18 @@ void	Command::doJoinCommand(Server &server){
 						// server.getChannel(server.getId()).fdsPushBack(_fd);
 	} else {
 		// if not admin and not already in channel
+
 		for (vector<Channel>::iterator it = tmpVector.begin(); it != tmpVector.end(); it++) {
 			if ((*it).getChannelName() == _arguments[0]) {
 				if((*it).getFdAdmin() != _fd) {
 					vector<int>::iterator it2;
-					for(it2= (*it).getFdVector().begin(); it2 != (*it).getFdVector().end(); it2++) {
+                    vector<int> tmpFd = (*it).getFdVector();
+					for(it2= tmpFd.begin(); it2 != tmpFd.end(); it2++) {
 						if((*it2) == _fd) {
 							break;
 						}
 					}
-					if (it2 == (*it).getFdVector().end()) {
+					if (it2 == tmpFd.end()) {
 						server.channelPushBackFd(channelID - 1, _fd);
 						NewUserConnect(server, _message, _nickname, _username, channelID - 1);
 						std::cout << "NEW MEMBER AT " << server.getChannel(channelID - 1).getChannelName() << " BY FD " << _fd << " " << _nickname << std::endl;
