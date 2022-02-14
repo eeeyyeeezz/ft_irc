@@ -52,6 +52,7 @@ class Server{
 	void			setUsersAtChannelFd(int fd);
 	void			userPushBack(User *user);
 	
+	void			channelSetNew(vector<Channel> &tmpVector);
 	void			channelPushBackFd(int id, int fd);
 	
 	// SERVER

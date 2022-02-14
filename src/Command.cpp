@@ -111,15 +111,4 @@ void	Command::doPrivmsgCommand(Server &server){
 	}
 }
 
-bool Command::checkUserInChannel(Channel &channel) {
-	if(channel.getFdAdmin() == _fd)
-		return true;
-	vector<int> tmpVector = channel.getFdVector();
-	for(vector<int>::iterator it = tmpVector.begin(); it != tmpVector.end(); it++) {
-		if((*it) == _fd)
-			return true;
-	}
-	return false;
-}
-
 Command::~Command() { }

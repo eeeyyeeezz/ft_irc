@@ -50,7 +50,7 @@ void	Server::bindSocket(Server &server){
 	hint.sin_family = AF_INET;
 	hint.sin_port = htons(server.getPort());
 	hint.sin_addr.s_addr = htonl(INADDR_ANY);
-	inet_pton(AF_INET, "0.0.0.0", &hint.sin_addr);
+	inet_pton(AF_INET, "127.0.0.1", &hint.sin_addr);
 	
 	if (bind(server.getListening(), (sockaddr *)&hint, sizeof(hint)) == -1) { error("Can't bind"); } 
 }
@@ -64,15 +64,6 @@ void	Server::listenSocket(Server &server, struct pollfd fds[]){
 void	Server::writeToServerAndAllUsers(string buff, int readed, struct pollfd fds[], int i){
 	std::cout << getUser(i - 1).getNickname() << ": " << buff;
 
-	// user in which channel
-	//int channelID = this->getUser(getId()).getAtChannelFd();
-	//if (channelID != -1)
-		;
-	// writeToall;
-	// for (size_t userToWrite = 0; userToWrite < this->getCountConnects(); userToWrite++){
-	// 	if (fds[i].fd != fds[userToWrite].fd && std::find(_acceptedUsers.begin(), _acceptedUsers.end(), fds[userToWrite].fd) != _acceptedUsers.end()) 
-	// 		send(fds[userToWrite].fd, buff.c_str(), readed + 1, 0);
-	// }
 }
 
 void	Server::mainLoop(Server &server, struct pollfd fds[]){
@@ -104,7 +95,6 @@ void	Server::setNewConnection(int &flag, struct pollfd fds[], size_t &i){
 	std::cout << YELLOW << "NEW CONNNECT" << NORMAL << std::endl;
 	fds[getCountConnects()].events = POLLIN;
 	fds[getCountConnects()].revents = 0;
-	// send(fds[i].fd, "With first log in type PASS and password\n", 41 + 1, 0);
 	setCountConnects(1);
 }
 

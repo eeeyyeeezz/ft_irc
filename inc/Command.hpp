@@ -40,7 +40,7 @@ class Command{
 	
 	// CHANNEL COMMANDS
 	void	doJoinCommand(Server &server);
-	void	doPartCommand();
+	void	doPartCommand(Server &server);
 
 	// BOT
 	void	doHelpCommand();	
