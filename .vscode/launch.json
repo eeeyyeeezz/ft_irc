@@ -9,7 +9,7 @@
 			"type": "cppdbg",
 			"request": "launch",
 			"program": "/home/eeeyyeeezz/Desktop/ft_irc/ircserv",
-			"args": ["6667", "55"],
+			"args": ["6667", "5555"],
 			"stopAtEntry": true,
 			"cwd": "/home/eeeyyeeezz/Desktop/ft_irc",
 			"environment": [],

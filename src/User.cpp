@@ -36,14 +36,14 @@ void		startDebug(Server &server){
 	std::cout << WHITE << "NEW USER! NICKNAME: " << BLUE << "[" << server.getUser(0).getNickname() << "]" << WHITE << " USERNAME: "<< BLUE << "[" << server.getUser(0).getUsername() << "]" << NORMAL << std::endl;
 	}
 
-	{
-	server.setNicknameByUser("mhogg", 1);
-	server.setUsernameByUser("Irina", 1);
-	server.setPasswordPassedByUser(1);
-	server.setUserPassedByUser(1);
-	server.setNicknamePassedByUser(1);
-	std::cout << WHITE << "NEW USER! NICKNAME: " << BLUE << "[" << server.getUser(1).getNickname() << "]" << WHITE << " USERNAME: "<< BLUE << "[" << server.getUser(1).getUsername() << "]" << NORMAL << std::endl;;
-	}
+	// {
+	// server.setNicknameByUser("mhogg", 1);
+	// server.setUsernameByUser("Irina", 1);
+	// server.setPasswordPassedByUser(1);
+	// server.setUserPassedByUser(1);
+	// server.setNicknamePassedByUser(1);
+	// std::cout << WHITE << "NEW USER! NICKNAME: " << BLUE << "[" << server.getUser(1).getNickname() << "]" << WHITE << " USERNAME: "<< BLUE << "[" << server.getUser(1).getUsername() << "]" << NORMAL << std::endl;;
+	// }
 }
 
 
@@ -53,11 +53,11 @@ int			User::parsCommand(Server &server, string message, int i){
 
 	 if (!allPrepIsDone)
 		 return server.getUser(i).preparationCommands(server, message, i);
-	//if (!onlyOnce){
-	//	startDebug(server);
-	//	++onlyOnce;
-	//}
-	// all prep is done
+	
+	// if (!onlyOnce){
+	// 	startDebug(server);
+	// 	++onlyOnce;
+	// }
 	
 	vector<User> newVector = server.getVectorOfUsers();
 	Command command(message, server.getUser(i).getFd(), server.getUser(i).getNickname(), server.getUser(i).getUsername(), newVector);

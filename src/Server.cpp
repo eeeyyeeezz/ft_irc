@@ -70,6 +70,7 @@ void	Server::writeToServerAndAllUsers(string buff, int readed, struct pollfd fds
 
 void	Server::mainLoop(Server &server, struct pollfd fds[]){
 	int flag = 0;
+	std::cout << "Server start!\n";
 	while (true){
 		int COUNTFD;
 		
