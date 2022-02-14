@@ -64,10 +64,11 @@ void	Server::listenSocket(Server &server, struct pollfd fds[]){
 void	Server::writeToServerAndAllUsers(string buff, int readed, struct pollfd fds[], int i){
 	std::cout << getUser(i - 1).getNickname() << ": " << buff;
 
-	// for (size_t userToWrite = 0; userToWrite < this->getCountConnects(); userToWrite++){
-	// 	if (fds[i].fd != fds[userToWrite].fd && std::find(_acceptedUsers.begin(), _acceptedUsers.end(), fds[userToWrite].fd) != _acceptedUsers.end()) 
-	// 		send(fds[userToWrite].fd, buff.c_str(), readed + 1, 0);
-	// }
+	// user in which channel
+	int channelID = this->getUser(getId()).getAtChannelFd();
+	if (channelID != -1)
+			;
+		// writeToall;
 }
 
 void	Server::mainLoop(Server &server, struct pollfd fds[]){

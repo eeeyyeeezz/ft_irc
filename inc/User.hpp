@@ -11,7 +11,7 @@ class User {
 	private:
 	string	_nickname;
 	string	_username;
-	int		_atChannelFd;
+	int		_atChannelFd; // atChannelID
 	int		_sockfd;
 	
 	// VALIDATION FLAGS
