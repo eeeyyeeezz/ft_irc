@@ -118,6 +118,12 @@ void	Command::doPrivmsgCommand(Server &server){
           send((*it), _message.c_str(), _message.length(), 0);
         }
       }
+      else {
+        CANNOT_SEND_TO_CHAN;
+        send(_fd, tmpChannel.getChannelName().c_str(), tmpChannel.getChannelName().length(), 0);
+        send(_fd, "\n", 1, 0);
+      }
+
     }
 	else {
 		NO_SUCH_NICK;
