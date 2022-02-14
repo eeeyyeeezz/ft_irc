@@ -41,6 +41,7 @@ void	Command::checkCommand(Server &server){
 	else if (_command == "PRIVMSG") doPrivmsgCommand(server);
 	else if (_command == "NOTICE") doNoticeCommand(server);
 	else if (_command == "JOIN") doJoinCommand(server);
+	else if (_command == "PART") doPartCommand(server);
 
 	// BOT commands
 	if (_command == "BOT" && _arguments[0] == "HELP") doHelpCommand();

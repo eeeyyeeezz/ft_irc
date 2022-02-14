@@ -14,8 +14,9 @@ string				Channel::getChannelName(){ return(_channelName); }
 // SETTERS
 void				Channel::fdsPushBack(int fd) { _fds.push_back(fd); }
 void				Channel::setChannelName(string channelName) { _channelName = channelName; }
-void				Channel::setFdVector(vector<int> fds) { _fds = fds; }
+void				Channel::setFdVector(vector<int> &fds) { _fds = fds; }
 void				Channel::setFdAdmin(int fd) { _fdAmin = fd; }
+void				Channel::setNewVector(vector<int> &newVector) { _fds = newVector; }
 
 void	NewUserConnect(Server &server, string message, string nickname, string username, int id){
 	Channel tmpChannel = server.getChannel(id);
@@ -35,11 +36,11 @@ bool	checkChannelNameExist(vector<Channel> &tmpVector, string channelName){
 }
 
 bool Command::checkUserInChannel(Channel &channel) {
-	if(channel.getFdAdmin() == _fd)
+	if (channel.getFdAdmin() == _fd)
 		return true;
 	vector<int> tmpVector = channel.getFdVector();
-	for(vector<int>::iterator it = tmpVector.begin(); it != tmpVector.end(); it++) {
-		if((*it) == _fd)
+	for (vector<int>::iterator it = tmpVector.begin(); it != tmpVector.end(); it++){
+		if ((*it) == _fd)
 			return true;
 	}
 	return false;
@@ -74,15 +75,14 @@ void	Command::doJoinCommand(Server &server){
 		return ;
 	} else {
 		// if not admin and not already in channel
-		for (vector<Channel>::iterator it = tmpVector.begin(); it != tmpVector.end(); it++) {
+		for (vector<Channel>::iterator it = tmpVector.begin(); it != tmpVector.end(); it++){
 			if ((*it).getChannelName() == _arguments[0]) {
-				if((*it).getFdAdmin() != _fd) {
+				if ((*it).getFdAdmin() != _fd){
 					vector<int>::iterator it2;
 					vector<int> tmpFd = (*it).getFdVector();
-					for(it2= tmpFd.begin(); it2 != tmpFd.end(); it2++) {
-						if((*it2) == _fd) {
+					for (it2= tmpFd.begin(); it2 != tmpFd.end(); it2++){
+						if ((*it2) == _fd)
 							break;
-						}
 					}
 					if (it2 == tmpFd.end()) {
 						server.channelPushBackFd(channelID - 1, _fd);
@@ -98,18 +98,25 @@ void	Command::doJoinCommand(Server &server){
 void	Command::doPartCommand(Server &server){
 	bool channelNameExist = false;
 	vector<Channel> tmpVector = server.getVectorOfChannels();
-	vector<int> tmpIntFdsVector = server.getChannel(server.getId()).getFdVector(); 
 	channelNameExist = checkChannelNameExist(tmpVector, _arguments[0]);
 	
 	if (!channelNameExist){
 		// 403 ERR_NOSUCHCHANNEL
 		return ;
 	} else {
+		int atChannelFd = server.getUserAtChannelFd();
+		Channel tmpChannel = server.getChannel(atChannelFd);
+		vector<int> tmpIntFdsVector = server.getChannel(atChannelFd).getFdVector();
 		if (int element = std::find(tmpIntFdsVector.begin(), tmpIntFdsVector.end(), _fd) != tmpIntFdsVector.end()){
-			// CHECK IF ADM!!
-			
-			tmpVector.erase(tmpVector.begin() + element);
-			server.channelSetNew(tmpVector);
+			int fdAdmin = server.getChannel(atChannelFd).getFdAdmin();
+			tmpIntFdsVector.erase(tmpIntFdsVector.begin() + element);
+			tmpChannel.setFdVector(tmpIntFdsVector);
+
+			if (_fd = fdAdmin){
+				server.setNewChannelAdm(tmpIntFdsVector); // CHECK IF ADM!!
+				std::cout << "NEW ADM SET\n";
+			}
+			server.channelSetNew(tmpChannel, atChannelFd);
 			std::cout << _nickname << " LEAVES " << _arguments[0];
 			return ;
 		}
@@ -119,7 +126,5 @@ void	Command::doPartCommand(Server &server){
 		}
 	}
 }
-
-void	Server::channelSetNew(vector<Channel> &tmpVector){ _channels = tmpVector; }
 
 Channel::~Channel() { }

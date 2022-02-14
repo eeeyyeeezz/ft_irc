@@ -139,7 +139,6 @@ int				User::parsNickCommand(Server &server, string message, int i){
 	server.setNicknamePassedByUser(i);
 	if (GET_USER_PASSED){
 		NEW_USER_CREATED;
-		server.acceptedUsersPushBack(server.getUser(i).getFd());
 		SEND_ABOUT_NEW_USER;
 	}
 	return (1);
@@ -157,7 +156,6 @@ int				User::parsUserCommand(Server &server, string message, int i){
 	server.setUserPassedByUser(i);
 	if (GET_NICK_PASSED){
 		NEW_USER_CREATED;
-		server.acceptedUsersPushBack(server.getUser(i).getFd());
 		SEND_ABOUT_NEW_USER;
 	}
 	return (1);

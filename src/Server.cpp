@@ -26,7 +26,6 @@ void			Server::setUserPassedByUser(int i) { _users[i].setUserPassed(); }
 void			Server::setId(int id) { _id = id;  }
 
 void			Server::setCountConnects(int i) { _countConnects += i; }
-void			Server::acceptedUsersPushBack(int value) { _acceptedUsers.push_back(value); }
 void			Server::setUsernameByUser(string username, int i) {  _users[i].setUsername(username); }
 void			Server::setNicknameByUser(string nickname, int i) { _users[i].setNickname(nickname); }
 void			Server::channelsPushBack(Channel *channel) { _channels.push_back(*channel); }
@@ -34,7 +33,10 @@ void			Server::channelsPushBack(Channel *channel) { _channels.push_back(*channel
 void			Server::setUsersAtChannelFd(int fd) { _users[_id].setAtChannelFd(fd); }
 void			Server::userPushBack(User *user) { _users.push_back(*user); }
 
+void			Server::setNewChannelAdm(vector<int> &tmpIntFdsVector) { _channels[_id].setFdAdmin(tmpIntFdsVector[0]); }
 void			Server::channelPushBackFd(int id, int fd) { _channels[id].fdsPushBack(fd); }
+void			Server::channelVectorSetNew(vector<Channel> &tmpVector){ _channels = tmpVector; }
+void			Server::channelSetNew(Channel &newChannel, int id) { _channels[id] = newChannel; }
 
 // SERVER
 void	Server::createSocket(Server &server){

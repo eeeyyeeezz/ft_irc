@@ -22,8 +22,10 @@ class Channel{
 	// SETTERS
 	void				fdsPushBack(int fd);
 	void				setChannelName(string channelName);
-	void				setFdVector(vector<int> fds);
+	void				setFdVector(vector<int> &fds);
 	void				setFdAdmin(int fd);
+	
+	void				setNewVector(vector<int> &newVector);
 
 
 };

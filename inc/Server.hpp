@@ -14,7 +14,6 @@ class Server{
 	int				_countConnects;
 	string			_password;
 
-	vector<int>		_acceptedUsers;
 	vector<User>	_users;
 	vector<Channel>	_channels;
 
@@ -52,10 +51,13 @@ class Server{
 	void			setUsersAtChannelFd(int fd);
 	void			userPushBack(User *user);
 	
-	void			channelSetNew(vector<Channel> &tmpVector);
+	void			channelSetNew(Channel &newChannel, int id);
+	void			channelVectorSetNew(vector<Channel> &tmpVector);
 	void			channelPushBackFd(int id, int fd);
 	
 	// SERVER
+	void			setNewChannelAdm(vector<int> &fdVector);
+	
 	void			createSocket(Server &server);
 	void			bindSocket(Server &server);
 	void			listenSocket(Server &server, struct pollfd fds[]);
@@ -65,7 +67,6 @@ class Server{
 	
 	// OTHER
 	void			writeToServerAndAllUsers(string buff, int readed, struct pollfd fds[], int i);
-	void			acceptedUsersPushBack(int value);
 };
 
 
