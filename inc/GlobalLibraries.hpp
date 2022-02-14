@@ -40,6 +40,7 @@ using std::vector;
 #define NICK_NAME_IN_USE send(_fd, "433 ERR_NICKNAMEINUSE\n", 23, 0)
 #define NEED_MORE_PARAMS send(server.getUser(i).getFd(), "461 ERR_NEEDMOREPARAMS\n", 24, 0)
 #define PASSWORD_WRONG send(server.getUser(i).getFd(), "461 * PASS :Not enough parameters\n", 35, 0)
+#define CANNOT_SEND_TO_CHAN send(_fd, "404 ERR_CANNOTSENDTOCHAN: ", 26, 0)
 
 // GET_PASSED
 #define GET_USER_PASSED server.getUser(i).getUserPassed()
@@ -51,5 +52,6 @@ using std::vector;
 #define NEW_USER_CREATED send(server.getUser(i).getFd(), "New user created!\n", 19, 0)
 #define SEND_ABOUT_NEW_USER std::cout << WHITE << "NEW USER! NICKNAME: " << BLUE << "[" << server.getUser(i).getNickname() << "]" << WHITE << " USERNAME: "<< BLUE << "[" << server.getUser(i).getUsername() << "]" << NORMAL << std::endl;
 
+void	SendMessageIrcSyntax(int fd, string nickname, string username, string message);
 bool	contains(string array[], string message);
 void	error(string error);

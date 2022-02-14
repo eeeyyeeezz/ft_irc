@@ -38,15 +38,15 @@ void	Command::checkCommand(Server &server){
 	
 	if (_command == "QUIT") doQuitCommand();
 	else if (_command == "NICK") doNickCommand(server);
-	else if (_command == "PRIVMSG") doPrivmsgCommand();
-	else if (_command == "NOTICE") doNoticeCommand();
+	else if (_command == "PRIVMSG") doPrivmsgCommand(server);
+	else if (_command == "NOTICE") doNoticeCommand(server);
 	else if (_command == "JOIN") doJoinCommand(server);
 
 	// BOT commands
 	if (_command == "BOT" && _arguments[0] == "HELP") doHelpCommand();
 }
 
-void	Command::doNoticeCommand() { doPrivmsgCommand(); }
+void	Command::doNoticeCommand(Server &server) { doPrivmsgCommand(server); }
 
 void	Command::doQuitCommand(){
 	string goodbyeMessage;
@@ -74,12 +74,11 @@ void	Command::doNickCommand(Server &server){
 }
 
 
-void	Command::doPrivmsgCommand(){
+void	Command::doPrivmsgCommand(Server &server){
 	if (_arguments.size() < 2){
 		 NO_USER_TO_PRIVATEMSG;
 		 return ;
 	}
-	
 	// if exist
 	bool userExist = false;
 	int fdToPm;
@@ -90,22 +89,37 @@ void	Command::doPrivmsgCommand(){
 			break;
 		}
 	}
-
-	// Выводим у тех, кто получил сообщение: ”:Nick!<username>@host Command <args>”
-	// например “:user1!John@127.0.0.1 PRIVMSG user2 :Hello”
-
-	if (userExist){
-		send(fdToPm, ":!", 2, 0);
-		send(fdToPm, _nickname.c_str(), _nickname.length(), 0);
-		send(fdToPm, "@127.0.0.1 ", 12, 0);
-		send(fdToPm, _message.c_str(), _message.length(), 0);
+	bool channelExist = false;
+	Channel tmpChannel;
+	vector<Channel> tmpVector = server.getVectorOfChannels();
+	for(vector<Channel>::iterator it = tmpVector.begin(); it != tmpVector.end(); it++){
+		if ((*it).getChannelName() == _arguments[0]){
+			channelExist = true;
+			tmpChannel = (*it);
+			break;
+		}
 	}
+
+
+	if (userExist)
+		SendMessageIrcSyntax(_fd, _nickname, _username, _message);
+	else if (channelExist) 
+		doChannelPrivmsg(tmpChannel, _fd, _message);
 	else {
 		NO_SUCH_NICK;
 		return ;
 	}
-
 }
 
+bool Command::checkUserInChannel(Channel &channel) {
+	if(channel.getFdAdmin() == _fd)
+		return true;
+	vector<int> tmpVector = channel.getFdVector();
+	for(vector<int>::iterator it = tmpVector.begin(); it != tmpVector.end(); it++) {
+		if((*it) == _fd)
+			return true;
+	}
+	return false;
+}
 
 Command::~Command() { }

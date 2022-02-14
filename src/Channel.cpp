@@ -24,15 +24,21 @@ void	NewUserConnect(Server &server, string message, string nickname, string user
 	Channel tmpChannel = server.getChannel(id);
 	vector<int> tmpFdVector = tmpChannel.getFdVector();
 	
-	for (int i = 0; i < tmpFdVector.size(); i++){
-		send(tmpFdVector[i], ":", 1, 0);
-		send(tmpFdVector[i], nickname.c_str(), nickname.length() + 1, 0);
-		send(tmpFdVector[i], "!", 1, 0);
-		send(tmpFdVector[i], username.c_str(), nickname.length() + 1, 0);
-		send(tmpFdVector[i], "@127.0.0.1 ", 12, 0);
-		send(tmpFdVector[i], message.c_str(), message.length() + 1, 0);
-	}
+	for (int i = 0; i < tmpFdVector.size(); i++)
+		SendMessageIrcSyntax(tmpFdVector[i], nickname, username, message);
 	// :nickname!username@host message	
+}
+
+void	Command::doChannelPrivmsg(Channel &tmpChannel, int _fd, string message){
+	if (checkUserInChannel(tmpChannel)) {
+		vector<int> tmpFds = tmpChannel.getFdVector();
+		for (vector<int>::iterator it = tmpFds.begin(); it != tmpFds.end(); it++)
+			SendMessageIrcSyntax((*it), _nickname, _username, message);
+	} else {
+		CANNOT_SEND_TO_CHAN;
+		send(_fd, tmpChannel.getChannelName().c_str(), tmpChannel.getChannelName().length(), 0);
+		send(_fd, "\n", 1, 0);
+	}
 }
 
 void	Command::doJoinCommand(Server &server){
@@ -58,16 +64,18 @@ void	Command::doJoinCommand(Server &server){
 						// server.getChannel(server.getId()).fdsPushBack(_fd);
 	} else {
 		// if not admin and not already in channel
+
 		for (vector<Channel>::iterator it = tmpVector.begin(); it != tmpVector.end(); it++) {
 			if ((*it).getChannelName() == _arguments[0]) {
 				if((*it).getFdAdmin() != _fd) {
 					vector<int>::iterator it2;
-					for(it2= (*it).getFdVector().begin(); it2 != (*it).getFdVector().end(); it2++) {
+                    vector<int> tmpFd = (*it).getFdVector();
+					for(it2= tmpFd.begin(); it2 != tmpFd.end(); it2++) {
 						if((*it2) == _fd) {
 							break;
 						}
 					}
-					if (it2 == (*it).getFdVector().end()) {
+					if (it2 == tmpFd.end()) {
 						server.channelPushBackFd(channelID - 1, _fd);
 						NewUserConnect(server, _message, _nickname, _username, channelID - 1);
 						std::cout << "NEW MEMBER AT " << server.getChannel(channelID - 1).getChannelName() << " BY FD " << _fd << " " << _nickname << std::endl;

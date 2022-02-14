@@ -51,12 +51,12 @@ int			User::parsCommand(Server &server, string message, int i){
 	static int onlyOnce = 0;
 	bool allPrepIsDone = server.getUser(i).getAllPrepArguments();
 
-	if (!allPrepIsDone)
-		return server.getUser(i).preparationCommands(server, message, i);
-	// if (!onlyOnce){
-	// 	startDebug(server);
-	// 	++onlyOnce;
-	// }
+	 if (!allPrepIsDone)
+		 return server.getUser(i).preparationCommands(server, message, i);
+	//if (!onlyOnce){
+	//	startDebug(server);
+	//	++onlyOnce;
+	//}
 	// all prep is done
 	
 	vector<User> newVector = server.getVectorOfUsers();
