@@ -10,7 +10,6 @@ vector<int>			Channel::getFdVector(){ return(_fds); }
 int					Channel::getFdAdmin(){ return(_fdAmin); }
 string				Channel::getChannelName(){ return(_channelName); }
 
-
 // SETTERS
 void				Channel::fdsPushBack(int fd) { _fds.push_back(fd); }
 void				Channel::setChannelName(string channelName) { _channelName = channelName; }
@@ -112,18 +111,21 @@ void	Command::doPartCommand(Server &server){
 		Channel tmpChannel = server.getChannel(atChannelFd);
 		vector<int> tmpIntFdsVector = server.getChannel(atChannelFd).getFdVector();
 		vector<int>::iterator element = std::find(tmpIntFdsVector.begin(), tmpIntFdsVector.end(), _fd);
+		
 		if (element != tmpIntFdsVector.end()){
-			// segfault
 			int fdAdmin = server.getChannel(atChannelFd).getFdAdmin();
 			tmpIntFdsVector.erase(element);
 			tmpChannel.setFdVector(tmpIntFdsVector);
-			// seg end
 
-			if (_fd == fdAdmin){
-				server.setNewChannelAdm(tmpIntFdsVector); // CHECK IF ADM!!
-				std::cout << "NEW ADM SET\n";
+			if (_fd == fdAdmin && tmpIntFdsVector.size() > 0){
+				server.setNewChannelAdm(tmpIntFdsVector);
+				std::cout << "NEW ADM FD IS " << server.getChannel(server.getId()).getFdAdmin() << std::endl;
 			}
 			server.channelSetNew(tmpChannel, atChannelFd);
+			
+			// send to all that leaves
+			for (int i = 0; i < tmpIntFdsVector.size(); i++)
+				SendMessageIrcSyntax(tmpIntFdsVector[i], _nickname, _username, _message);
 			std::cout << _nickname << " LEAVES " << _arguments[0] << std::endl;;
 			return ;
 		} else { 

@@ -33,17 +33,17 @@ void		startDebug(Server &server){
 	server.setPasswordPassedByUser(0);
 	server.setUserPassedByUser(0);
 	server.setNicknamePassedByUser(0);
-	std::cout << WHITE << "NEW USER! NICKNAME: " << BLUE << "[" << server.getUser(0).getNickname() << "]" << WHITE << " USERNAME: "<< BLUE << "[" << server.getUser(0).getUsername() << "]" << NORMAL << std::endl;
+	std::cout << WHITE << "NEW USER! NICKNAME: " << BLUE << "[" << server.getUser(0).getNickname() << "]" << WHITE << " USERNAME: "<< BLUE << "[" << server.getUser(0).getUsername() << "]" << WHITE << " FD " << BLUE << "[" << server.getUser(0).getFd() << "]" << NORMAL << std::endl;
 	}
 
-	// {
-	// server.setNicknameByUser("mhogg", 1);
-	// server.setUsernameByUser("Irina", 1);
-	// server.setPasswordPassedByUser(1);
-	// server.setUserPassedByUser(1);
-	// server.setNicknamePassedByUser(1);
-	// std::cout << WHITE << "NEW USER! NICKNAME: " << BLUE << "[" << server.getUser(1).getNickname() << "]" << WHITE << " USERNAME: "<< BLUE << "[" << server.getUser(1).getUsername() << "]" << NORMAL << std::endl;;
-	// }
+	{
+	server.setNicknameByUser("mhogg", 1);
+	server.setUsernameByUser("Irina", 1);
+	server.setPasswordPassedByUser(1);
+	server.setUserPassedByUser(1);
+	server.setNicknamePassedByUser(1);
+	std::cout << WHITE << "NEW USER! NICKNAME: " << BLUE << "[" << server.getUser(1).getNickname() << "]" << WHITE << " USERNAME: "<< BLUE << "[" << server.getUser(1).getUsername() << "]" << WHITE << " FD " << BLUE << "[" << server.getUser(1).getFd() << "]" << NORMAL << std::endl;
+	}
 }
 
 
@@ -51,13 +51,13 @@ int			User::parsCommand(Server &server, string message, int i){
 	static int onlyOnce = 0;
 	bool allPrepIsDone = server.getUser(i).getAllPrepArguments();
 
-	 if (!allPrepIsDone)
-		 return server.getUser(i).preparationCommands(server, message, i);
+	//  if (!allPrepIsDone)
+		//  return server.getUser(i).preparationCommands(server, message, i);
 	
-	// if (!onlyOnce){
-	// 	startDebug(server);
-	// 	++onlyOnce;
-	// }
+	if (!onlyOnce){
+		startDebug(server);
+		++onlyOnce;
+	}
 	
 	vector<User> newVector = server.getVectorOfUsers();
 	Command command(message, server.getUser(i).getFd(), server.getUser(i).getNickname(), server.getUser(i).getUsername(), newVector);

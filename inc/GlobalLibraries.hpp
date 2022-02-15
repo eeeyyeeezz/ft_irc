@@ -50,7 +50,7 @@ using std::vector;
 #define NEW_NICK_NAME_SET send(_fd, "New nickname set!\n", 19, 0)
 #define NEED_NICK_OR_USER send(server.getUser(i).getFd(), "You need to write NICK or USER command with argument before you can chat\n", 74, 0)
 #define NEW_USER_CREATED send(server.getUser(i).getFd(), "New user created!\n", 19, 0)
-#define SEND_ABOUT_NEW_USER std::cout << WHITE << "NEW USER! NICKNAME: " << BLUE << "[" << server.getUser(i).getNickname() << "]" << WHITE << " USERNAME: "<< BLUE << "[" << server.getUser(i).getUsername() << "]" << NORMAL << std::endl;
+#define SEND_ABOUT_NEW_USER std::cout << WHITE << "NEW USER! NICKNAME: " << BLUE << "[" << server.getUser(i).getNickname() << "]" << WHITE << " USERNAME: "<< BLUE << "[" << server.getUser(i).getUsername() << "]" << WHITE << " FD " << BLUE << "[" << server.getUser(i).getFd() << "]" << NORMAL << std::endl;
 
 void	SendMessageIrcSyntax(int fd, string nickname, string username, string message);
 bool	contains(string array[], string message);
