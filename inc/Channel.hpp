@@ -7,7 +7,7 @@ class Channel{
 	string				_channelName;
 	vector<int>			_fds;
 	int					_channelID;
-	int					_fdAmin;
+	int					_fdAdmin;
 
 	public:
 	Channel();
@@ -21,12 +21,17 @@ class Channel{
 
 	// SETTERS
 	void				fdsPushBack(int fd);
+	void 				doKickFromChannel(int fd, int userFd);
+	void				doChannelPrivmsg(int fd, string message, string nickname, string username);
 	void				setChannelName(string channelName);
 	void				setFdVector(vector<int> &fds);
 	void				setFdAdmin(int fd);
 	
 	void				setNewVector(vector<int> &newVector);
+	bool				checkUserInChannel(int fd);
 
+	//check
+	void				printFds();
 
 };
 

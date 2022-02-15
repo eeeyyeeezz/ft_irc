@@ -42,6 +42,7 @@ void	Command::checkCommand(Server &server){
 	else if (_command == "NOTICE") doNoticeCommand(server);
 	else if (_command == "JOIN") doJoinCommand(server);
 	else if (_command == "PART") doPartCommand(server);
+	else if (_command == "KICK") doKickCommand(server);
 
 	// BOT commands
 	if (_command == "BOT" && _arguments[0] == "HELP") doHelpCommand();
@@ -101,15 +102,44 @@ void	Command::doPrivmsgCommand(Server &server){
 		}
 	}
 
-
 	if (userExist)
 		SendMessageIrcSyntax(_fd, _nickname, _username, _message);
-	else if (channelExist) 
-		doChannelPrivmsg(tmpChannel, _fd, _message);
+	else if (channelExist) {
+	  //tmpChannel.printFds();
+	  tmpChannel.doChannelPrivmsg(_fd, _message, _nickname, _username);
+	}
 	else {
 		NO_SUCH_NICK;
 		return ;
 	}
 }
+void Command::doKickCommand(Server &server) {
+  if(_arguments.size() < 2) {
+	std::cout << "need more params\n";
+	return;
+  }
 
+  vector<User> tmpVectorOfUsers = server.getVectorOfUsers();
+  bool userExist = false;
+  int userFd;
+  for(vector<User>::iterator it = tmpVectorOfUsers.begin(); it != tmpVectorOfUsers.end(); it++) {
+	if((*it).getNickname() == _arguments[1]) {
+	  userExist = true;
+	  userFd = (*it).getFd();
+	  break;
+	}
+  }
+  if(userExist) {
+	bool channelExist = false;
+	Channel tmpChannel;
+	vector<Channel> tmpVector = server.getVectorOfChannels();
+	for (vector<Channel>::iterator it = tmpVector.begin(); it != tmpVector.end(); it++) {
+	  if ((*it).getChannelName() == _arguments[0]) {
+		channelExist = true;
+		(*it).doKickFromChannel(_fd, userFd);
+		break;
+	  }
+	}
+  }
+}
 Command::~Command() { }

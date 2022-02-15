@@ -35,12 +35,13 @@ class Command{
 	void	doQuitCommand();
 	void	doNickCommand(Server &server);
 	void	doPrivmsgCommand(Server &server);
-	void	doChannelPrivmsg(Channel &tmpChannel, int _fd, string message);
+	//void	doChannelPrivmsg(Channel &tmpChannel, int _fd, string message);
 	void	doNoticeCommand(Server &server);
 	
 	// CHANNEL COMMANDS
 	void	doJoinCommand(Server &server);
 	void	doPartCommand(Server &server);
+	void	doKickCommand(Server &server);
 
 	// BOT
 	void	doHelpCommand();	
