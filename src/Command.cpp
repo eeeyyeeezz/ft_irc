@@ -84,7 +84,7 @@ void	Command::doPrivmsgCommand(Server &server){
 	// if exist
 	bool userExist = false;
 	int fdToPm;
-	for(vector<User>::iterator it = _users.begin(); it != _users.end(); it++){
+	for (vector<User>::iterator it = _users.begin(); it != _users.end(); it++){
 		if ((*it).getNickname() == _arguments[0]){
 			userExist = true;
 			fdToPm = (*it).getFd();
@@ -103,7 +103,7 @@ void	Command::doPrivmsgCommand(Server &server){
 	}
 
 	if (userExist)
-		SendMessageIrcSyntax(_fd, _nickname, _username, _message);
+		SendMessageIrcSyntax(fdToPm, _nickname, _username, _message);
 	else if (channelExist) {
 	  tmpChannel.doChannelPrivmsg(_fd, _message, _nickname, _username);
 	}
@@ -112,6 +112,7 @@ void	Command::doPrivmsgCommand(Server &server){
 		return ;
 	}
 }
+
 void Command::doKickCommand(Server &server) {
   if(_arguments.size() < 2) {
 	std::cout << "need more params\n";

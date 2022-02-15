@@ -49,8 +49,8 @@ bool Channel::checkUserInChannel(int fd) {
 void	Channel::doChannelPrivmsg(int _fd, string message, string nickname, string username){
 	if (checkUserInChannel(_fd)) {
 		for (vector<int>::iterator it = _fds.begin(); it != _fds.end(); it++) {
-		  if((*it) != _fd)
-		  	SendMessageIrcSyntax((*it), nickname, username, message);
+			if ((*it) != _fd)
+				SendMessageIrcSyntax((*it), nickname, username, message);
 		}
 	} else {
 		CANNOT_SEND_TO_CHAN;
@@ -70,7 +70,7 @@ void	Command::doJoinCommand(Server &server){
 		Channel *channel = new Channel(_arguments[0], _fd);
 		server.channelsPushBack(channel);
 		server.setUsersAtChannelFd(channelID);
-		NewUserConnect(server, _message, _nickname, _username, channelID);
+		// NewUserConnect(server, _message, _nickname, _username, channelID);
 		std::cout << "NEW CHANNEL! " << _arguments[0] << " ADMIN IS " << _nickname << std::endl;
 		++channelID;
 		return ;
@@ -87,7 +87,7 @@ void	Command::doJoinCommand(Server &server){
 					}
 					if (it2 == tmpFd.end()) {
 						server.channelPushBackFd(channelID - 1, _fd);
-						NewUserConnect(server, _message, _nickname, _username, channelID - 1);
+						// NewUserConnect(server, _message, _nickname, _username, channelID - 1);
 						std::cout << "NEW MEMBER AT " << server.getChannel(channelID - 1).getChannelName() << " BY FD " << _fd << " " << _nickname << std::endl;
 					}
 				}
@@ -149,10 +149,11 @@ void Channel::doKickFromChannel(int fd, int userFd) {
   } else
 	std::cout << "You are not admin\n";
 }
+
 void Channel::printFds() {
-  vector<int>::iterator itb = _fds.begin();
-  vector<int>::iterator ite = _fds.end();
-  for(vector<int>::iterator it = itb; it!=ite; it++) {
+	vector<int>::iterator itb = _fds.begin();
+	vector<int>::iterator ite = _fds.end();
+	for(vector<int>::iterator it = itb; it!=ite; it++) {
 	std::cout << "fd" << (*it) << "\n";
 	}
 }
