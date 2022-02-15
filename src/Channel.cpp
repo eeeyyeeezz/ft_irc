@@ -3,18 +3,18 @@
 
 Channel::Channel() { }
 
-Channel::Channel(string channelName, int fd) : _channelName(channelName), _fdAmin(fd), _channelID(-1) { _fds.push_back(fd); }
+Channel::Channel(string channelName, int fd) : _channelName(channelName), _fdAdmin(fd), _channelID(-1) { _fds.push_back(fd); }
 
 // GETTERS
 vector<int>			Channel::getFdVector(){ return(_fds); }
-int					Channel::getFdAdmin(){ return(_fdAmin); }
+int					Channel::getFdAdmin(){ return(_fdAdmin); }
 string				Channel::getChannelName(){ return(_channelName); }
 
 // SETTERS
 void				Channel::fdsPushBack(int fd) { _fds.push_back(fd); }
 void				Channel::setChannelName(string channelName) { _channelName = channelName; }
 void				Channel::setFdVector(vector<int> &fds) { _fds = fds; }
-void				Channel::setFdAdmin(int fd) { _fdAmin = fd; }
+void				Channel::setFdAdmin(int fd) { _fdAdmin = fd; }
 void				Channel::setNewVector(vector<int> &newVector) { _fds = newVector; }
 
 void	NewUserConnect(Server &server, string message, string nickname, string username, int id){
@@ -34,25 +34,27 @@ bool	checkChannelNameExist(vector<Channel> &tmpVector, string channelName){
 	return false;
 }
 
-bool Command::checkUserInChannel(Channel &channel) {
-	if (channel.getFdAdmin() == _fd)
-		return true;
-	vector<int> tmpVector = channel.getFdVector();
-	for (vector<int>::iterator it = tmpVector.begin(); it != tmpVector.end(); it++){
-		if ((*it) == _fd)
-			return true;
+bool Channel::checkUserInChannel(int fd) {
+	if (fd == _fdAdmin) {
+	  return true;
+	}
+	for (vector<int>::iterator it = _fds.begin(); it != _fds.end(); it++){
+		if ((*it) == fd) {
+		  return true;
+		}
 	}
 	return false;
 }
 
-void	Command::doChannelPrivmsg(Channel &tmpChannel, int _fd, string message){
-	if (checkUserInChannel(tmpChannel)) {
-		vector<int> tmpFds = tmpChannel.getFdVector();
-		for (vector<int>::iterator it = tmpFds.begin(); it != tmpFds.end(); it++)
-			SendMessageIrcSyntax((*it), _nickname, _username, message);
+void	Channel::doChannelPrivmsg(int _fd, string message, string nickname, string username){
+	if (checkUserInChannel(_fd)) {
+		for (vector<int>::iterator it = _fds.begin(); it != _fds.end(); it++) {
+		  if((*it) != _fd)
+		  	SendMessageIrcSyntax((*it), nickname, username, message);
+		}
 	} else {
 		CANNOT_SEND_TO_CHAN;
-		send(_fd, tmpChannel.getChannelName().c_str(), tmpChannel.getChannelName().length() + 1, 0);
+		send(_fd, _channelName.c_str(), _channelName.length() + 1, 0);
 		send(_fd, "\n", 1, 0);
 	}
 }
@@ -135,5 +137,23 @@ void	Command::doPartCommand(Server &server){
 		}
 	}
 }
-
+void Channel::doKickFromChannel(int fd, int userFd) {
+  if(fd == _fdAdmin) {
+	vector<int>::iterator itb = _fds.begin();
+	vector<int>::iterator ite = _fds.end();
+	for(vector<int>::iterator it = itb; it!=ite; it++) {
+	  if((*it) == userFd) {
+		_fds.erase(it);
+	  }
+	}
+  } else
+	std::cout << "You are not admin\n";
+}
+void Channel::printFds() {
+  vector<int>::iterator itb = _fds.begin();
+  vector<int>::iterator ite = _fds.end();
+  for(vector<int>::iterator it = itb; it!=ite; it++) {
+	std::cout << "fd" << (*it) << "\n";
+	}
+}
 Channel::~Channel() { }
