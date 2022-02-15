@@ -105,7 +105,6 @@ void	Command::doPrivmsgCommand(Server &server){
 	if (userExist)
 		SendMessageIrcSyntax(_fd, _nickname, _username, _message);
 	else if (channelExist) {
-	  //tmpChannel.printFds();
 	  tmpChannel.doChannelPrivmsg(_fd, _message, _nickname, _username);
 	}
 	else {
@@ -137,7 +136,7 @@ void Command::doKickCommand(Server &server) {
 	  if ((*it).getChannelName() == _arguments[0]) {
 		channelExist = true;
 		(*it).doKickFromChannel(_fd, userFd);
-		break;
+		server.channelVectorSetNew(tmpVector);
 	  }
 	}
   }
