@@ -23,7 +23,6 @@ void	NewUserConnect(Server &server, string message, string nickname, string user
 	
 	for (int i = 0; i < tmpFdVector.size(); i++)
 		SendMessageIrcSyntax(tmpFdVector[i], nickname, username, message);
-	// :nickname!username@host message	
 }
 
 bool	checkChannelNameExist(vector<Channel> &tmpVector, string channelName){
@@ -55,7 +54,7 @@ void	Channel::doChannelPrivmsg(int _fd, string message, string nickname, string 
 	} else {
 		CANNOT_SEND_TO_CHAN;
 		send(_fd, _channelName.c_str(), _channelName.length() + 1, 0);
-		send(_fd, "\n", 1, 0);
+		send(_fd, "\r\n", 3, 0);
 	}
 }
 
@@ -70,14 +69,14 @@ void	Command::doJoinCommand(Server &server){
 		Channel *channel = new Channel(_arguments[0], _fd);
 		server.channelsPushBack(channel);
 		server.setUsersAtChannelFd(channelID);
-		// NewUserConnect(server, _message, _nickname, _username, channelID);
+		NewUserConnect(server, _message, _nickname, _username, channelID);
 		std::cout << "NEW CHANNEL! " << _arguments[0] << " ADMIN IS " << _nickname << std::endl;
 		++channelID;
 		return ;
 	} else {
 		// if not admin and not already in channel
 		for (vector<Channel>::iterator it = tmpVector.begin(); it != tmpVector.end(); it++){
-			if ((*it).getChannelName() == _arguments[0]) {
+			if ((*it).getChannelName() == _arguments[0]){
 				if ((*it).getFdAdmin() != _fd){
 					vector<int>::iterator it2;
 					vector<int> tmpFd = (*it).getFdVector();
@@ -85,9 +84,9 @@ void	Command::doJoinCommand(Server &server){
 						if ((*it2) == _fd)
 							break;
 					}
-					if (it2 == tmpFd.end()) {
+					if (it2 == tmpFd.end()){
 						server.channelPushBackFd(channelID - 1, _fd);
-						// NewUserConnect(server, _message, _nickname, _username, channelID - 1);
+						NewUserConnect(server, _message, _nickname, _username, channelID - 1);
 						std::cout << "NEW MEMBER AT " << server.getChannel(channelID - 1).getChannelName() << " BY FD " << _fd << " " << _nickname << std::endl;
 					}
 				}
@@ -137,24 +136,57 @@ void	Command::doPartCommand(Server &server){
 		}
 	}
 }
-void Channel::doKickFromChannel(int fd, int userFd) {
-  if(fd == _fdAdmin) {
-	vector<int>::iterator itb = _fds.begin();
-	vector<int>::iterator ite = _fds.end();
-	for(vector<int>::iterator it = itb; it!=ite; it++) {
-	  if((*it) == userFd) {
-		_fds.erase(it);
-	  }
+
+void Command::doKickCommand(Server &server) {
+	if(_arguments.size() < 2){
+		// 461 ERR_NEEDMOREPARAMS
+		return;
 	}
-  } else
-	std::cout << "You are not admin\n";
+
+	vector<User> tmpVectorOfUsers = server.getVectorOfUsers();
+	bool userExist = false;
+	int userFd;
+	for (vector<User>::iterator it = tmpVectorOfUsers.begin(); it != tmpVectorOfUsers.end(); it++){
+		if ((*it).getNickname() == _arguments[1]){
+			userExist = true;
+			userFd = (*it).getFd();
+			break;
+		}
+	}
+	
+	if (userExist){
+		bool channelExist = false;
+		Channel tmpChannel;
+		vector<Channel> tmpVector = server.getVectorOfChannels();
+		for (vector<Channel>::iterator it = tmpVector.begin(); it != tmpVector.end(); it++){
+			if ((*it).getChannelName() == _arguments[0]){
+				channelExist = true;
+				(*it).doKickFromChannel(_fd, userFd);
+				server.channelVectorSetNew(tmpVector);
+			}
+		}
+	}
+}
+
+void Channel::doKickFromChannel(int fd, int userFd){
+	if (fd == _fdAdmin){
+		vector<int>::iterator itb = _fds.begin();
+		vector<int>::iterator ite = _fds.end();
+		for (vector<int>::iterator it = itb; it != ite; it++){
+			if ((*it) == userFd){
+				_fds.erase(it);
+			}
+		}
+	} else
+		;
+		// 482 ERR_CHANOPRIVSNEEDED
 }
 
 void Channel::printFds() {
 	vector<int>::iterator itb = _fds.begin();
 	vector<int>::iterator ite = _fds.end();
-	for(vector<int>::iterator it = itb; it!=ite; it++) {
-	std::cout << "fd" << (*it) << "\n";
+	for (vector<int>::iterator it = itb; it != ite; it++){
+		std::cout << "fd" << (*it) << "\n";
 	}
 }
 Channel::~Channel() { }

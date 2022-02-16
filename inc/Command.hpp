@@ -32,7 +32,7 @@ class Command{
 	void	checkCommand(Server &server);
 
 	// COMMANDS
-	void	doQuitCommand();
+	void	doQuitCommand(Server &server);
 	void	doNickCommand(Server &server);
 	void	doPrivmsgCommand(Server &server);
 	//void	doChannelPrivmsg(Channel &tmpChannel, int _fd, string message);
@@ -47,7 +47,10 @@ class Command{
 	void	doHelpCommand();	
 	void	doShowtimeCommand();
 	void	doRandnumberCommand();
-    bool    checkUserInChannel(Channel &channel);
+	
+		
+	// OTHER
+	bool	checkUserInChannel(Channel &channel);
 };
 
 

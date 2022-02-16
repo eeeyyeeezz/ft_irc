@@ -16,6 +16,9 @@ Command::Command(string message, int fd, string nickname, string username, vecto
 		_arguments.erase(_arguments.begin());
 
 		for (vector<string>::iterator it = _arguments.begin(); it != _arguments.end(); it++)
+			(*it).erase(std::remove((*it).begin(), (*it).end(), '\r'), (*it).end());
+
+		for (vector<string>::iterator it = _arguments.begin(); it != _arguments.end(); it++)
 			(*it).erase(std::remove((*it).begin(), (*it).end(), '\n'), (*it).end());
 	}
 }
@@ -36,7 +39,7 @@ int		Command::commandStart(Server &server){
 
 void	Command::checkCommand(Server &server){
 	
-	if (_command == "QUIT") doQuitCommand();
+	if (_command == "QUIT") doQuitCommand(server);
 	else if (_command == "NICK") doNickCommand(server);
 	else if (_command == "PRIVMSG") doPrivmsgCommand(server);
 	else if (_command == "NOTICE") doNoticeCommand(server);
@@ -46,16 +49,22 @@ void	Command::checkCommand(Server &server){
 
 	// BOT commands
 	if (_command == "BOT" && _arguments[0] == "HELP") doHelpCommand();
+	if (_command == "BOT" && _arguments[0] == "SHOWTIME") doShowtimeCommand();
+	if (_command == "BOT" && _arguments[0] == "RANDNUMBER") doRandnumberCommand();
 }
 
 void	Command::doNoticeCommand(Server &server) { doPrivmsgCommand(server); }
 
-void	Command::doQuitCommand(){
-	string goodbyeMessage;
-	for (vector<string>::iterator it = _arguments.begin(); it != _arguments.end(); it++)
-		goodbyeMessage += *it + " ";
+void	Command::doQuitCommand(Server &server){
+	vector<User> tmpUser = server.getVectorOfUsers();
+	vector<User>::iterator it_begin = tmpUser.begin();
+	vector<User>::iterator it_end = tmpUser.end();
 	
-	std::cout << RED << _fd << ":" << BLUE << " [" << goodbyeMessage << "]" << NORMAL;
+	for (; it_begin != it_end; it_begin++){
+		if ((*it_begin).getFd() != _fd)
+			send((*it_begin).getFd(), _message.c_str(), _message.length() + 1, 0);
+	}
+	
 	close(_fd);
 }
 
@@ -71,16 +80,13 @@ void	Command::doNickCommand(Server &server){
 		}
 	}
 	server.setNicknameByUser(newNick, server.getId());
-	// _nickname = _arguments[0];		// Ne tak nado u usera menyat'
 	NEW_NICK_NAME_SET;
 }
 
 
 void	Command::doPrivmsgCommand(Server &server){
-	if (_arguments.size() < 2){
-		 NO_USER_TO_PRIVATEMSG;
-		 return ;
-	}
+	if (_arguments.size() < 2){ NO_USER_TO_PRIVATEMSG; return ; }
+	
 	// if exist
 	bool userExist = false;
 	int fdToPm;
@@ -91,6 +97,7 @@ void	Command::doPrivmsgCommand(Server &server){
 			break;
 		}
 	}
+	
 	bool channelExist = false;
 	Channel tmpChannel;
 	vector<Channel> tmpVector = server.getVectorOfChannels();
@@ -104,42 +111,12 @@ void	Command::doPrivmsgCommand(Server &server){
 
 	if (userExist)
 		SendMessageIrcSyntax(fdToPm, _nickname, _username, _message);
-	else if (channelExist) {
-	  tmpChannel.doChannelPrivmsg(_fd, _message, _nickname, _username);
-	}
+	else if (channelExist) 
+		tmpChannel.doChannelPrivmsg(_fd, _message, _nickname, _username);
 	else {
 		NO_SUCH_NICK;
 		return ;
 	}
 }
 
-void Command::doKickCommand(Server &server) {
-  if(_arguments.size() < 2) {
-	std::cout << "need more params\n";
-	return;
-  }
-
-  vector<User> tmpVectorOfUsers = server.getVectorOfUsers();
-  bool userExist = false;
-  int userFd;
-  for(vector<User>::iterator it = tmpVectorOfUsers.begin(); it != tmpVectorOfUsers.end(); it++) {
-	if((*it).getNickname() == _arguments[1]) {
-	  userExist = true;
-	  userFd = (*it).getFd();
-	  break;
-	}
-  }
-  if(userExist) {
-	bool channelExist = false;
-	Channel tmpChannel;
-	vector<Channel> tmpVector = server.getVectorOfChannels();
-	for (vector<Channel>::iterator it = tmpVector.begin(); it != tmpVector.end(); it++) {
-	  if ((*it).getChannelName() == _arguments[0]) {
-		channelExist = true;
-		(*it).doKickFromChannel(_fd, userFd);
-		server.channelVectorSetNew(tmpVector);
-	  }
-	}
-  }
-}
 Command::~Command() { }

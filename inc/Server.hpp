@@ -18,6 +18,7 @@ class Server{
 	vector<Channel>	_channels;
 
 	public:
+	Server();
 	Server(int port, string password);
 	~Server();
 
