@@ -20,17 +20,16 @@ void				Channel::setNewVector(vector<int> &newVector) { _fds = newVector; }
 void	NewUserConnect(Server &server, int fd, string message, string nickname, string username, int id, string channelName){
 	Channel tmpChannel = server.getChannel(id);
 	vector<int> tmpFdVector = tmpChannel.getFdVector();
-
 	
-	string beginMessage = string(":KVIrc 331 " + nickname + channelName + string(":No topis is set\r\n") + 
-	string(":KVIrc 353 ") + nickname + " = " + channelName + string(" :@") + nickname + "\r\n") + 
-	string(":KVIrc 366 ") + nickname + " " + channelName + " :End of /NAMES list";
-	send(fd, beginMessage.c_str(), beginMessage.length() + 1, 0);	
-		
-	for (int i = 0; i < tmpFdVector.size(); i++){	
+	for (int i = 0; i < tmpFdVector.size(); i++){
 		if (tmpFdVector[i] != fd)
 			SendMessageIrcSyntax(tmpFdVector[i], nickname, username, message);
 	}
+	
+	string beginMessage = string(":KVIrc 331 " + nickname + channelName + string(":No topis is set\r\n") + 
+	string(":KVIrc 353 ") + nickname + " = " + channelName + string(" :@") + nickname +  "\r\n") + 
+	string(":KVIrc 366 ") + nickname + " " + channelName + " :End of /NAMES list\r\n";
+	send(fd, beginMessage.c_str(), beginMessage.length() + 1, 0);	
 }
 
 bool	checkChannelNameExist(vector<Channel> &tmpVector, string channelName){
@@ -42,13 +41,12 @@ bool	checkChannelNameExist(vector<Channel> &tmpVector, string channelName){
 }
 
 bool Channel::checkUserInChannel(int fd) {
-	if (fd == _fdAdmin) {
-	  return true;
-	}
+	if (fd == _fdAdmin)
+		return true;
+		
 	for (vector<int>::iterator it = _fds.begin(); it != _fds.end(); it++){
-		if ((*it) == fd) {
-		  return true;
-		}
+		if ((*it) == fd)
+			return true;
 	}
 	return false;
 }

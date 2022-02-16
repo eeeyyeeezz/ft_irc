@@ -134,13 +134,10 @@ int				User::parsNickCommand(Server &server, string message, int i){
 		NEED_MORE_PARAMS;
 		return (1);
 	}
-	send(server.getUser(i).getFd(), "Nickname set!\n", 15, 0);
 	server.setNicknameByUser(parametrs[0], i);
 	server.setNicknamePassedByUser(i);
-	if (GET_USER_PASSED){
-		NEW_USER_CREATED;
+	if (GET_USER_PASSED)
 		SEND_ABOUT_NEW_USER;
-	}
 	return (1);
 }
 
@@ -151,27 +148,20 @@ int				User::parsUserCommand(Server &server, string message, int i){
 		NEED_MORE_PARAMS;
 		return (1);
 	}
-	send(server.getUser(i).getFd(), "Username set!\n", 15, 0);
 	server.setUsernameByUser(parametrs[0], i);
 	server.setUserPassedByUser(i);
-	if (GET_NICK_PASSED){
-		NEW_USER_CREATED;
+	if (GET_NICK_PASSED)
 		SEND_ABOUT_NEW_USER;
-	}
 	return (1);
 }
 
 void			User::checkUserPassword(Server &server, string message, int i){
 	vector<string>	parametrs = getParametrs(message);
 
-	if (parametrs[0] == std::string(server.getPassword())){
-		send(server.getUser(i).getFd(), "Password correct!\n", 19, 0);
+	if (parametrs[0] == std::string(server.getPassword()))
 		server.setPasswordPassedByUser(i);
-	} else{
+	else
 		PASSWORD_WRONG;
-		// "461 * PASS :Not enough parameters\n"
-		// close(server.getUser(i).getFd());
-	}
 }
 
 User::~User() { };
