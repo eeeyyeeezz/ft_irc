@@ -17,12 +17,20 @@ void				Channel::setFdVector(vector<int> &fds) { _fds = fds; }
 void				Channel::setFdAdmin(int fd) { _fdAdmin = fd; }
 void				Channel::setNewVector(vector<int> &newVector) { _fds = newVector; }
 
-void	NewUserConnect(Server &server, string message, string nickname, string username, int id){
+void	NewUserConnect(Server &server, int fd, string message, string nickname, string username, int id, string channelName){
 	Channel tmpChannel = server.getChannel(id);
 	vector<int> tmpFdVector = tmpChannel.getFdVector();
+
 	
-	for (int i = 0; i < tmpFdVector.size(); i++)
-		SendMessageIrcSyntax(tmpFdVector[i], nickname, username, message);
+	string beginMessage = string(":KVIrc 331 " + nickname + channelName + string(":No topis is set\r\n") + 
+	string(":KVIrc 353 ") + nickname + " = " + channelName + string(" :@") + nickname + "\r\n") + 
+	string(":KVIrc 366 ") + nickname + " " + channelName + " :End of /NAMES list";
+	send(fd, beginMessage.c_str(), beginMessage.length() + 1, 0);	
+		
+	for (int i = 0; i < tmpFdVector.size(); i++){	
+		if (tmpFdVector[i] != fd)
+			SendMessageIrcSyntax(tmpFdVector[i], nickname, username, message);
+	}
 }
 
 bool	checkChannelNameExist(vector<Channel> &tmpVector, string channelName){
@@ -68,8 +76,8 @@ void	Command::doJoinCommand(Server &server){
 	if (!channelNameExist){
 		Channel *channel = new Channel(_arguments[0], _fd);
 		server.channelsPushBack(channel);
-		server.setUsersAtChannelFd(channelID);
-		NewUserConnect(server, _message, _nickname, _username, channelID);
+		server.setUsersAtChannelFd(channelID);		
+		NewUserConnect(server, _fd, _message, _nickname, _username, channelID, _arguments[0]);
 		std::cout << "NEW CHANNEL! " << _arguments[0] << " ADMIN IS " << _nickname << std::endl;
 		++channelID;
 		return ;
@@ -86,7 +94,7 @@ void	Command::doJoinCommand(Server &server){
 					}
 					if (it2 == tmpFd.end()){
 						server.channelPushBackFd(channelID - 1, _fd);
-						NewUserConnect(server, _message, _nickname, _username, channelID - 1);
+						NewUserConnect(server, _fd, _message, _nickname, _username, channelID - 1, _arguments[0]);
 						std::cout << "NEW MEMBER AT " << server.getChannel(channelID - 1).getChannelName() << " BY FD " << _fd << " " << _nickname << std::endl;
 					}
 				}
