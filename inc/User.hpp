@@ -51,7 +51,7 @@ class User {
 	int		preparationCommands(Server &server, string message, int i);
 	int		parsNickCommand(Server &server, string message, int i);
 	int		parsUserCommand(Server &server, string message, int i);
-	int		parsCommand(Server &server, string message, int i); // return 1 - user passed command ; return 0 - simple message
+	int		parsCommand(Server &server, string message, int i, struct pollfd fds[]); // return 1 - user passed command ; return 0 - simple message
 };
 
 #endif

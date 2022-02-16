@@ -27,19 +27,19 @@ Command::Command(string message, int fd, string nickname, string username, vecto
 vector<User>		Command::getVectorOfUsers() { return (_users); }
 
 
-int		Command::commandStart(Server &server){
+int		Command::commandStart(Server &server, struct pollfd fds[]){
 	string	commands[] = {"NICK", "QUIT", "PRIVMSG", "NOTICE", "HELP", "JOIN", "PART", "KICK", "BOT"};
 	if (std::find(std::begin(commands), std::end(commands), _command) != std::end(commands)){
-		checkCommand(server);
+		checkCommand(server, fds);
 		return (1);
 	}
 
 	return (0);
 }
 
-void	Command::checkCommand(Server &server){
+void	Command::checkCommand(Server &server, struct pollfd fds[]){
 	
-	if (_command == "QUIT") doQuitCommand(server);
+	if (_command == "QUIT") doQuitCommand(server, fds);
 	else if (_command == "NICK") doNickCommand(server);
 	else if (_command == "PRIVMSG") doPrivmsgCommand(server);
 	else if (_command == "NOTICE") doNoticeCommand(server);
@@ -49,21 +49,22 @@ void	Command::checkCommand(Server &server){
 
 	// BOT commands
 	if (_command == "BOT" && _arguments[0] == "HELP") doHelpCommand();
+	if (_command == "BOT" && _arguments[0] == "INFO") doInfoCommand(*this);
+	if (_command == "BOT" && _arguments[0] == "SHOWUSERS") doShowusersCommand(server);
 	if (_command == "BOT" && _arguments[0] == "SHOWTIME") doShowtimeCommand();
 	if (_command == "BOT" && _arguments[0] == "RANDNUMBER") doRandnumberCommand();
 }
 
 void	Command::doNoticeCommand(Server &server) { doPrivmsgCommand(server); }
 
-void	Command::doQuitCommand(Server &server){
-	vector<User> tmpUser = server.getVectorOfUsers();
-	vector<User>::iterator it_begin = tmpUser.begin();
-	vector<User>::iterator it_end = tmpUser.end();
+void	Command::doQuitCommand(Server &server, struct pollfd fds[]){
+	std::cout << RED << fds[server.getId() + 1].fd << BLUE << "  disconnected" << NORMAL << std::endl;
+	fds[server.getId() + 1].fd = -1;
 	
-	for (; it_begin != it_end; it_begin++){
-		if ((*it_begin).getFd() != _fd)
-			send((*it_begin).getFd(), _message.c_str(), _message.length() + 1, 0);
-	}
+	vector<User> tmpVector = server.getVectorOfUsers();
+	tmpVector.erase(tmpVector.begin() + server.getId());
+	server.usersVectorSetNew(tmpVector);
+	server.setCountConnects(-1);
 	
 	close(_fd);
 }

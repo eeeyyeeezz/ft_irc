@@ -30,9 +30,10 @@ void			Server::setUsernameByUser(string username, int i) {  _users[i].setUsernam
 void			Server::setNicknameByUser(string nickname, int i) { _users[i].setNickname(nickname); }
 void			Server::channelsPushBack(Channel *channel) { _channels.push_back(*channel); }
 
-void			Server::setUsersAtChannelFd(int fd) { _users[_id].setAtChannelFd(fd); }
 void			Server::userPushBack(User *user) { _users.push_back(*user); }
+void			Server::usersVectorSetNew(vector<User> &tmpVector) { _users = tmpVector; }
 
+void			Server::setUsersAtChannelFd(int fd) { _users[_id].setAtChannelFd(fd); }
 void			Server::setNewChannelAdm(vector<int> &tmpIntFdsVector) { _channels[_id].setFdAdmin(tmpIntFdsVector[0]); }
 void			Server::channelPushBackFd(int id, int fd) { _channels[id].fdsPushBack(fd); }
 void			Server::channelVectorSetNew(vector<Channel> &tmpVector){ _channels = tmpVector; }
@@ -117,8 +118,8 @@ void	Server::continueConnection(int &flag, struct pollfd fds[], size_t &i){
 	buff[readed] = 0;
 	_users[i - 1].setFd(fds[i].fd);
 	setId(i - 1);
-	if (!_users[i].parsCommand(*this, std::string(buff), i - 1))
-		writeToServerAndAllUsers(std::string(buff), readed, fds, i);
+	_users[i].parsCommand(*this, std::string(buff), i - 1, fds);
+	writeToServerAndAllUsers(std::string(buff), readed, fds, i);
 	fds[i].revents = 0;
 }
 

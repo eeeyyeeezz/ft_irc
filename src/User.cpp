@@ -47,12 +47,12 @@ void		startDebug(Server &server){
 }
 
 
-int			User::parsCommand(Server &server, string message, int i){
+int			User::parsCommand(Server &server, string message, int i, struct pollfd fds[]){
 	static int onlyOnce = 0;
 	bool allPrepIsDone = server.getUser(i).getAllPrepArguments();
 
-	 if (!allPrepIsDone)
-		 return server.getUser(i).preparationCommands(server, message, i);
+	if (!allPrepIsDone)
+		return server.getUser(i).preparationCommands(server, message, i);
 	
 	// if (!onlyOnce){
 	// 	startDebug(server);
@@ -61,7 +61,7 @@ int			User::parsCommand(Server &server, string message, int i){
 	
 	vector<User> newVector = server.getVectorOfUsers();
 	Command command(message, server.getUser(i).getFd(), server.getUser(i).getNickname(), server.getUser(i).getUsername(), newVector);
-	return command.commandStart(server);
+	return command.commandStart(server, fds);
 }
 
 string		getFirstWord(string message){

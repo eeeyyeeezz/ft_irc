@@ -49,9 +49,10 @@ class Server{
 	void			setListening(int socket);
 	void			setCountConnects(int i);
 	
-	void			setUsersAtChannelFd(int fd);
 	void			userPushBack(User *user);
+	void			usersVectorSetNew(vector<User> &tmpVector);
 	
+	void			setUsersAtChannelFd(int fd);
 	void			channelSetNew(Channel &newChannel, int id);
 	void			channelVectorSetNew(vector<Channel> &tmpVector);
 	void			channelPushBackFd(int id, int fd);

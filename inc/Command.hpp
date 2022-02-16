@@ -28,11 +28,11 @@ class Command{
 	// GETTERS
 	vector<User>	getVectorOfUsers();
 
-	int		commandStart(Server &server);
-	void	checkCommand(Server &server);
+	int		commandStart(Server &server, struct pollfd fds[]);
+	void	checkCommand(Server &server, struct pollfd fds[]);
 
 	// COMMANDS
-	void	doQuitCommand(Server &server);
+	void	doQuitCommand(Server &server, struct pollfd fds[]);
 	void	doNickCommand(Server &server);
 	void	doPrivmsgCommand(Server &server);
 	//void	doChannelPrivmsg(Channel &tmpChannel, int _fd, string message);
@@ -44,7 +44,9 @@ class Command{
 	void	doKickCommand(Server &server);
 
 	// BOT
-	void	doHelpCommand();	
+	void	doHelpCommand();
+	void	doInfoCommand(Command &user);
+	void	doShowusersCommand(Server &server);
 	void	doShowtimeCommand();
 	void	doRandnumberCommand();
 	
