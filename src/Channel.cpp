@@ -26,7 +26,7 @@ void	NewUserConnect(Server &server, int fd, string message, string nickname, str
 			SendMessageIrcSyntax(tmpFdVector[i], nickname, username, message);
 	}
 	
-	string beginMessage = string(":KVIrc 331 " + nickname + " " + channelName + ":No topis is set\r\n"); // +  
+	string beginMessage = string(":KVIrc 331 " + nickname + " " + channelName + ": No topis is set\r\n"); // +  
 	// ":KVIrc 353 " + nickname + " = " + channelName + " :@" + nickname + "\r\n"); 
 	// ":KVIrc 366 " + nickname + " " + channelName + " :End of /NAMES list\r\n");
 	send(fd, beginMessage.c_str(), beginMessage.length() + 1, 0);	
@@ -62,19 +62,22 @@ void	Channel::doChannelPrivmsg(int fd, string message, string nickname, string u
 
 void	Command::createNewChannel(Server &server){
 	Channel *channel = new Channel(_arguments[0], _fd);
+	int	_channelID = server.getChannelID();
 	server.channelsPushBack(channel);
-	server.setUsersAtChannelFd(_channelID);		
+	server.setUsersAtChannelFd(_channelID);
 	NewUserConnect(server, _fd, _message, _nickname, _username, _channelID, _arguments[0]);
 	std::cout << "NEW CHANNEL! " << _arguments[0] << " ADMIN IS " << _nickname << std::endl;
-	++_channelID;
+	server.setChannelID(1);
 }
 
 void	Command::doJoinCommand(Server &server){
+	int	_channelID = server.getChannelID();
 	bool channelNameExist = false;
 	
 	vector<Channel> tmpVector = server.getVectorOfChannels();
 	channelNameExist = checkChannelNameExist(tmpVector, _arguments[0]);
 	
+	std::cout << "CHANNEL ID IS " << _channelID << std::endl;
 	if (!channelNameExist)
 		createNewChannel(server);
 	else {
@@ -95,12 +98,13 @@ void	Command::doJoinCommand(Server &server){
 					}
 				}
 			}
-		}	
+		}
 	}
 }
 
 void	Command::doPartCommand(Server &server){
 	bool channelNameExist = false;
+	int	_channelID = server.getChannelID();
 	vector<Channel> tmpVector = server.getVectorOfChannels();
 	channelNameExist = checkChannelNameExist(tmpVector, _arguments[0]);
 	

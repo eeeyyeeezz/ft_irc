@@ -3,10 +3,11 @@
 
 #define BUFFER_SIZE 4096
 
-Server::Server(int port, string password) : _port(port), _password(password), _countConnects(0) { }
+Server::Server(int port, string password) : _port(port), _password(password), _countConnects(0), _channelID(0) { }
 
 // GETTERS
 int				Server::getId() { return (_id); }
+int				Server::getChannelID() { return(_channelID); }
 int				Server::getPort() { return(_port); }
 void			Server::setListening(int socket) { _listening = socket; }
 int				Server::getListening() { return(_listening); }
@@ -23,6 +24,7 @@ User			Server::getUser(int i) { return(_users[i]); }
 void			Server::setPasswordPassedByUser(int i) { _users[i].setPasswordPassed(); }
 void			Server::setNicknamePassedByUser(int i) { _users[i].setNicknamePassed(); }
 void			Server::setUserPassedByUser(int i) { _users[i].setUserPassed(); }
+void			Server::setChannelID(int id) { _channelID += id; }
 void			Server::setId(int id) { _id = id;  }
 
 void			Server::setCountConnects(int i) { _countConnects += i; }

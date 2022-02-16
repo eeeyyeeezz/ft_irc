@@ -10,6 +10,7 @@ class Server{
 	private:
 	int				_port;
 	int				_id;
+	int				_channelID;	// just iterator for channels
 	int				_listening;
 	int				_countConnects;
 	string			_password;
@@ -24,6 +25,7 @@ class Server{
 
 	// GETTERS
 	int				getId();
+	int				getChannelID();
 	int				getPort();
 	int				getListening();
 	int				getCountConnects();
@@ -44,7 +46,7 @@ class Server{
 	void			setNicknamePassedByUser(int i);
 	void			setUserPassedByUser(int i);
 
-	void			channelsPushBack(Channel *channel);
+	void			setChannelID(int id);
 	void			setId(int id);
 	void			setListening(int socket);
 	void			setCountConnects(int i);
@@ -53,6 +55,7 @@ class Server{
 	void			usersVectorSetNew(vector<User> &tmpVector);
 	
 	void			setUsersAtChannelFd(int fd);
+	void			channelsPushBack(Channel *channel);
 	void			channelSetNew(Channel &newChannel, int id);
 	void			channelVectorSetNew(vector<Channel> &tmpVector);
 	void			channelPushBackFd(int id, int fd);
