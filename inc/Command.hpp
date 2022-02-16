@@ -12,6 +12,7 @@ class Command{
 	private:
 	int				_fd;
 	int				_i;
+	int				_channelID;
 	string			_message;
 	string			_username;
 	string			_nickname;

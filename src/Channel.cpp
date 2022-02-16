@@ -65,7 +65,6 @@ void	Channel::doChannelPrivmsg(int _fd, string message, string nickname, string 
 }
 
 void	Command::doJoinCommand(Server &server){
-	static int channelID = 0;
 	bool channelNameExist = false;
 	
 	vector<Channel> tmpVector = server.getVectorOfChannels();
@@ -74,10 +73,10 @@ void	Command::doJoinCommand(Server &server){
 	if (!channelNameExist){
 		Channel *channel = new Channel(_arguments[0], _fd);
 		server.channelsPushBack(channel);
-		server.setUsersAtChannelFd(channelID);		
-		NewUserConnect(server, _fd, _message, _nickname, _username, channelID, _arguments[0]);
+		server.setUsersAtChannelFd(_channelID);		
+		NewUserConnect(server, _fd, _message, _nickname, _username, _channelID, _arguments[0]);
 		std::cout << "NEW CHANNEL! " << _arguments[0] << " ADMIN IS " << _nickname << std::endl;
-		++channelID;
+		++_channelID;
 		return ;
 	} else {
 		// if not admin and not already in channel
@@ -91,9 +90,9 @@ void	Command::doJoinCommand(Server &server){
 							break;
 					}
 					if (it2 == tmpFd.end()){
-						server.channelPushBackFd(channelID - 1, _fd);
-						NewUserConnect(server, _fd, _message, _nickname, _username, channelID - 1, _arguments[0]);
-						std::cout << "NEW MEMBER AT " << server.getChannel(channelID - 1).getChannelName() << " BY FD " << _fd << " " << _nickname << std::endl;
+						server.channelPushBackFd(_channelID - 1, _fd);
+						NewUserConnect(server, _fd, _message, _nickname, _username, _channelID - 1, _arguments[0]);
+						std::cout << "NEW MEMBER AT " << server.getChannel(_channelID - 1).getChannelName() << " BY FD " << _fd << " " << _nickname << std::endl;
 					}
 				}
 			}
@@ -118,6 +117,14 @@ void	Command::doPartCommand(Server &server){
 		Channel tmpChannel = server.getChannel(atChannelFd);
 		vector<int> tmpIntFdsVector = server.getChannel(atChannelFd).getFdVector();
 		vector<int>::iterator element = std::find(tmpIntFdsVector.begin(), tmpIntFdsVector.end(), _fd);
+		
+		if (tmpChannel.getFdVector().size() == 1){
+			tmpVector.erase(tmpVector.begin());
+			server.channelVectorSetNew(tmpVector);
+			_channelID = 0;
+			std::cout << "CHANNEL " << _arguments[0] << " DELETED\n";
+			return ;
+		}
 		
 		if (element != tmpIntFdsVector.end()){
 			int fdAdmin = server.getChannel(atChannelFd).getFdAdmin();
