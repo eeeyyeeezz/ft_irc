@@ -168,12 +168,10 @@ void Command::doKickCommand(Server &server) {
 	}
 	
 	if (userExist){
-		bool channelExist = false;
 		Channel tmpChannel;
-		vector<Channel> tmpVector = server.getVectorOfChannels();
+		vector<Channel> tmpVector = server.getVectorOfChannelsRef();
 		for (vector<Channel>::iterator it = tmpVector.begin(); it != tmpVector.end(); it++){
 			if ((*it).getChannelName() == _arguments[0]){
-				channelExist = true;
 				(*it).doKickFromChannel(_fd, userFd);
 				server.channelVectorSetNew(tmpVector);
 			}
