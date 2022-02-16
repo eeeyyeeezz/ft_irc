@@ -51,17 +51,22 @@ bool Channel::checkUserInChannel(int fd) {
 	return false;
 }
 
-void	Channel::doChannelPrivmsg(int _fd, string message, string nickname, string username){
-	if (checkUserInChannel(_fd)) {
+void	Channel::doChannelPrivmsg(int fd, string message, string nickname, string username){
+	if (checkUserInChannel(fd)) {
 		for (vector<int>::iterator it = _fds.begin(); it != _fds.end(); it++) {
-			if ((*it) != _fd)
+			if ((*it) != fd)
 				SendMessageIrcSyntax((*it), nickname, username, message);
 		}
-	} else {
-		CANNOT_SEND_TO_CHAN;
-		send(_fd, _channelName.c_str(), _channelName.length() + 1, 0);
-		send(_fd, "\r\n", 3, 0);
-	}
+	} else CANNOT_SEND_TO_CHAN;
+}
+
+void	Command::createNewChannel(Server &server){
+	Channel *channel = new Channel(_arguments[0], _fd);
+	server.channelsPushBack(channel);
+	server.setUsersAtChannelFd(_channelID);		
+	NewUserConnect(server, _fd, _message, _nickname, _username, _channelID, _arguments[0]);
+	std::cout << "NEW CHANNEL! " << _arguments[0] << " ADMIN IS " << _nickname << std::endl;
+	++_channelID;
 }
 
 void	Command::doJoinCommand(Server &server){
@@ -70,15 +75,9 @@ void	Command::doJoinCommand(Server &server){
 	vector<Channel> tmpVector = server.getVectorOfChannels();
 	channelNameExist = checkChannelNameExist(tmpVector, _arguments[0]);
 	
-	if (!channelNameExist){
-		Channel *channel = new Channel(_arguments[0], _fd);
-		server.channelsPushBack(channel);
-		server.setUsersAtChannelFd(_channelID);		
-		NewUserConnect(server, _fd, _message, _nickname, _username, _channelID, _arguments[0]);
-		std::cout << "NEW CHANNEL! " << _arguments[0] << " ADMIN IS " << _nickname << std::endl;
-		++_channelID;
-		return ;
-	} else {
+	if (!channelNameExist)
+		createNewChannel(server);
+	else {
 		// if not admin and not already in channel
 		for (vector<Channel>::iterator it = tmpVector.begin(); it != tmpVector.end(); it++){
 			if ((*it).getChannelName() == _arguments[0]){
@@ -104,9 +103,6 @@ void	Command::doPartCommand(Server &server){
 	bool channelNameExist = false;
 	vector<Channel> tmpVector = server.getVectorOfChannels();
 	channelNameExist = checkChannelNameExist(tmpVector, _arguments[0]);
-	
-	// check if user in channel!
-	
 	
 	if (!channelNameExist){
 		// 403 ERR_NOSUCHCHANNEL
@@ -191,8 +187,7 @@ void Channel::doKickFromChannel(int fd, int userFd){
 			}
 		}
 	} else
-		;
-		// 482 ERR_CHANOPRIVSNEEDED
+		; // 482 ERR_CHANOPRIVSNEEDED
 }
 
 void Channel::printFds() {

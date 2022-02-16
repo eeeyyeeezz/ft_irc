@@ -53,6 +53,7 @@ class Command{
 	
 		
 	// OTHER
+	void	createNewChannel(Server &server);
 	bool	checkUserInChannel(Channel &channel);
 };
 
