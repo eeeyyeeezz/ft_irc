@@ -57,7 +57,10 @@ void	Channel::doChannelPrivmsg(int fd, string message, string nickname, string u
 			if ((*it) != fd)
 				SendMessageIrcSyntax((*it), nickname, username, message);
 		}
-	} else CANNOT_SEND_TO_CHAN;
+	} else {
+		CANNOT_SEND_TO_CHAN;
+		std::cout << "NOT.IN.CHANNEL!\n";
+	}
 }
 
 void	Command::createNewChannel(Server &server){
@@ -121,7 +124,7 @@ void	Command::doPartCommand(Server &server){
 		if (tmpChannel.getFdVector().size() == 1){
 			tmpVector.erase(tmpVector.begin());
 			server.channelVectorSetNew(tmpVector);
-			_channelID = 0;
+			server.setChannelID(-1);
 			std::cout << "CHANNEL " << _arguments[0] << " DELETED\n";
 			return ;
 		}

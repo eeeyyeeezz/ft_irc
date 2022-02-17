@@ -10,6 +10,7 @@ Command::Command(string message, int fd, string nickname, string username, vecto
 		while (getline(stringToSplit, stringSplitted, ' ' ) && stringSplitted != " ")
 			_arguments.push_back(stringSplitted);
 		_command = _arguments[0];
+		_command.erase(std::remove(_command.begin(), _command.end(), '\r'), _command.end());
 		_command.erase(std::remove(_command.begin(), _command.end(), '\n'), _command.end());
 		_arguments.erase(_arguments.begin());
 
