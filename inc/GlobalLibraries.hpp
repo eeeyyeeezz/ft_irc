@@ -39,7 +39,6 @@ using std::vector;
 #define NO_SUCH_NICK send(_fd, "401 ERR_NOSUCHNICK\n", 20, 0)
 #define NICK_NAME_IN_USE send(_fd, "433 ERR_NICKNAMEINUSE\n", 23, 0)
 #define NEED_MORE_PARAMS send(server.getUser(i).getFd(), "461 ERR_NEEDMOREPARAMS\n", 24, 0)
-#define PASSWORD_WRONG send(server.getUser(i).getFd(), "461 * PASS :Not enough parameters\n", 35, 0)
 #define CANNOT_SEND_TO_CHAN send(fd, "404 ERR_CANNOTSENDTOCHAN: ", 26, 0)
 
 // NEW ERRORS
