@@ -54,7 +54,11 @@ void	Command::checkCommand(Server &server, struct pollfd fds[]){
 	if (_command == "BOT" && _arguments[0] == "RANDNUMBER") doRandnumberCommand();
 }
 
-void	Command::doNoticeCommand(Server &server) { doPrivmsgCommand(server); }
+void	Command::doNoticeCommand(Server &server){
+	if (_arguments[0] == "*")
+		return ;
+	doPrivmsgCommand(server); 
+}
 
 void	Command::doQuitCommand(Server &server, struct pollfd fds[]){
 	std::cout << RED << fds[server.getId() + 1].fd << BLUE << "  disconnected" << NORMAL << std::endl;

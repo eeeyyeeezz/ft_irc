@@ -4,13 +4,13 @@
 
 void	Command::doHelpCommand(){
 	if (_arguments.size() == 1)
-		send(_fd, "BOT Commands: HELP, SHOWTIME, RANDNUMBER, INFO, SHOWUSERS\r\n", 60, 0);
+		send(_fd, "BOT COMMANDS: HELP, SHOWTIME, RANDNUMBER, INFO, SHOWUSERS\r\n", 60, 0);
 	else
-		send(_fd, "BOT Wrong syntax\r\n", 19, 0);
+		send(_fd, "BOT ERROR Wrong syntax\r\n", 25, 0);
 }
 
 void	Command::doInfoCommand(Command &user){
-	string showInfo = "Nickname is [" + _nickname + "]\r\nUSERNAME IS [" + _username + "]\r\n";
+	string showInfo = "BOT NICKNAME is [" + _nickname + "]\r\nUSERNAME IS [" + _username + "]\r\n";
 	send(_fd, showInfo.c_str(), showInfo.length() + 1, 0);
 }
 
@@ -18,7 +18,7 @@ void	Command::doShowusersCommand(Server &server){
 	vector<User> tmpVectorOfUsers = server.getVectorOfUsers();
 	int numberOfUsers = tmpVectorOfUsers.size();
 	
-	string stringNumberOfUsers = "BOT NUMBER OF USERS [" + std::to_string(numberOfUsers) + "]\r\n";
+	string stringNumberOfUsers = "BOT SHOWUSERS NUMBER OF USERS [" + std::to_string(numberOfUsers) + "]\r\n";
 	send(_fd, stringNumberOfUsers.c_str(), stringNumberOfUsers.length() + 1, 0);
 	
 	vector<User>::iterator it_begin = tmpVectorOfUsers.begin();
@@ -26,10 +26,12 @@ void	Command::doShowusersCommand(Server &server){
 	
 	int i = 0;
 	while (it_begin != it_end){
-		string infoAboutUser = "BOT ID [" + std::to_string(i) + 
-			"] NICKNAME " + (*it_begin).getNickname() + 
-				"] USERNAME [" + (*it_begin).getUsername() + "]\r\n";
-		send(_fd, infoAboutUser.c_str(), infoAboutUser.length() + 1, 0);
+		string infoAboutUserID = "USER ID [" + std::to_string(i) + "]\r\n";
+		string infoAboutUserNickname = "USER NICKNAME [" + string((*it_begin).getNickname()) + "]\r\n";
+		string infoAboutUserUsername = "USER USERNAME [" + string((*it_begin).getUsername()) + "]\r\n";
+		send(_fd, infoAboutUserID.c_str(), infoAboutUserID.length() + 1, 0);
+		send(_fd, infoAboutUserUsername.c_str(), infoAboutUserID.length() + 1, 0);
+		send(_fd, infoAboutUserNickname.c_str(), infoAboutUserID.length() + 1, 0);
 		++it_begin;
 		++i;
 	}

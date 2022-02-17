@@ -74,6 +74,7 @@ using std::vector;
 // END OF NEW ERRORS
 
 // GET_PASSED
+#define NEW_USER(nickname, username) ("001 * Welcome to the Internet Relay Network " + nickname + "!" + username +"@127.0.0.1\r\n")
 #define GET_USER_PASSED server.getUser(i).getUserPassed()
 #define GET_NICK_PASSED server.getUser(i).getNickNamePassed()
 

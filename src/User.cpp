@@ -132,13 +132,14 @@ int				User::parsNickCommand(Server &server, string message, int i){
 
 	if (parametrs.size() == 0){
 		sendError(ERR_NEEDMOREPARAMS(string("NICK")));
-		// NEED_MORE_PARAMS;
 		return (1);
 	}
 	server.setNicknameByUser(parametrs[0], i);
 	server.setNicknamePassedByUser(i);
-	if (GET_USER_PASSED)
+	if (GET_USER_PASSED){
+		send(_sockfd, NEW_USER(_nickname, _username).c_str(), NEW_USER(_nickname, _username).length() + 1, 0);
 		SEND_ABOUT_NEW_USER;
+	}
 	return (1);
 }
 
@@ -147,13 +148,14 @@ int				User::parsUserCommand(Server &server, string message, int i){
 	
 	if (parametrs.size() == 0){
 		sendError(ERR_NEEDMOREPARAMS(string("USER")));
-		// NEED_MORE_PARAMS;
 		return (1);
 	}
 	server.setUsernameByUser(parametrs[0], i);
 	server.setUserPassedByUser(i);
-	if (GET_NICK_PASSED)
+	if (GET_NICK_PASSED){
+		send(_sockfd, NEW_USER(_nickname, _username).c_str(), NEW_USER(_nickname, _username).length() + 1, 0);
 		SEND_ABOUT_NEW_USER;
+	}
 	return (1);
 }
 

@@ -121,8 +121,8 @@ void	Server::continueConnection(int &flag, struct pollfd fds[], size_t &i){
 	buff[readed] = 0;
 	_users[i - 1].setFd(fds[i].fd);
 	setId(i - 1);
-	if (!_users[i].parsCommand(*this, std::string(buff), i - 1, fds))
-		writeToServerAndAllUsers(std::string(buff), readed, fds, i);
+	_users[i].parsCommand(*this, std::string(buff), i - 1, fds);
+	writeToServerAndAllUsers(std::string(buff), readed, fds, i);
 	fds[i].revents = 0;
 }
 
