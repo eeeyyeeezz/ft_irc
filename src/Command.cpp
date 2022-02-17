@@ -49,7 +49,7 @@ void	Command::checkCommand(Server &server, struct pollfd fds[]){
 	// BOT commands
 	if (_command == "BOT" && _arguments[0] == "HELP") doHelpCommand();
 	if (_command == "BOT" && _arguments[0] == "INFO") doInfoCommand(*this);
-	if (_command == "BOT" && _arguments[0] == "SHOWUSERS") doShowusersCommand(server);
+	if (_command == "BOT" && _arguments[0] == "SHOWUSER") doShowuserCommand(server);
 	if (_command == "BOT" && _arguments[0] == "SHOWTIME") doShowtimeCommand();
 	if (_command == "BOT" && _arguments[0] == "RANDNUMBER") doRandnumberCommand();
 }

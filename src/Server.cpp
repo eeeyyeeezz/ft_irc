@@ -67,11 +67,6 @@ void	Server::listenSocket(Server &server, struct pollfd fds[]){
 	fcntl(fds[0].fd, F_SETFL, O_NONBLOCK);
 }
 
-void	Server::writeToServerAndAllUsers(string buff, int readed, struct pollfd fds[], int i){
-	std::cout << getUser(i - 1).getNickname() << ": " << buff;
-
-}
-
 void	Server::mainLoop(Server &server, struct pollfd fds[]){
 	int flag = 0;
 	std::cout << "Server start!\n";
@@ -122,7 +117,7 @@ void	Server::continueConnection(int &flag, struct pollfd fds[], size_t &i){
 	_users[i - 1].setFd(fds[i].fd);
 	setId(i - 1);
 	_users[i].parsCommand(*this, std::string(buff), i - 1, fds);
-	writeToServerAndAllUsers(std::string(buff), readed, fds, i);
+	std::cout << getUser(i - 1).getNickname() << ": " << buff;
 	fds[i].revents = 0;
 }
 

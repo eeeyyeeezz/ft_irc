@@ -71,8 +71,6 @@ class Server{
 	void			setNewConnection(int &flag, struct pollfd fds[], size_t &i);
 	void			continueConnection(int &flag, struct pollfd fds[], size_t &i);
 	
-	// OTHER
-	void			writeToServerAndAllUsers(string buff, int readed, struct pollfd fds[], int i);
 };
 
 
