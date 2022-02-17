@@ -173,6 +173,7 @@ void Command::doKickCommand(Server &server) {
 		for (vector<Channel>::iterator it = tmpVector.begin(); it != tmpVector.end(); it++){
 			if ((*it).getChannelName() == _arguments[0]){
 				(*it).doKickFromChannel(_fd, userFd);
+				std::cout << _arguments[1] << " was KICKED from " << _arguments[0] << std::endl;
 				server.channelVectorSetNew(tmpVector);
 			}
 		}
