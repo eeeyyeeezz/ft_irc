@@ -42,6 +42,38 @@ using std::vector;
 #define PASSWORD_WRONG send(server.getUser(i).getFd(), "461 * PASS :Not enough parameters\n", 35, 0)
 #define CANNOT_SEND_TO_CHAN send(fd, "404 ERR_CANNOTSENDTOCHAN: ", 26, 0)
 
+// NEW ERRORS
+// COMMON ERRORS
+#define ERR_NOTREGISTERED "451 *  :You have not registered\n"
+#define ERR_UNKNOWNCOMMAND(command) ("421 *  " + command + " :Unknown command")
+#define ERR_NEEDMOREPARAMS(command) ("461 *  " + command + " :Not enough parameters\n")
+
+// PASS ERRORS
+#define ERR_PASSWDMISMATCH "464 *  :Password incorrect\n"
+// PASS and USER ERROR in case if user is already registered
+#define ERR_ALREADYREGISTRED "462 *  :You may not reregister\n"
+
+// NICK ERRORS
+#define ERR_ERRONEUSNICKNAME(nick) ("432 *  " + nick + " :Erroneus nickname\n")
+#define ERR_NICKNAMEINUSE(nick) ("433 *  " + nick + " :Nickname is already in use\n"
+
+// PRIVMSG and NOTICE ERRORS
+#define ERR_NORECIPIENT(command) ("411 * :No recipient given " + command + "\n")
+#define ERR_NOTEXTTOSEND "412 *  :No text to send\n"
+#define ERR_CANNOTSENDTOCHAN(channel) ("404 *  " + channel " :Cannot send to channel\n")
+#define ERR_NOSUCHNICK(nick) ("401 *  " + nick + " :No such nick/channel\n")
+
+// JOIN ERRORS
+#define ERR_CHANNELISFULL(channel) ("471 *  " + channel + " :Cannot join channel (+l)")
+#define ERR_NOSUCHCHANNEL(channel) ("403 *  " + channel + " :No such channel\n")
+#define ERR_TOOMANYCHANNELS(channel) ("405 *  " + channel + " :You have joined too many channels\n")
+
+// PART and KICK ERRORS
+#define ERR_NOSUCHCHANNEL(channel) ("403 *  " + channel + " :No such channel\n")
+#define ERR_NOTONCHANNEL(channel) ("442 *  ") + channel + " :You're not on that channel\n")
+#define ERR_CHANOPRIVSNEEDED(channel) ("482 *  " + channel " :You're not channel operator\n")
+// END OF NEW ERRORS
+
 // GET_PASSED
 #define GET_USER_PASSED server.getUser(i).getUserPassed()
 #define GET_NICK_PASSED server.getUser(i).getNickNamePassed()

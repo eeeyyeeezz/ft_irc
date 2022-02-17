@@ -52,6 +52,8 @@ class User {
 	int		parsNickCommand(Server &server, string message, int i);
 	int		parsUserCommand(Server &server, string message, int i);
 	int		parsCommand(Server &server, string message, int i, struct pollfd fds[]); // return 1 - user passed command ; return 0 - simple message
+
+	void sendError(string err);
 };
 
 #endif

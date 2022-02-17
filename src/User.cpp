@@ -164,4 +164,6 @@ void			User::checkUserPassword(Server &server, string message, int i){
 		PASSWORD_WRONG;
 }
 
+void	User::sendError(std::string err) { send(_sockfd, err.c_str(), err.length() + 1, 0); }
+
 User::~User() { };
