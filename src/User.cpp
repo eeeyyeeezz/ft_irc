@@ -131,7 +131,8 @@ int				User::parsNickCommand(Server &server, string message, int i){
 	vector<string>	parametrs = getParametrs(message);
 
 	if (parametrs.size() == 0){
-		NEED_MORE_PARAMS;
+		sendError(ERR_NEEDMOREPARAMS(string("NICK")));
+		// NEED_MORE_PARAMS;
 		return (1);
 	}
 	server.setNicknameByUser(parametrs[0], i);
@@ -145,7 +146,8 @@ int				User::parsUserCommand(Server &server, string message, int i){
 	vector<string>	parametrs = getParametrs(message);
 	
 	if (parametrs.size() == 0){
-		NEED_MORE_PARAMS;
+		sendError(ERR_NEEDMOREPARAMS(string("USER")));
+		// NEED_MORE_PARAMS;
 		return (1);
 	}
 	server.setUsernameByUser(parametrs[0], i);
@@ -161,7 +163,9 @@ void			User::checkUserPassword(Server &server, string message, int i){
 	if (parametrs[0] == std::string(server.getPassword()))
 		server.setPasswordPassedByUser(i);
 	else
-		PASSWORD_WRONG;
+		sendError(ERR_PASSWDMISMATCH);
 }
+
+void	User::sendError(std::string err) { send(_sockfd, err.c_str(), err.length() + 1, 0); }
 
 User::~User() { };

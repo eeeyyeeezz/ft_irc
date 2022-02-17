@@ -13,6 +13,7 @@ void			Server::setListening(int socket) { _listening = socket; }
 int				Server::getListening() { return(_listening); }
 int				Server::getCountConnects() { return(_countConnects); }
 vector<Channel>	Server::getVectorOfChannels() { return(_channels); }
+vector<Channel>	&Server::getVectorOfChannelsRef() { return(_channels); }
 vector<User>	Server::getVectorOfUsers() { return(_users); }
 Channel			Server::getChannel(int i) { return(_channels[i]); }
 string			Server::getPassword() { return(_password); }

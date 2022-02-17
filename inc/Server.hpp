@@ -30,6 +30,7 @@ class Server{
 	int				getListening();
 	int				getCountConnects();
 	vector<Channel>	getVectorOfChannels();
+  	vector<Channel>	&getVectorOfChannelsRef();
 	vector<User>	getVectorOfUsers();
 	
 	User			getUser(int i);
