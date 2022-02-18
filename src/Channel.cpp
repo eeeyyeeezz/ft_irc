@@ -176,7 +176,7 @@ void Command::doKickCommand(Server &server) {
 		for (vector<Channel>::iterator it = tmpVector.begin(); it != tmpVector.end(); it++){
 			if ((*it).getChannelName() == _arguments[0]){
 				(*it).doKickFromChannel(_fd, userFd);
-				std::cout << _arguments[1] << " was KICKED from " << _arguments[0] << std::endl;
+				std::cout << _arguments[1] << " WAS KICKED FROM " << _arguments[0] << std::endl;
 				server.channelVectorSetNew(tmpVector);
 			}
 		}
@@ -187,11 +187,14 @@ void Channel::doKickFromChannel(int fd, int userFd){
 	if (fd == _fdAdmin){
 		vector<int>::iterator itb = _fds.begin();
 		vector<int>::iterator ite = _fds.end();
-		for (vector<int>::iterator it = itb; it != ite; it++){
+		vector<int>::iterator it;
+		for (it = itb; it != ite; it++){
 			if ((*it) == userFd){
 				_fds.erase(it);
+				return;
 			}
 		}
+		if(it == ite) ERR_USER_NOT_IN_CHANNEL;
 	} else	ERR_CHAN_O_PRIVS_NEEDED;
 }
 
