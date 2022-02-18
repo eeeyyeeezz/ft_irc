@@ -40,6 +40,7 @@ using std::vector;
 #define NICK_NAME_IN_USE send(_fd, "433 ERR_NICKNAMEINUSE\n", 23, 0)
 #define NEED_MORE_PARAMS send(server.getUser(i).getFd(), "461 ERR_NEEDMOREPARAMS\n", 24, 0)
 #define CANNOT_SEND_TO_CHAN send(fd, "404 ERR_CANNOTSENDTOCHAN: ", 26, 0)
+#define ERR_CHAN_O_PRIVS_NEEDED send(fd, "482  ERR_CHANOPRIVSNEEDED ", 27, 0)
 
 // NEW ERRORS
 // COMMON ERRORS

@@ -192,8 +192,7 @@ void Channel::doKickFromChannel(int fd, int userFd){
 				_fds.erase(it);
 			}
 		}
-	} else
-		; // 482 ERR_CHANOPRIVSNEEDED
+	} else	ERR_CHAN_O_PRIVS_NEEDED;
 }
 
 void Channel::printFds() {
