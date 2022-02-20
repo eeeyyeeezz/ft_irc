@@ -39,9 +39,9 @@ using std::vector;
 #define NO_SUCH_NICK send(_fd, "401 ERR_NOSUCHNICK\n", 20, 0)
 #define NICK_NAME_IN_USE send(_fd, "433 ERR_NICKNAMEINUSE\n", 23, 0)
 #define NEED_MORE_PARAMS send(server.getUser(i).getFd(), "461 ERR_NEEDMOREPARAMS\n", 24, 0)
-#define CANNOT_SEND_TO_CHAN send(fd, "404 ERR_CANNOTSENDTOCHAN: ", 26, 0)
-#define ERR_CHAN_O_PRIVS_NEEDED send(fd, "482 ERR_CHANOPRIVSNEEDED ", 27, 0)
-#define	ERR_USER_NOT_IN_CHANNEL send(fd, "441 ERR_USERNOTINCHANNEL ", 26, 0)
+#define CANNOT_SEND_TO_CHAN send(fd, "404 ERR_CANNOTSENDTOCHAN: \r\n", 29, 0)
+#define ERR_CHAN_O_PRIVS_NEEDED send(fd, "482 ERR_CHANOPRIVSNEEDED\r\n", 27, 0)
+#define	ERR_USER_NOT_IN_CHANNEL send(fd, "441 ERR_USERNOTINCHANNEL\r\n", 27, 0)
 
 // NEW ERRORS
 // COMMON ERRORS
@@ -71,7 +71,7 @@ using std::vector;
 
 // PART and KICK ERRORS
 #define ERR_NOSUCHCHANNEL(channel) ("403 *  " + channel + " :No such channel\n")
-#define ERR_NOTONCHANNEL(channel) ("442 *  ") + channel + " :You're not on that channel\n")
+#define ERR_NOTONCHANNEL(channel) ("442 *  " + channel + " :You're not on that channel\n")
 #define ERR_CHANOPRIVSNEEDED(channel) ("482 *  " + channel " :You're not channel operator\n")
 // END OF NEW ERRORS
 
@@ -87,5 +87,4 @@ using std::vector;
 #define SEND_ABOUT_NEW_USER std::cout << WHITE << "NEW USER! NICKNAME: " << BLUE << "[" << server.getUser(i).getNickname() << "]" << WHITE << " USERNAME: "<< BLUE << "[" << server.getUser(i).getUsername() << "]" << WHITE << " FD " << BLUE << "[" << server.getUser(i).getFd() << "]" << NORMAL << std::endl;
 
 void	SendMessageIrcSyntax(int fd, string nickname, string username, string message);
-bool	contains(string array[], string message);
 void	error(string error);

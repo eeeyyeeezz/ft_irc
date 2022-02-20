@@ -36,14 +36,14 @@ void		startDebug(Server &server){
 	std::cout << WHITE << "NEW USER! NICKNAME: " << BLUE << "[" << server.getUser(0).getNickname() << "]" << WHITE << " USERNAME: "<< BLUE << "[" << server.getUser(0).getUsername() << "]" << WHITE << " FD " << BLUE << "[" << server.getUser(0).getFd() << "]" << NORMAL << std::endl;
 	}
 
-	// {
-	// server.setNicknameByUser("mhogg", 1);
-	// server.setUsernameByUser("Irina", 1);
-	// server.setPasswordPassedByUser(1);
-	// server.setUserPassedByUser(1);
-	// server.setNicknamePassedByUser(1);
-	// std::cout << WHITE << "NEW USER! NICKNAME: " << BLUE << "[" << server.getUser(1).getNickname() << "]" << WHITE << " USERNAME: "<< BLUE << "[" << server.getUser(1).getUsername() << "]" << WHITE << " FD " << BLUE << "[" << server.getUser(1).getFd() << "]" << NORMAL << std::endl;
-	// }
+	{
+	server.setNicknameByUser("mhogg", 1);
+	server.setUsernameByUser("Irina", 1);
+	server.setPasswordPassedByUser(1);
+	server.setUserPassedByUser(1);
+	server.setNicknamePassedByUser(1);
+	std::cout << WHITE << "NEW USER! NICKNAME: " << BLUE << "[" << server.getUser(1).getNickname() << "]" << WHITE << " USERNAME: "<< BLUE << "[" << server.getUser(1).getUsername() << "]" << WHITE << " FD " << BLUE << "[" << server.getUser(1).getFd() << "]" << NORMAL << std::endl;
+	}
 }
 
 
@@ -129,8 +129,6 @@ int			User::preparationCommands(Server &server, string message, int i){
 			return (1);
 		}
 	} 
-
-	SEND_ABOUT_NEW_USER;
 	return (0);
 }
 
