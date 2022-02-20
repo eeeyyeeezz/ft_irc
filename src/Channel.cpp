@@ -111,12 +111,12 @@ void	Command::doJoinCommand(Server &server){
 
 void	partUser(Server &server, vector<int> &tmpIntFdsVector, Channel &tmpChannel, vector<int>::iterator &element, int atChannelFd, string nickname, string channelName, int fd){
 	int fdAdmin = server.getChannel(atChannelFd).getFdAdmin();
-	tmpIntFdsVector.erase(element);
 	tmpChannel.setFdVector(tmpIntFdsVector);
 	if (fd == fdAdmin && tmpIntFdsVector.size() > 0){
-		server.setNewChannelAdm(tmpIntFdsVector);
-		std::cout << "NEW ADM FD IS " << server.getChannel(server.getId()).getFdAdmin() << std::endl;
+		send(fd, ":127.0.0.1 KVIrc Operator. Cant. Leave\r\n", 41, 0);
+		return ;
 	}
+	tmpIntFdsVector.erase(element);
 	server.channelSetNew(tmpChannel, atChannelFd);
 	
 	// send to all that leaves
