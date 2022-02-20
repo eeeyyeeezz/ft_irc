@@ -76,14 +76,30 @@ void	Command::createNewChannel(Server &server){
 	server.setChannelID(1);
 }
 
+int	checkChannelErrors(vector<string> _arguments, int _fd){
+	if (_arguments.size() == 0){
+		string err = ERR_NEEDMOREPARAMS((string)"JOIN");
+		send(_fd, err.c_str(), err.length() + 1, 0);
+		return 1;
+	}
+	if (_arguments.size() > 0){
+		if (_arguments[0][0] != '#'){
+			string err = ERR_BADCHANNELKEY((string)"JOIN");
+			send(_fd, err.c_str(), err.length() + 1, 0);
+			return 1;
+		}
+	}
+	return 0;
+}
+
 void	Command::doJoinCommand(Server &server){
 	int	_channelID = server.getChannelID();
 	bool channelNameExist = false;
-	
 	vector<Channel> tmpVector = server.getVectorOfChannels();
 	channelNameExist = checkChannelNameExist(tmpVector, _arguments[0]);
-	
-	std::cout << "CHANNEL ID IS " << _channelID << std::endl;
+	int ifChannelError = checkChannelErrors(_arguments, _fd);
+	if (ifChannelError)
+		return ;
 	if (!channelNameExist)
 		createNewChannel(server);
 	else {
