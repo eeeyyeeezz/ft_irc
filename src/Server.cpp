@@ -3,7 +3,7 @@
 
 #define BUFFER_SIZE 4096
 
-Server::Server(int port, string password) : _port(port), _password(password), _countConnects(0), _channelID(0) { }
+Server::Server(int port, string password) : _port(port), _channelID(0), _countConnects(0), _password(password){ }
 
 // GETTERS
 int				Server::getId() { return (_id); }
@@ -76,7 +76,7 @@ void	Server::mainLoop(Server &server, struct pollfd fds[]){
 		if (flag > 0) { std::cout << "Exit\n" ; exit(EXIT_SUCCESS); } // exit_success
 		if ((COUNTFD = poll(fds, server.getCountConnects(), -1)) < 0) { error("Poll crash"); } // do_error poll crash
 
-		for (size_t i = 0; i < server.getCountConnects(); i++){
+		for (size_t i = 0; i < (size_t )server.getCountConnects(); i++){
 			if (fds[i].fd > 0 && (fds[i].revents & POLLIN) == POLLIN){
 				++flag;
 				if (i == 0) 
