@@ -177,15 +177,16 @@ void Command::doKickCommand(Server &server) {
 		vector<Channel> tmpVector = server.getVectorOfChannelsRef();
 		for (vector<Channel>::iterator it = tmpVector.begin(); it != tmpVector.end(); it++){
 			if ((*it).getChannelName() == _arguments[0]){
-				(*it).doKickFromChannel(_fd, userFd);
-				std::cout << _arguments[1] << " WAS KICKED FROM " << _arguments[0] << std::endl;
-				server.channelVectorSetNew(tmpVector);
+				if((*it).doKickFromChannel(_fd, userFd)) {
+                    std::cout << _arguments[1] << " WAS KICKED FROM " << _arguments[0] << std::endl;
+                    server.channelVectorSetNew(tmpVector);
+                }
 			}
 		}
 	}
 }
 
-void Channel::doKickFromChannel(int fd, int userFd){
+bool Channel::doKickFromChannel(int fd, int userFd){
 	if (fd == _fdAdmin){
 		vector<int>::iterator itb = _fds.begin();
 		vector<int>::iterator ite = _fds.end();
@@ -193,11 +194,18 @@ void Channel::doKickFromChannel(int fd, int userFd){
 		for (it = itb; it != ite; it++){
 			if ((*it) == userFd){
 				_fds.erase(it);
-				return;
+				return true;
 			}
 		}
-		if(it == ite) ERR_USER_NOT_IN_CHANNEL;
-	} else	ERR_CHAN_O_PRIVS_NEEDED;
+		if(it == ite) {
+            ERR_USER_NOT_IN_CHANNEL;
+            return false;
+        }
+	} else {
+        string err = "482 *  " + _channelName + " :You're not channel operator\n";
+        send(_sockfd, err.c_str(), err.length() + 1, 0);
+        return false;
+    }
 }
 
 void Channel::printFds() {

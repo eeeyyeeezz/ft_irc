@@ -21,7 +21,7 @@ class Channel{
 
 	// SETTERS
 	void				fdsPushBack(int fd);
-	void 				doKickFromChannel(int fd, int userFd);
+	bool 				doKickFromChannel(int fd, int userFd);
 	void				doChannelPrivmsg(int fd, string message, string nickname, string username);
 	void				setChannelName(string channelName);
 	void				setFdVector(vector<int> &fds);
