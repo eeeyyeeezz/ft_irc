@@ -50,7 +50,7 @@ void		startDebug(Server &server){
 int			User::parsCommand(Server &server, string message, int i, struct pollfd fds[]){
 	static int onlyOnce = 0;
 	bool allPrepIsDone = server.getUser(i).getAllPrepArguments();
-
+	
 	if (!allPrepIsDone)
 		return server.getUser(i).preparationCommands(server, message, i);
 	
@@ -74,6 +74,7 @@ string		getFirstWord(string message){
 			firstWord = stringSplitted;
 			break ;
 		}
+		firstWord.erase(std::remove(firstWord.begin(), firstWord.end(), '\r'), firstWord.end());
 		firstWord.erase(std::remove(firstWord.begin(), firstWord.end(), '\n'), firstWord.end());
 	}
 	return firstWord;
@@ -103,8 +104,8 @@ int			User::preparationCommands(Server &server, string message, int i){
 	string firstWord = getFirstWord(message);
 	
 	// PING
-	if (server.getUser(i).getPasswordPassed() == 0 && firstWord == "PING"){
-		string pong = "PONG " + parametrs[0] + "\r\n";
+	if (server.getUser(i).getPasswordPassed() == 0 && parametrs[0] == "LSPING"){
+		string pong = "PONG " + parametrs[1] + "\r\n";
 		send(_sockfd, pong.c_str(), pong.length() + 1, 0);
 	}
 

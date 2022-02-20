@@ -5,30 +5,17 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
-			"name": "clang++ - Сборка и отладка активного файла",
+			"name": "clang++ - Build and debug active file",
 			"type": "cppdbg",
 			"request": "launch",
-			"program": "/home/eeeyyeeezz/Desktop/ft_irc/ircserv",
+			"program": "${fileDirname}/ircserv",
 			"args": ["6667", "5555"],
 			"stopAtEntry": true,
-			"cwd": "/home/eeeyyeeezz/Desktop/ft_irc",
+			"cwd": "${fileDirname}",
 			"environment": [],
 			"externalConsole": false,
 			"MIMode": "lldb",
-			"setupCommands": [
-				{
-					"description": "Включить автоматическое форматирование для gdb",
-					"text": "-enable-pretty-printing",
-					"ignoreFailures": true
-				},
-				{
-					"description": "Задать для варианта приложения дизассемблирования значение Intel",
-					"text": "-gdb-set disassembly-flavor intel",
-					"ignoreFailures": true
-				}
-			],
-			"preLaunchTask": "C/C++: clang++ сборка активного файла",
-			"miDebuggerPath": "/usr/bin/lldb-mi"
+			"preLaunchTask": "C/C++: clang++ build active file"
 		}
 	]
 }

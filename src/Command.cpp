@@ -27,7 +27,7 @@ vector<User>		Command::getVectorOfUsers() { return (_users); }
 
 
 int		Command::commandStart(Server &server, struct pollfd fds[]){
-	string	commands[] = {"NICK", "QUIT", "PRIVMSG", "NOTICE", "HELP", "JOIN", "PART", "KICK", "BOT"};
+	string	commands[] = {"NICK", "QUIT", "PING" "PRIVMSG", "NOTICE", "HELP", "JOIN", "PART", "KICK", "BOT"};
 	if (std::find(std::begin(commands), std::end(commands), _command) != std::end(commands)){
 		checkCommand(server, fds);
 		return (1);
@@ -37,8 +37,9 @@ int		Command::commandStart(Server &server, struct pollfd fds[]){
 }
 
 void	Command::checkCommand(Server &server, struct pollfd fds[]){
-	
+
 	if (_command == "QUIT") doQuitCommand(server, fds);
+	else if (_command == "PING") doPingCommand(server);
 	else if (_command == "NICK") doNickCommand(server);
 	else if (_command == "PRIVMSG") doPrivmsgCommand(server);
 	else if (_command == "NOTICE") doNoticeCommand(server);
@@ -58,6 +59,11 @@ void	Command::doNoticeCommand(Server &server){
 	if (_arguments[0] == "*")
 		return ;
 	doPrivmsgCommand(server); 
+}
+
+void	Command::doPingCommand(Server &server){
+	string pong = "PONG 127.0.0.1\r\n";
+	send(_fd, pong.c_str(), pong.length() + 1, 0); 
 }
 
 void	Command::doQuitCommand(Server &server, struct pollfd fds[]){

@@ -32,6 +32,7 @@ class Command{
 	void	checkCommand(Server &server, struct pollfd fds[]);
 
 	// COMMANDS
+	void	doPingCommand(Server &server);
 	void	doQuitCommand(Server &server, struct pollfd fds[]);
 	void	doNickCommand(Server &server);
 	void	doPrivmsgCommand(Server &server);

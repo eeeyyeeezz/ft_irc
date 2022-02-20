@@ -1,6 +1,8 @@
 {
 	"files.associations": {
+		"string": "cpp",
 		"__bit_reference": "cpp",
+		"__bits": "cpp",
 		"__config": "cpp",
 		"__debug": "cpp",
 		"__errc": "cpp",
@@ -21,6 +23,7 @@
 		"bitset": "cpp",
 		"cctype": "cpp",
 		"chrono": "cpp",
+		"clocale": "cpp",
 		"cmath": "cpp",
 		"complex": "cpp",
 		"cstdarg": "cpp",
@@ -51,7 +54,6 @@
 		"sstream": "cpp",
 		"stdexcept": "cpp",
 		"streambuf": "cpp",
-		"string": "cpp",
 		"string_view": "cpp",
 		"system_error": "cpp",
 		"tuple": "cpp",
@@ -59,13 +61,6 @@
 		"typeinfo": "cpp",
 		"unordered_map": "cpp",
 		"utility": "cpp",
-		"vector": "cpp",
-		"*.tcc": "cpp",
-		"clocale": "cpp",
-		"deque": "cpp",
-		"memory_resource": "cpp",
-		"numeric": "cpp",
-		"random": "cpp",
-		"fstream": "cpp"
+		"vector": "cpp"
 	}
 }

@@ -19,7 +19,7 @@ int		main(int argc, char **argv){
 		
 	// Первичная настройка
 	Server	server(atoi(argv[1]), std::string(argv[2]));
-	struct pollfd fds[10]; // количество FD'шников
+	struct pollfd fds[10];
 	InitialSetup(server, fds, 10);
 
 	server.createSocket(server);
