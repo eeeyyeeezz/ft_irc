@@ -44,7 +44,7 @@ using std::vector;
 
 // NEW ERRORS
 // COMMON ERRORS
-#define ERR_NOTREGISTERED "451 *  :You have not registered\n"
+#define ERR_NOTREGISTERED "451 *  :You have not registered\r\n"
 #define ERR_UNKNOWNCOMMAND(command) ("421 *  " + command + " :Unknown command")
 #define ERR_NEEDMOREPARAMS(command) ("461 *  " + command + " :Not enough parameters\n")
 

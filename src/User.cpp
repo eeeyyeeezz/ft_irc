@@ -117,7 +117,8 @@ int			User::preparationCommands(Server &server, string message, int i){
 		server.getUser(i).checkUserPassword(server, message, i);
 		return (1);
 	} else if (server.getUser(i).getPasswordPassed() == 0 && firstWord != "PASS") {
-		send(server.getUser(i).getFd(), "You need to write PASS command and password\n", 45, 0);
+		sendError(ERR_NOTREGISTERED);
+		// send(server.getUser(i).getFd(), "You need to write PASS command and password\n", 45, 0);
 		return (1);
 	}
 
@@ -129,7 +130,7 @@ int			User::preparationCommands(Server &server, string message, int i){
 		else if (firstWord == "USER\n" || firstWord == "USER")
 			return(server.getUser(i).parsUserCommand(server, message, i));
 		else{
-			NEED_NICK_OR_USER;
+			sendError(ERR_NOTREGISTERED);
 			return (1);
 		}
 	} 
@@ -170,6 +171,10 @@ int				User::parsUserCommand(Server &server, string message, int i){
 
 void			User::checkUserPassword(Server &server, string message, int i){
 	vector<string>	parametrs = getParametrs(message);
+	if (parametrs.size() == 0){
+		sendError(ERR_NEEDMOREPARAMS(string("PASS")));
+		return ;
+	}
 
 	if (parametrs[0] == std::string(server.getPassword()))
 		server.setPasswordPassedByUser(i);
