@@ -71,7 +71,7 @@ using std::vector;
 
 // PART and KICK ERRORS
 #define ERR_NOSUCHCHANNEL(channel) ("403 *  " + channel + " :No such channel\n")
-#define ERR_NOTONCHANNEL(channel) ("442 *  " + channel + " :You're not on that channel\n")
+#define ERR_NOTONCHANNEL(channel) ("442 *  " + channel + " :You're not on that channel\r\n")
 #define ERR_CHANOPRIVSNEEDED(channel) ("482 *  " + channel " :You're not channel operator\n")
 // END OF NEW ERRORS
 
