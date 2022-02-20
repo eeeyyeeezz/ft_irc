@@ -20,10 +20,11 @@ void				Channel::setNewVector(vector<int> &newVector) { _fds = newVector; }
 void	NewUserConnect(Server &server, int fd, string message, string nickname, string username, int id, string channelName){
 	Channel tmpChannel = server.getChannel(id);
 	vector<int> tmpFdVector = tmpChannel.getFdVector();
-	
+	string userJoined = ":127.0.0.1 " + nickname + " " + "join " + channelName + "\r\n";
+
 	for (int i = 0; i < tmpFdVector.size(); i++){
 		if (tmpFdVector[i] != fd)
-			SendMessageIrcSyntax(tmpFdVector[i], nickname, username, message);
+			send(tmpFdVector[i], userJoined.c_str(), userJoined.length() + 1, 0);
 	}
 	
 	string beginMessage = string(":KVIrc 331 " + nickname + " " + channelName + ": No topis is set\r\n"); // +  
