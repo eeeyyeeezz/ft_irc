@@ -36,21 +36,21 @@ void		startDebug(Server &server){
 	std::cout << WHITE << "NEW USER! NICKNAME: " << BLUE << "[" << server.getUser(0).getNickname() << "]" << WHITE << " USERNAME: "<< BLUE << "[" << server.getUser(0).getUsername() << "]" << WHITE << " FD " << BLUE << "[" << server.getUser(0).getFd() << "]" << NORMAL << std::endl;
 	}
 
-	{
-	server.setNicknameByUser("mhogg", 1);
-	server.setUsernameByUser("Irina", 1);
-	server.setPasswordPassedByUser(1);
-	server.setUserPassedByUser(1);
-	server.setNicknamePassedByUser(1);
-	std::cout << WHITE << "NEW USER! NICKNAME: " << BLUE << "[" << server.getUser(1).getNickname() << "]" << WHITE << " USERNAME: "<< BLUE << "[" << server.getUser(1).getUsername() << "]" << WHITE << " FD " << BLUE << "[" << server.getUser(1).getFd() << "]" << NORMAL << std::endl;
-	}
+	// {
+	// server.setNicknameByUser("mhogg", 1);
+	// server.setUsernameByUser("Irina", 1);
+	// server.setPasswordPassedByUser(1);
+	// server.setUserPassedByUser(1);
+	// server.setNicknamePassedByUser(1);
+	// std::cout << WHITE << "NEW USER! NICKNAME: " << BLUE << "[" << server.getUser(1).getNickname() << "]" << WHITE << " USERNAME: "<< BLUE << "[" << server.getUser(1).getUsername() << "]" << WHITE << " FD " << BLUE << "[" << server.getUser(1).getFd() << "]" << NORMAL << std::endl;
+	// }
 }
 
 
 int			User::parsCommand(Server &server, string message, int i, struct pollfd fds[]){
 	static int onlyOnce = 0;
 	bool allPrepIsDone = server.getUser(i).getAllPrepArguments();
-	
+
 	if (!allPrepIsDone)
 		return server.getUser(i).preparationCommands(server, message, i);
 	
@@ -74,7 +74,6 @@ string		getFirstWord(string message){
 			firstWord = stringSplitted;
 			break ;
 		}
-		firstWord.erase(std::remove(firstWord.begin(), firstWord.end(), '\r'), firstWord.end());
 		firstWord.erase(std::remove(firstWord.begin(), firstWord.end(), '\n'), firstWord.end());
 	}
 	return firstWord;
@@ -108,7 +107,7 @@ int			User::preparationCommands(Server &server, string message, int i){
 		string pong = "PONG " + parametrs[1] + "\r\n";
 		send(_sockfd, pong.c_str(), pong.length() + 1, 0);
 	}
-
+	
 	// PASS 
 	if (server.getUser(i).getPasswordPassed() == 0 && firstWord == "PASS"){
 		server.getUser(i).checkUserPassword(server, message, i);

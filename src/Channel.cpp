@@ -21,7 +21,7 @@ void	NewUserConnect(Server &server, int fd, string message, string nickname, str
 	Channel tmpChannel = server.getChannel(id);
 	vector<int> tmpFdVector = tmpChannel.getFdVector();
 	string userJoined = ":127.0.0.1 " + nickname + " " + "join " + channelName + "\r\n";
-
+	
 	for (int i = 0; i < tmpFdVector.size(); i++){
 		if (tmpFdVector[i] != fd)
 			send(tmpFdVector[i], userJoined.c_str(), userJoined.length() + 1, 0);
@@ -69,8 +69,6 @@ void	Command::createNewChannel(Server &server){
 	Channel *channel = new Channel(_arguments[0], _fd);
 	int	_channelID = server.getChannelID();
 	server.channelsPushBack(channel);
-	delete channel;
-	
 	server.setUsersAtChannelFd(_channelID);
 	NewUserConnect(server, _fd, _message, _nickname, _username, _channelID, _arguments[0]);
 	std::cout << "NEW CHANNEL! " << _arguments[0] << " ADMIN IS " << _nickname << std::endl;

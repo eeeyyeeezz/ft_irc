@@ -8,6 +8,16 @@ void	SendMessageIrcSyntax(int fd, string nickname, string username, string messa
 	send(fd, messageToSend.c_str(), messageToSend.length() + 1, 0);
 }
 
+bool	contains(string array[], string message){
+	for (int i = 0; i < array->length(); i++){
+		if (array[i] == message) {
+			std::cout << message << std::endl;
+			return (true);
+		}
+	}
+	return (false);
+}
+
 void	error(string error){
 	std::cout << error << std::endl;
 	exit(EXIT_FAILURE);

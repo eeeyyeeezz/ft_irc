@@ -1,6 +1,6 @@
 NAME = ircserv
 
-SRCS = main.cpp \
+SRCS = main_server.cpp \
 		src/Utils.cpp src/Server.cpp \
 		src/User.cpp src/Command.cpp src/Channel.cpp \
 		src/Bot.cpp

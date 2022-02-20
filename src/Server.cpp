@@ -91,8 +91,7 @@ void	Server::mainLoop(Server &server, struct pollfd fds[]){
 void	Server::setNewConnection(int &flag, struct pollfd fds[], size_t &i){
 	User *user = new User(fds[i].fd);
 	_users.push_back(*user);
-	delete user;
-	
+
 	flag = 0;
 	fds[getCountConnects()].fd = accept(fds[i].fd, NULL, NULL);
 	std::cout << YELLOW << "NEW CONNNECT" << NORMAL << std::endl;
