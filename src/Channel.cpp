@@ -156,7 +156,8 @@ void	Command::doPartCommand(Server &server){
 
 void Command::doKickCommand(Server &server) {
 	if(_arguments.size() < 2){
-		// 461 ERR_NEEDMOREPARAMS
+        string err = "461 *  KICK :Not enough parameters\r\n";
+        send(_fd, err.c_str(), err.length() + 1, 0);
 		return;
 	}
 
