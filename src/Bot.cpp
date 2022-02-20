@@ -9,7 +9,7 @@ void	Command::doHelpCommand(){
 		send(_fd, "BOT ERROR Wrong syntax\r\n", 25, 0);
 }
 
-void	Command::doInfoCommand(Command &user){
+void	Command::doInfoCommand(){
 	string showInfo = ": BOT NICKNAME is [" + _nickname + "]\r\n:BOT USERNAME IS [" + _username + "]\r\n";
 	send(_fd, showInfo.c_str(), showInfo.length() + 1, 0);
 }

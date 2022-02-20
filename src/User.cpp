@@ -1,8 +1,8 @@
 #include "../inc/User.hpp"
 
-User::User() :  _passwordPassed(0), _nickNamePassed(0), _userPassed(0), _atChannelFd(-1) { };
+User::User() :  _atChannelFd(-1), _passwordPassed(0), _nickNamePassed(0), _userPassed(0)  { };
 
-User::User(int fd) : _sockfd(fd), _passwordPassed(0), _nickNamePassed(0), _userPassed(0), _atChannelFd(-1) {  }
+User::User(int fd) : _atChannelFd(-1), _sockfd(fd), _passwordPassed(0), _nickNamePassed(0), _userPassed(0)  {}
 
 
 // SETTERS
@@ -48,7 +48,7 @@ void		startDebug(Server &server){
 
 
 int			User::parsCommand(Server &server, string message, int i, struct pollfd fds[]){
-	static int onlyOnce = 0;
+	//static int onlyOnce = 0;
 	bool allPrepIsDone = server.getUser(i).getAllPrepArguments();
 
 	if (!allPrepIsDone)

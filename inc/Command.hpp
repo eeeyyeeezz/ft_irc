@@ -45,7 +45,7 @@ class Command{
 
 	// BOT
 	void	doHelpCommand();
-	void	doInfoCommand(Command &user);
+	void	doInfoCommand();
 	void	doShowuserCommand(Server &server);
 	void	doShowtimeCommand();
 	void	doRandnumberCommand();

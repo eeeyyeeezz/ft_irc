@@ -3,7 +3,7 @@
 
 Channel::Channel() { }
 
-Channel::Channel(string channelName, int fd) : _channelName(channelName), _fdAdmin(fd), _channelID(-1) { _fds.push_back(fd); }
+Channel::Channel(string channelName, int fd) : _channelName(channelName), _fdAdmin(fd) { _fds.push_back(fd); }
 
 // GETTERS
 vector<int>			Channel::getFdVector(){ return(_fds); }
@@ -17,12 +17,12 @@ void				Channel::setFdVector(vector<int> &fds) { _fds = fds; }
 void				Channel::setFdAdmin(int fd) { _fdAdmin = fd; }
 void				Channel::setNewVector(vector<int> &newVector) { _fds = newVector; }
 
-void	NewUserConnect(Server &server, int fd, string message, string nickname, string username, int id, string channelName){
+void	NewUserConnect(Server &server, int fd, string nickname, int id, string channelName){
 	Channel tmpChannel = server.getChannel(id);
 	vector<int> tmpFdVector = tmpChannel.getFdVector();
 	string userJoined = ":127.0.0.1 " + nickname + " " + "join " + channelName + "\r\n";
 	
-	for (int i = 0; i < tmpFdVector.size(); i++){
+	for (size_t i = 0; i < tmpFdVector.size(); i++){
 		if (tmpFdVector[i] != fd)
 			send(tmpFdVector[i], userJoined.c_str(), userJoined.length() + 1, 0);
 			// SendMessageIrcSyntax(tmpFdVector[i], nickname, username, message);
@@ -70,7 +70,7 @@ void	Command::createNewChannel(Server &server){
 	int	_channelID = server.getChannelID();
 	server.channelsPushBack(channel);
 	server.setUsersAtChannelFd(_channelID);
-	NewUserConnect(server, _fd, _message, _nickname, _username, _channelID, _arguments[0]);
+	NewUserConnect(server, _fd, _nickname, _channelID, _arguments[0]);
 	std::cout << "NEW CHANNEL! " << _arguments[0] << " ADMIN IS " << _nickname << std::endl;
 	server.setChannelID(1);
 }
@@ -98,7 +98,7 @@ void	Command::doJoinCommand(Server &server){
 					}
 					if (it2 == tmpFd.end()){
 						server.channelPushBackFd(_channelID - 1, _fd);
-						NewUserConnect(server, _fd, _message, _nickname, _username, _channelID - 1, _arguments[0]);
+						NewUserConnect(server, _fd, _nickname, _channelID - 1, _arguments[0]);
 						std::cout << "NEW MEMBER AT " << server.getChannel(_channelID - 1).getChannelName() << " BY FD " << _fd << " " << _nickname << std::endl;
 					}
 				}
@@ -109,7 +109,6 @@ void	Command::doJoinCommand(Server &server){
 
 void	Command::doPartCommand(Server &server){
 	bool channelNameExist = false;
-	int	_channelID = server.getChannelID();
 	vector<Channel> tmpVector = server.getVectorOfChannels();
 	channelNameExist = checkChannelNameExist(tmpVector, _arguments[0]);
 	
@@ -143,7 +142,7 @@ void	Command::doPartCommand(Server &server){
 			server.channelSetNew(tmpChannel, atChannelFd);
 			
 			// send to all that leaves
-			for (int i = 0; i < tmpIntFdsVector.size(); i++)
+			for (size_t i = 0; i < tmpIntFdsVector.size(); i++)
 				SendMessageIrcSyntax(tmpIntFdsVector[i], _nickname, _username, _message);
 			std::cout << _nickname << " LEAVES " << _arguments[0] << std::endl;;
 			return ;
@@ -177,7 +176,7 @@ void Command::doKickCommand(Server &server) {
 		vector<Channel> tmpVector = server.getVectorOfChannelsRef();
 		for (vector<Channel>::iterator it = tmpVector.begin(); it != tmpVector.end(); it++){
 			if ((*it).getChannelName() == _arguments[0]){
-				if((*it).doKickFromChannel(_fd, userFd)) {
+				if((*it).doKickFromChannel(_fd, userFd, _arguments[1])) {
                     std::cout << _arguments[1] << " WAS KICKED FROM " << _arguments[0] << std::endl;
                     server.channelVectorSetNew(tmpVector);
                 }
@@ -186,7 +185,7 @@ void Command::doKickCommand(Server &server) {
 	}
 }
 
-bool Channel::doKickFromChannel(int fd, int userFd){
+bool Channel::doKickFromChannel(int fd, int userFd, string userName){
 	if (fd == _fdAdmin){
 		vector<int>::iterator itb = _fds.begin();
 		vector<int>::iterator ite = _fds.end();
@@ -198,14 +197,17 @@ bool Channel::doKickFromChannel(int fd, int userFd){
 			}
 		}
 		if(it == ite) {
+            string err = userName +  _channelName + " :They aren't on that channel\n";
+            send(fd, err.c_str(), err.length() + 1, 0);
             ERR_USER_NOT_IN_CHANNEL;
             return false;
         }
 	} else {
         string err = "482 *  " + _channelName + " :You're not channel operator\n";
-        send(_sockfd, err.c_str(), err.length() + 1, 0);
+        send(fd, err.c_str(), err.length() + 1, 0);
         return false;
     }
+    return false;
 }
 
 void Channel::printFds() {

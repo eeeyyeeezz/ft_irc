@@ -9,7 +9,7 @@ void	SendMessageIrcSyntax(int fd, string nickname, string username, string messa
 }
 
 bool	contains(string array[], string message){
-	for (int i = 0; i < array->length(); i++){
+	for (size_t i = 0; i < array->length(); i++){
 		if (array[i] == message) {
 			std::cout << message << std::endl;
 			return (true);

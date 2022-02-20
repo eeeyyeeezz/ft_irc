@@ -2,7 +2,7 @@
 
 Command::Command() { }
 
-Command::Command(string message, int fd, string nickname, string username, vector<User> &users) : _message(message), _fd(fd), _nickname(nickname), _username(username), _users(users) {
+Command::Command(string message, int fd, string nickname, string username, vector<User> &users) : _fd(fd), _message(message),  _username(username), _nickname(nickname),  _users(users) {
 	if (!message.empty()){	
 		std::istringstream stringToSplit(message.c_str());
 		string stringSplitted;
@@ -48,7 +48,7 @@ void	Command::checkCommand(Server &server, struct pollfd fds[]){
 
 	// BOT commands
 	if (_command == "BOT" && _arguments[0] == "HELP") doHelpCommand();
-	if (_command == "BOT" && _arguments[0] == "INFO") doInfoCommand(*this);
+	if (_command == "BOT" && _arguments[0] == "INFO") doInfoCommand();
 	if (_command == "BOT" && _arguments[0] == "SHOWUSER") doShowuserCommand(server);
 	if (_command == "BOT" && _arguments[0] == "SHOWTIME") doShowtimeCommand();
 	if (_command == "BOT" && _arguments[0] == "RANDNUMBER") doRandnumberCommand();

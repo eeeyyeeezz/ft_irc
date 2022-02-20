@@ -8,7 +8,7 @@
 void	InitialSetup(Server &server, struct pollfd fds[], int count)
 {
 	server.setCountConnects(1);
-	for (size_t i = 0; i < count; i++)
+	for (size_t i = 0; i < (size_t)count; i++)
 		fds[i].fd = -1;
 	fds[0].events = POLLIN;
 	fds[0].revents = 0;
