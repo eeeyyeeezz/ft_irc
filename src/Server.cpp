@@ -91,6 +91,7 @@ void	Server::mainLoop(Server &server, struct pollfd fds[]){
 void	Server::setNewConnection(int &flag, struct pollfd fds[], size_t &i){
 	User *user = new User(fds[i].fd);
 	_users.push_back(*user);
+	delete user;
 
 	flag = 0;
 	fds[getCountConnects()].fd = accept(fds[i].fd, NULL, NULL);
@@ -116,8 +117,8 @@ void	Server::continueConnection(int &flag, struct pollfd fds[], size_t &i){
 	buff[readed] = 0;
 	_users[i - 1].setFd(fds[i].fd);
 	setId(i - 1);
-	_users[i].parsCommand(*this, std::string(buff), i - 1, fds);
-	std::cout << getUser(i - 1).getNickname() << ": " << buff;
+	if (!_users[i].parsCommand(*this, std::string(buff), i - 1, fds))
+		std::cout << getUser(i - 1).getNickname() << ": " << buff;
 	fds[i].revents = 0;
 }
 

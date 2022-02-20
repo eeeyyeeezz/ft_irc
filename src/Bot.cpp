@@ -1,6 +1,6 @@
 #include "../inc/Command.hpp"
 #include <chrono>
-#include <ctime>
+#include <time.h>
 
 void	Command::doHelpCommand(){
 	if (_arguments.size() == 1)
@@ -42,11 +42,8 @@ void	Command::doShowuserCommand(Server &server){
 }
 
 void	Command::doShowtimeCommand(){
-	auto start = std::chrono::system_clock::now();
-	auto end = std::chrono::system_clock::now();
-	std::chrono::duration<double> elapsed_seconds = end-start;
-	std::time_t end_time = std::chrono::system_clock::to_time_t(end);
-	string timeNow = ":BOT Time is " + std::string(std::ctime(&end_time));
+	time_t givemetime = time(NULL);
+	string timeNow = ":BOT Time is " + string(ctime(&givemetime));
 	send(_fd, timeNow.c_str(), timeNow.length() + 1, 0);
 }
 

@@ -70,7 +70,7 @@ using std::vector;
 
 // PART and KICK ERRORS
 #define ERR_NOSUCHCHANNEL(channel) ("403 *  " + channel + " :No such channel\n")
-#define ERR_NOTONCHANNEL(channel) ("442 *  ") + channel + " :You're not on that channel\n")
+#define ERR_NOTONCHANNEL(channel) ("442 *  " + channel + " :You're not on that channel\r\n")
 #define ERR_CHANOPRIVSNEEDED(channel) ("482 *  " + channel " :You're not channel operator\n")
 #define	ERR_USER_NOT_IN_CHANNEL send(fd, "441 ERR_USERNOTINCHANNEL ", 26, 0)
 // END OF NEW ERRORS
@@ -87,5 +87,4 @@ using std::vector;
 #define SEND_ABOUT_NEW_USER std::cout << WHITE << "NEW USER! NICKNAME: " << BLUE << "[" << server.getUser(i).getNickname() << "]" << WHITE << " USERNAME: "<< BLUE << "[" << server.getUser(i).getUsername() << "]" << WHITE << " FD " << BLUE << "[" << server.getUser(i).getFd() << "]" << NORMAL << std::endl;
 
 void	SendMessageIrcSyntax(int fd, string nickname, string username, string message);
-bool	contains(string array[], string message);
 void	error(string error);
