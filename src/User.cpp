@@ -99,14 +99,18 @@ vector<string>		getParametrs(string message){
 }
 
 int			User::preparationCommands(Server &server, string message, int i){
+    static int onlyOnce = 0;
 	vector<string> parametrs = getParametrs(message);
 	string firstWord = getFirstWord(message);
 	
 	// PING
-	if (server.getUser(i).getPasswordPassed() == 0 && parametrs[0] == "LSPING"){
-		string pong = "PONG " + parametrs[1] + "\r\n";
-		send(_sockfd, pong.c_str(), pong.length() + 1, 0);
-	}
+	if (!onlyOnce && parametrs.size() > 0){
+		if (parametrs[0] == "LSPING") {
+            string pong = "PONG " + parametrs[1] + "\r\n";
+            send(_sockfd, pong.c_str(), pong.length() + 1, 0);
+        }
+        ++onlyOnce;
+    }
 	
 	// PASS 
 	if (server.getUser(i).getPasswordPassed() == 0 && firstWord == "PASS"){

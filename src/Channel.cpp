@@ -28,7 +28,7 @@ void	NewUserConnect(Server &server, int fd, string message, string nickname, str
 			// SendMessageIrcSyntax(tmpFdVector[i], nickname, username, message);
 	}
 	
-	string beginMessage = string(":KVIrc 331 " + nickname + " " + channelName + ": No topis is set\r\n"); // +  
+	string beginMessage = string(":KVIrc 331 " + nickname + " " + channelName + ": No topic is set\r\n"); // +
 	// ":KVIrc 353 " + nickname + " = " + channelName + " :@" + nickname + "\r\n"); 
 	// ":KVIrc 366 " + nickname + " " + channelName + " :End of /NAMES list\r\n");
 	send(fd, beginMessage.c_str(), beginMessage.length() + 1, 0);	
