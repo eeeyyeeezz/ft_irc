@@ -64,9 +64,10 @@ using std::vector;
 #define ERR_NOSUCHNICK(nick) ("401 *  " + nick + " :No such nick/channel\n")
 
 // JOIN ERRORS
-#define ERR_CHANNELISFULL(channel) ("471 *  " + channel + " :Cannot join channel (+l)")
-#define ERR_NOSUCHCHANNEL(channel) ("403 *  " + channel + " :No such channel\n")
-#define ERR_TOOMANYCHANNELS(channel) ("405 *  " + channel + " :You have joined too many channels\n")
+#define ERR_CHANNELISFULL(channel) ("471 *  " + channel + " :Cannot join channel (+l)\r\n")
+// #define ERR_NOSUCHCHANNEL(channel) ("403 *  " + channel + " :No such channel\r\n")
+#define ERR_TOOMANYCHANNELS(channel) ("405 *  " + channel + " :You have joined too many channels\r\n")
+#define ERR_BADCHANNELKEY(channel) ("475 * " + channel + " :Cannot join channel (+k)\r\n")
 
 // PART and KICK ERRORS
 #define ERR_NOSUCHCHANNEL(channel) ("403 *  " + channel + " :No such channel\n")
