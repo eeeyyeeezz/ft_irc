@@ -68,7 +68,6 @@ void	Command::createNewChannel(Server &server){
 	server.channelsPushBack(channel);
 	delete channel;
 	
-	server.setUsersAtChannelFd(_channelID);
 	NewUserConnect(server, _fd, _nickname, _channelID, _arguments[0]);
 	std::cout << "NEW CHANNEL! " << _arguments[0] << " ADMIN IS " << _nickname << std::endl;
 	server.setChannelID(1);
@@ -112,12 +111,10 @@ void	Command::doJoinCommand(Server &server){
 							break;
 					}
 					if (it2 == tmpFd.end()){
-                        if(tmpFd.size() == 0) {
+                        if(tmpFd.size() == 0)
                             (*it).setFdAdmin(_fd);
-                            server.channelVectorSetNew(tmpVector);
-                        }
-						server.channelPushBackFd(_channelID - 1, _fd);
-						server.setUsersAtChannelFd(_channelID - 1);
+                        (*it).fdsPushBack(_fd);
+                        server.channelVectorSetNew(tmpVector);
 						NewUserConnect(server, _fd, _nickname, _channelID - 1, _arguments[0]);
 						std::cout << "NEW MEMBER AT " << server.getChannel(_channelID - 1).getChannelName() << " BY FD " << _fd << " " << _nickname << std::endl;
 					}
@@ -125,23 +122,6 @@ void	Command::doJoinCommand(Server &server){
 			}
 		}
 	}
-}
-
-void	partUser(Server &server, vector<int> &tmpIntFdsVector, Channel &tmpChannel, vector<int>::iterator &element, int atChannelFd, string nickname, string channelName, int fd){
-	int fdAdmin = server.getChannel(atChannelFd).getFdAdmin();
-	tmpChannel.setFdVector(tmpIntFdsVector);
-	if (fd == fdAdmin && tmpIntFdsVector.size() > 0){
-		send(fd, ":127.0.0.1 KVIrc Operator. Cant. Leave\r\n", 41, 0);
-		return ;
-	}
-	tmpIntFdsVector.erase(element);
-	server.channelSetNew(tmpChannel, atChannelFd);
-	// send to all that leaves
-	string userLeaved = ":127.0.0.1 " + nickname + " " + "PART " + channelName + "\r\n";
-	for (size_t i = 0; i < tmpIntFdsVector.size(); i++)
-		send(tmpIntFdsVector[i], userLeaved.c_str(), userLeaved.length() + 1, 0);
-	std::cout << nickname << " LEAVES " << channelName << std::endl;
-	return ;
 }
 
 void	Command::doPartCommand(Server &server){
@@ -255,7 +235,6 @@ bool Channel::doKickFromChannel(int fd, int userFd, string userName){
 	}
 	return false;
 }
-
 void Channel::printFds() {
 	vector<int>::iterator itb = _fds.begin();
 	vector<int>::iterator ite = _fds.end();

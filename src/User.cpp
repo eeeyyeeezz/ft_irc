@@ -1,8 +1,8 @@
 #include "../inc/User.hpp"
 
-User::User() :  _atChannelFd(-1), _passwordPassed(0), _nickNamePassed(0), _userPassed(0)  { };
+User::User() :   _passwordPassed(0), _nickNamePassed(0), _userPassed(0)  { };
 
-User::User(int fd) : _atChannelFd(-1), _sockfd(fd), _passwordPassed(0), _nickNamePassed(0), _userPassed(0)  {}
+User::User(int fd) :  _sockfd(fd), _passwordPassed(0), _nickNamePassed(0), _userPassed(0)  {}
 
 
 // SETTERS
@@ -12,12 +12,10 @@ void		User::setNickname(string nickname) { _nickname = nickname; }
 void		User::setPasswordPassed() { _passwordPassed = 1; }
 void		User::setNicknamePassed() { _nickNamePassed = 1; }
 void		User::setUserPassed() { _userPassed = 1; }
-void		User::setAtChannelFd(int fd) { _atChannelFd = fd; }
 
 
 // GETTERS
 int			User::getFd() { return(_sockfd); }
-int			User::getAtChannelFd() { return(_atChannelFd); }
 int			User::getPasswordPassed() { return(this->_passwordPassed); }
 int			User::getUserPassed() { return(this->_userPassed); }
 int			User::getNickNamePassed() { return(this->_nickNamePassed); }

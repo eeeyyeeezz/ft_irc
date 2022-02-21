@@ -18,7 +18,6 @@ vector<User>	Server::getVectorOfUsers() { return(_users); }
 Channel			Server::getChannel(int i) { return(_channels[i]); }
 string			Server::getPassword() { return(_password); }
 
-int				Server::getUserAtChannelFd() { return(_users[_id].getAtChannelFd()); }
 User			Server::getUser(int i) { return(_users[i]); }
 
 // SETTERS
@@ -36,7 +35,6 @@ void			Server::channelsPushBack(Channel *channel) { _channels.push_back(*channel
 void			Server::userPushBack(User *user) { _users.push_back(*user); }
 void			Server::usersVectorSetNew(vector<User> &tmpVector) { _users = tmpVector; }
 
-void			Server::setUsersAtChannelFd(int fd) { _users[_id].setAtChannelFd(fd); }
 void			Server::setNewChannelAdm(vector<int> &tmpIntFdsVector) { _channels[_id].setFdAdmin(tmpIntFdsVector[0]); }
 void			Server::channelPushBackFd(int id, int fd) { _channels[id].fdsPushBack(fd); }
 void			Server::channelVectorSetNew(vector<Channel> &tmpVector){ _channels = tmpVector;}

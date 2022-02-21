@@ -34,7 +34,6 @@ class Server{
 	vector<User>	getVectorOfUsers();
 	
 	User			getUser(int i);
-	int				getUserAtChannelFd();
 	
 	Channel			getChannel(int i);
 	string			getPassword();
@@ -55,7 +54,6 @@ class Server{
 	void			userPushBack(User *user);
 	void			usersVectorSetNew(vector<User> &tmpVector);
 	
-	void			setUsersAtChannelFd(int fd);
 	void			channelsPushBack(Channel *channel);
 	void			channelSetNew(Channel &newChannel, int id);
 	void			channelVectorSetNew(vector<Channel> &tmpVector);
