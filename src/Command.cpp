@@ -89,8 +89,9 @@ void	Command::doNickCommand(Server &server){
 
 
 void	Command::doPrivmsgCommand(Server &server){
+
 	if (_arguments.size() < 2){ 
-		send(_fd, ERR_NORECIPIENT(string("PRIVMSG")).c_str(), ERR_NORECIPIENT(string("PRIVMSG")).length() + 1, 0);
+		send(_fd, ERR_NEEDMOREPARAMS(string("PRIVMSG")).c_str(), ERR_NEEDMOREPARAMS(string("PRIVMSG")).length() + 1, 0);
 		return ; 
 	}
 	
