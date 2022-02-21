@@ -46,7 +46,7 @@ using std::vector;
 #define ERR_ALREADYREGISTRED "462 *  :You may not reregister\n"
 
 // NICK ERRORS
-#define ERR_ERRONEUSNICKNAME(nick) ("432 *  " + nick + " :Erroneus nickname\n")
+#define ERR_ERRONEUSNICKNAME(nick) ("432 *  " + nick + " :Erroneus nickname\r\n")
 #define ERR_NICKNAMEINUSE(nick) ("433 *  " + nick + " :Nickname is already in use\r\n")
 
 // PRIVMSG and NOTICE ERRORS
