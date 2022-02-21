@@ -53,6 +53,7 @@ bool Channel::checkUserInChannel(int fd) {
 }
 
 void	Channel::doChannelPrivmsg(int fd, string message, string nickname, string username){
+    printFds();
 	if (checkUserInChannel(fd)) {
 		for (vector<int>::iterator it = _fds.begin(); it != _fds.end(); it++) {
 			if ((*it) != fd)
@@ -118,7 +119,6 @@ void	partUser(Server &server, vector<int> &tmpIntFdsVector, Channel &tmpChannel,
 	}
 	tmpIntFdsVector.erase(element);
 	server.channelSetNew(tmpChannel, atChannelFd);
-	
 	// send to all that leaves
 	string userLeaved = ":127.0.0.1 " + nickname + " " + "PART " + channelName + "\r\n";
 	for (size_t i = 0; i < tmpIntFdsVector.size(); i++)
@@ -128,33 +128,41 @@ void	partUser(Server &server, vector<int> &tmpIntFdsVector, Channel &tmpChannel,
 }
 
 void	Command::doPartCommand(Server &server){
-	bool channelNameExist = false;
-	vector<Channel> tmpVector = server.getVectorOfChannels();
-	channelNameExist = checkChannelNameExist(tmpVector, _arguments[0]);
-	
-	if (!channelNameExist)
-		send(_fd, ERR_NOSUCHCHANNEL(_arguments[0]).c_str(), ERR_NOSUCHCHANNEL(_arguments[0]).length() + 1, 0);
-	else {
-		int atChannelFd = server.getUserAtChannelFd();
-		Channel tmpChannel = server.getChannel(atChannelFd);
-		vector<int> tmpIntFdsVector = server.getChannel(atChannelFd).getFdVector();
-		vector<int>::iterator element = std::find(tmpIntFdsVector.begin(), tmpIntFdsVector.end(), _fd);
-		
-		if (tmpChannel.getFdVector().size() == 1){
-			tmpVector.erase(tmpVector.begin());
-			server.channelVectorSetNew(tmpVector);
-			server.setChannelID(-1);
-			std::cout << "CHANNEL " << _arguments[0] << " DELETED\n";
-			return ;
-		}
-		
-		if (element != tmpIntFdsVector.end())
-			partUser(server, tmpIntFdsVector, tmpChannel, element, atChannelFd, _nickname, _arguments[0], _fd);
-		else
-			send(_fd, ERR_NOTONCHANNEL(_arguments[0]).c_str(),  ERR_NOTONCHANNEL(_arguments[0]).length() + 1, 0);
-	}
+    if(_arguments.size() < 1){
+        string err = "461 *  PART :Not enough parameters\r\n";
+        send(_fd, err.c_str(), err.length() + 1, 0);
+        return;
+    }
+    Channel tmpChannel;
+    vector<Channel> tmpVector = server.getVectorOfChannelsRef();
+    for (vector<Channel>::iterator it = tmpVector.begin(); it != tmpVector.end(); it++){
+        if ((*it).getChannelName() == _arguments[0]){
+            if((*it).doPartFromChannel(_fd)) {
+                std::cout << _nickname << " WAS PART FROM " << _arguments[0] << std::endl;
+                server.channelVectorSetNew(tmpVector);
+            }
+        }
+    }
 }
-
+bool Channel::doPartFromChannel(int fd) {
+    if(checkUserInChannel(fd)) {
+        if(fd == _fdAdmin) {
+            if(_fds.size() > 1) {
+                _fdAdmin = _fds[1];
+            }
+        }
+        vector<int>::iterator itb = _fds.begin();
+        vector<int>::iterator ite = _fds.end();
+        vector<int>::iterator it;
+        for (it = itb; it != ite; it++) {
+            if ((*it) == fd) {
+                _fds.erase(it);
+                return true;
+            }
+        }
+    }
+    return false;
+}
 void Command::doKickCommand(Server &server) {
 	if(_arguments.size() < 2){
         string err = "461 *  KICK :Not enough parameters\r\n";
@@ -176,7 +184,8 @@ void Command::doKickCommand(Server &server) {
 	if (userExist){
 		Channel tmpChannel;
 		vector<Channel> tmpVector = server.getVectorOfChannelsRef();
-		for (vector<Channel>::iterator it = tmpVector.begin(); it != tmpVector.end(); it++){
+        vector<Channel>::iterator it;
+		for ( it = tmpVector.begin(); it != tmpVector.end(); it++){
 			if ((*it).getChannelName() == _arguments[0]){
 				if((*it).doKickFromChannel(_fd, userFd, _arguments[1])) {
                     std::cout << _arguments[1] << " WAS KICKED FROM " << _arguments[0] << std::endl;
@@ -184,10 +193,23 @@ void Command::doKickCommand(Server &server) {
                 }
 			}
 		}
+        if (it == tmpVector.end()){
+            string channelDoesNotExist = ERR_NOSUCHCHANNEL(_arguments[0]);
+            send(_fd, channelDoesNotExist.c_str(), channelDoesNotExist.length() + 1, 0);
+        }
 	}
+    else {
+        string userDoesNotExist = "441 * " + _arguments[1] + " " + _arguments[0] + " :They aren't on that channel\r\n";
+        send(_fd, userDoesNotExist.c_str(), userDoesNotExist.length() + 1, 0);
+    }
 }
 
 bool Channel::doKickFromChannel(int fd, int userFd, string userName){
+    if (fd == userFd) {
+        string err = "You can't KICK yourself\r\n";
+        send(fd, err.c_str(), err.length() + 1, 0);
+        return false;
+    }
 	if (fd == _fdAdmin){
 		vector<int>::iterator itb = _fds.begin();
 		vector<int>::iterator ite = _fds.end();
@@ -199,9 +221,8 @@ bool Channel::doKickFromChannel(int fd, int userFd, string userName){
 			}
 		}
 	if (it == ite) {
-		string err = userName +  _channelName + " :They aren't on that channel\n";
+		string err = "441 * " + userName +  _channelName + " :They aren't on that channel\n";
 		send(fd, err.c_str(), err.length() + 1, 0);
-		ERR_USER_NOT_IN_CHANNEL;
 		return false;
 	}
 	} else {

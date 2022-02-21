@@ -39,7 +39,7 @@ void			Server::usersVectorSetNew(vector<User> &tmpVector) { _users = tmpVector; 
 void			Server::setUsersAtChannelFd(int fd) { _users[_id].setAtChannelFd(fd); }
 void			Server::setNewChannelAdm(vector<int> &tmpIntFdsVector) { _channels[_id].setFdAdmin(tmpIntFdsVector[0]); }
 void			Server::channelPushBackFd(int id, int fd) { _channels[id].fdsPushBack(fd); }
-void			Server::channelVectorSetNew(vector<Channel> &tmpVector){ _channels = tmpVector; }
+void			Server::channelVectorSetNew(vector<Channel> &tmpVector){ _channels = tmpVector;}
 void			Server::channelSetNew(Channel &newChannel, int id) { _channels[id] = newChannel; }
 
 // SERVER
