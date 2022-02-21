@@ -42,9 +42,6 @@ bool	checkChannelNameExist(vector<Channel> &tmpVector, string channelName){
 }
 
 bool Channel::checkUserInChannel(int fd) {
-	if (fd == _fdAdmin)
-		return true;
-		
 	for (vector<int>::iterator it = _fds.begin(); it != _fds.end(); it++){
 		if ((*it) == fd)
 			return true;
@@ -155,6 +152,8 @@ void	Command::doPartCommand(Server &server){
         if ((*it).getChannelName() == _arguments[0]){
             if((*it).doPartFromChannel(_fd)) {
                 std::cout << _nickname << " WAS PART FROM " << _arguments[0] << std::endl;
+                string err = "YOU WAS PART FROM " + _arguments[0] + "\r\n";
+                send(_fd, err.c_str(), err.length() + 1, 0);
                 server.channelVectorSetNew(tmpVector);
                 break;
             }
