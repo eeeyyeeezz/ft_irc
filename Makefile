@@ -18,7 +18,7 @@ run:
 	${CLANG} ${FLAGS} -g ${SRCS} -o ${NAME} && ./${NAME} 6667 5555
 
 clean:
-	rm -rf server
+	rm -rf ${NAME}
 
 re: clean all 
  
