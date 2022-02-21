@@ -79,17 +79,20 @@ void	Command::doNickCommand(Server &server){
 	
 	for (vector<User>::iterator it = tmpVector.begin(); it != tmpVector.end(); it++){
 		if ((*it).getNickname() == newNick){
-			NICK_NAME_IN_USE;
+			string InUse = ERR_NICKNAMEINUSE(newNick);
+			send(_fd, InUse.c_str(), InUse.length() + 1, 0);
 			return ;
 		}
 	}
 	server.setNicknameByUser(newNick, server.getId());
-	NEW_NICK_NAME_SET;
 }
 
 
 void	Command::doPrivmsgCommand(Server &server){
-	if (_arguments.size() < 2){ NO_USER_TO_PRIVATEMSG; return ; }
+	if (_arguments.size() < 2){ 
+		send(_fd, ERR_NORECIPIENT(string("PRIVMSG")).c_str(), ERR_NORECIPIENT(string("PRIVMSG")).length() + 1, 0);
+		return ; 
+	}
 	
 	// if exist
 	bool userExist = false;
@@ -118,7 +121,7 @@ void	Command::doPrivmsgCommand(Server &server){
 	else if (channelExist) 
 		tmpChannel.doChannelPrivmsg(_fd, _message, _nickname, _username);
 	else {
-		NO_SUCH_NICK;
+		send(_fd, ERR_NORECIPIENT(string("PRIVMSG")).c_str(), ERR_NORECIPIENT(string("PRIVMSG")).length() + 1, 0);
 		return ;
 	}
 }
