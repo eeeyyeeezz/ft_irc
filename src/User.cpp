@@ -74,6 +74,7 @@ string		getFirstWord(string message){
 			firstWord = stringSplitted;
 			break ;
 		}
+		firstWord.erase(std::remove(firstWord.begin(), firstWord.end(), '\r'), firstWord.end());
 		firstWord.erase(std::remove(firstWord.begin(), firstWord.end(), '\n'), firstWord.end());
 	}
 	return firstWord;
