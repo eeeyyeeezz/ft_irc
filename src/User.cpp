@@ -117,8 +117,8 @@ int			User::preparationCommands(Server &server, string message, int i){
 		server.getUser(i).checkUserPassword(server, message, i);
 		return (1);
 	} else if (server.getUser(i).getPasswordPassed() == 0 && firstWord != "PASS") {
-		sendError(ERR_NOTREGISTERED);
-		// send(server.getUser(i).getFd(), "You need to write PASS command and password\n", 45, 0);
+		// sendError(ERR_NICKNAMEINUSE);
+		send(server.getUser(i).getFd(), "You need to write PASS command and password\n", 45, 0);
 		return (1);
 	}
 
