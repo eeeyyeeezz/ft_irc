@@ -162,14 +162,14 @@ int				checkIdentity(Server &server, vector<string> arguments, int fd){
 
 int				User::parsNickCommand(Server &server, string message, int i){
 	vector<string>	parametrs = getParametrs(message);
-	int error = checkIdentity(server, parametrs, _sockfd);
-	if (error)
-		return 1;
-	
 	if (parametrs.size() == 0){
 		sendError(ERR_NEEDMOREPARAMS(string("NICK")));
 		return (1);
 	}
+	int error = checkIdentity(server, parametrs, _sockfd);
+	if (error)
+		return 1;
+	
 	server.setNicknameByUser(parametrs[0], i);
 	server.setNicknamePassedByUser(i);
 	if (GET_USER_PASSED){
