@@ -112,6 +112,10 @@ void	Command::doJoinCommand(Server &server){
 							break;
 					}
 					if (it2 == tmpFd.end()){
+                        if(tmpFd.size() == 0) {
+                            (*it).setFdAdmin(_fd);
+                            server.channelVectorSetNew(tmpVector);
+                        }
 						server.channelPushBackFd(_channelID - 1, _fd);
 						server.setUsersAtChannelFd(_channelID - 1);
 						NewUserConnect(server, _fd, _nickname, _channelID - 1, _arguments[0]);
