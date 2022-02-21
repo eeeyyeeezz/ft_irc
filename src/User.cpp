@@ -137,9 +137,26 @@ int			User::preparationCommands(Server &server, string message, int i){
 	return (0);
 }
 
+int				checkIdentity(Server &server, vector<string> arguments, int fd){
+	string newNick = arguments[0];
+	vector<User> tmpVector = server.getVectorOfUsers();
+	
+	for (vector<User>::iterator it = tmpVector.begin(); it != tmpVector.end(); it++){
+		if ((*it).getNickname() == newNick){
+			string InUse = ERR_NICKNAMEINUSE(newNick);
+			send(fd, InUse.c_str(), InUse.length() + 1, 0);
+			return 1;
+		}
+	}
+	return 0;
+}	
+
 int				User::parsNickCommand(Server &server, string message, int i){
 	vector<string>	parametrs = getParametrs(message);
-
+	int error = checkIdentity(server, parametrs, _sockfd);
+	if (error)
+		return 1;
+	
 	if (parametrs.size() == 0){
 		sendError(ERR_NEEDMOREPARAMS(string("NICK")));
 		return (1);
