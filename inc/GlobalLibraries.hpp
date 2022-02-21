@@ -34,13 +34,6 @@ using std::vector;
 #define GRAY "\033[1;30m"
 #define NORMAL "\033[0m"
 
-// ERRORS
-#define NO_USER_TO_PRIVATEMSG send(_fd, "411 ERR_NORECIPIENT\n", 21, 0)
-#define NO_SUCH_NICK send(_fd, "401 ERR_NOSUCHNICK\n", 20, 0)
-#define NICK_NAME_IN_USE send(_fd, "433 ERR_NICKNAMEINUSE\n", 23, 0)
-#define NEED_MORE_PARAMS send(server.getUser(i).getFd(), "461 ERR_NEEDMOREPARAMS\n", 24, 0)
-#define	ERR_USER_NOT_IN_CHANNEL send(fd, "441 ERR_USERNOTINCHANNEL \r\n", 28, 0)
-
 // NEW ERRORS
 // COMMON ERRORS
 #define ERR_NOTREGISTERED "451 *  :You have not registered\r\n"
@@ -54,7 +47,7 @@ using std::vector;
 
 // NICK ERRORS
 #define ERR_ERRONEUSNICKNAME(nick) ("432 *  " + nick + " :Erroneus nickname\n")
-#define ERR_NICKNAMEINUSE(nick) ("433 *  " + nick + " :Nickname is already in use\n"
+#define ERR_NICKNAMEINUSE(nick) ("433 *  " + nick + " :Nickname is already in use\r\n")
 
 // PRIVMSG and NOTICE ERRORS
 #define ERR_NORECIPIENT(command) ("411 * :No recipient given " + command + "\n")
@@ -81,9 +74,6 @@ using std::vector;
 #define GET_NICK_PASSED server.getUser(i).getNickNamePassed()
 
 // DEFINES
-#define NEW_NICK_NAME_SET send(_fd, "New nickname set!\n", 19, 0)
-#define NEED_NICK_OR_USER send(server.getUser(i).getFd(), "You need to write NICK or USER command with argument before you can chat\n", 74, 0)
-#define NEW_USER_CREATED send(server.getUser(i).getFd(), "New user created!\n", 19, 0)
 #define SEND_ABOUT_NEW_USER std::cout << WHITE << "NEW USER! NICKNAME: " << BLUE << "[" << server.getUser(i).getNickname() << "]" << WHITE << " USERNAME: "<< BLUE << "[" << server.getUser(i).getUsername() << "]" << WHITE << " FD " << BLUE << "[" << server.getUser(i).getFd() << "]" << NORMAL << std::endl;
 
 void	SendMessageIrcSyntax(int fd, string nickname, string username, string message);

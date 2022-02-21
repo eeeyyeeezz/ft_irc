@@ -118,7 +118,6 @@ int			User::preparationCommands(Server &server, string message, int i){
 		return (1);
 	} else if (server.getUser(i).getPasswordPassed() == 0 && firstWord != "PASS") {
 		sendError(ERR_NOTREGISTERED);
-		// send(server.getUser(i).getFd(), "You need to write PASS command and password\n", 45, 0);
 		return (1);
 	}
 
