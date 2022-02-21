@@ -53,14 +53,14 @@ bool Channel::checkUserInChannel(int fd) {
 }
 
 void	Channel::doChannelPrivmsg(int fd, string message, string nickname, string username){
-    printFds();
+    //printFds();
 	if (checkUserInChannel(fd)) {
 		for (vector<int>::iterator it = _fds.begin(); it != _fds.end(); it++) {
 			if ((*it) != fd)
 				SendMessageIrcSyntax((*it), nickname, username, message);
 		}
 	} else {
-		CANNOT_SEND_TO_CHAN;
+        send(fd, "404 ERR_CANNOTSENDTOCHAN: \r\n", 28, 0);
 		std::cout << "NOT.IN.CHANNEL!\n";
 	}
 }
@@ -156,6 +156,7 @@ void	Command::doPartCommand(Server &server){
             if((*it).doPartFromChannel(_fd)) {
                 std::cout << _nickname << " WAS PART FROM " << _arguments[0] << std::endl;
                 server.channelVectorSetNew(tmpVector);
+                break;
             }
         }
     }
@@ -205,7 +206,10 @@ void Command::doKickCommand(Server &server) {
 			if ((*it).getChannelName() == _arguments[0]){
 				if((*it).doKickFromChannel(_fd, userFd, _arguments[1])) {
                     std::cout << _arguments[1] << " WAS KICKED FROM " << _arguments[0] << std::endl;
+                    string err = "YOU WAS KICKED FROM " + _arguments[0] + "\r\n";
+                    send(userFd, err.c_str(), err.length() + 1, 0);
                     server.channelVectorSetNew(tmpVector);
+                    break;
                 }
 			}
 		}
@@ -252,6 +256,7 @@ bool Channel::doKickFromChannel(int fd, int userFd, string userName){
 void Channel::printFds() {
 	vector<int>::iterator itb = _fds.begin();
 	vector<int>::iterator ite = _fds.end();
+    std::cout << "Admin fd: " << _fdAdmin << "\n";
 	for (vector<int>::iterator it = itb; it != ite; it++){
 		std::cout << "fd" << (*it) << "\n";
 	}
