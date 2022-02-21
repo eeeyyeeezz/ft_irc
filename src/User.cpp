@@ -138,8 +138,16 @@ int			User::preparationCommands(Server &server, string message, int i){
 }
 
 int				checkIdentity(Server &server, vector<string> arguments, int fd){
-	string newNick = arguments[0];
+	string newNick;
+	if (arguments.size() != 0)
+		string newNick = arguments[0];
 	vector<User> tmpVector = server.getVectorOfUsers();
+
+	if ((newNick.length() <= 0 || newNick.length() >= 9) || arguments.size() == 0) {
+		string err = ERR_ERRONEUSNICKNAME(newNick);
+		send(fd, err.c_str(), err.length() + 1, 0);
+		return 1;
+	}
 	
 	for (vector<User>::iterator it = tmpVector.begin(); it != tmpVector.end(); it++){
 		if ((*it).getNickname() == newNick){
@@ -148,6 +156,7 @@ int				checkIdentity(Server &server, vector<string> arguments, int fd){
 			return 1;
 		}
 	}
+
 	return 0;
 }	
 
